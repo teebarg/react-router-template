@@ -1,0 +1,17 @@
+name: Api Deployment
+
+on:
+  workflow_dispatch:
+
+# Deploy it to the cluster
+jobs:
+    build:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Deploy to Render
+              env:
+                deploy_url: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+              run: |
+                echo "Branch Name: ${{ github.ref }}"
+                echo "Deploying.........."
+                curl "$deploy_url"

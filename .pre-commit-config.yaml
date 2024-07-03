@@ -1,0 +1,31 @@
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v3.4.0
+    hooks:
+    -   id: trailing-whitespace
+        files: ^backend/
+    -   id: end-of-file-fixer
+        files: ^backend/
+    -   id: check-yaml
+        files: ^backend/
+    -   id: check-added-large-files
+        files: ^backend/
+
+  - repo: https://github.com/psf/black
+    rev: 23.7.0
+    hooks:
+    -   id: black
+        args: [--line-length=100]
+        files: ^backend/
+
+  - repo: https://github.com/pre-commit/mirrors-isort
+    rev: v5.9.3
+    hooks:
+    -   id: isort
+        files: ^backend/
+
+  - repo: https://github.com/PyCQA/flake8
+    rev: 6.1.0
+    hooks:
+    -   id: flake8
+        files: ^backend/

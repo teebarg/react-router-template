@@ -1,0 +1,31 @@
+http:
+    routers:
+        frontend:
+            rule: PathPrefix(`/`)
+            service: frontend
+        backend:
+            rule: PathPrefix(`/api`)
+            service: backend
+        backend-doc:
+            rule: PathPrefix(`/docs`)
+            service: backend
+        backend-redoc:
+            rule: PathPrefix(`/redoc`)
+            service: backend
+        adminer:
+            rule: PathPrefix(`/adminer`)
+            service: adminer
+
+    services:
+        frontend:
+            loadBalancer:
+                servers:
+                    - url: http://localhost:5173
+        backend:
+            loadBalancer:
+                servers:
+                    - url: http://localhost:4012
+        adminer:
+            loadBalancer:
+                servers:
+                    - url: http://localhost:4015

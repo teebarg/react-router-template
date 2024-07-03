@@ -1,0 +1,26 @@
+services:
+
+  db:
+    image: postgres:12
+    ports:
+      - "4013:5432"
+    volumes:
+      - react-fast-template-data:/var/lib/postgresql/data
+    env_file:
+      - .env
+    environment:
+      - PGDATA=/var/lib/postgresql/data/pgdata
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD?Variable not set}
+      - POSTGRES_USER=${POSTGRES_USER?Variable not set}
+      - POSTGRES_DB=${POSTGRES_DB?Variable not set}
+
+  adminer:
+    image: adminer
+    container_name: adminer
+    ports:
+      - 4015:8080
+    depends_on:
+      - db
+
+volumes:
+  react-fast-template-data:

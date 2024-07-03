@@ -1,0 +1,62 @@
+services:
+  traefik:
+    image: traefik:v2.9
+    command:
+      - traefik
+      - --entrypoints.dev.address=:4010
+      - --providers.file.filename=/config.yml
+      - --api.insecure=true
+    ports:
+      - 4010:4010
+      - 4011:8080
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./lb.yml:/config.yml:ro
+    networks:
+      - traefik-network
+
+  backend:
+    image: '${DOCKER_IMAGE_BACKEND?Variable not set}:${TAG-latest}'
+    ports:
+      - 4012:8000
+    networks:
+      - traefik-network
+    env_file:
+      - ./backend/.env
+    build:
+      context: ./backend
+      args:
+        INSTALL_DEV: ${INSTALL_DEV-false}
+    platform: linux/amd64 # Patch for M1 Mac
+    volumes:
+      - ./backend/:/app
+
+
+  frontend:
+    image: '${DOCKER_IMAGE_FRONTEND?Variable not set}:${TAG-latest}'
+    ports:
+      - 4013:5173
+    networks:
+      - traefik-network
+    depends_on:
+      - backend
+    build:
+      context: ./frontend
+      args:
+        - NODE_ENV=production
+    command: npm run dev
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+    env_file:
+      - ./frontend/.env
+
+volumes:
+  volume-data:
+
+networks:
+  traefik-network:
+    name: traefik-network
+    external: true
