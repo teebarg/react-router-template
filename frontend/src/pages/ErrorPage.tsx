@@ -4,14 +4,26 @@ import { Button } from "@nextui-org/react";
 import { Link } from "@nextui-org/link";
 import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
-import { useRouteError } from "react-router-dom";
+import { useLocation, useNavigate, useRouteError } from "react-router-dom";
 
 interface Props {}
 
 const ErrorPage: React.FC<Props> = () => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const error: any = useRouteError();
-    // console.error(error);
+    const navigate = useNavigate();
+    const location = useLocation();
+
+    if ([401].includes(error.status)) {
+        const params = new URLSearchParams();
+        params.set("from", location.pathname);
+        navigate("/login?" + params.toString());
+        return;
+    }
+    if ([400, 403].includes(error.status)) {
+        navigate("/");
+        return;
+    }
+
     return (
         <div>
             <div className="h-screen flex flex-col">

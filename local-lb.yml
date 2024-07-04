@@ -24,8 +24,8 @@ http:
         backend:
             loadBalancer:
                 servers:
-                    - url: http://localhost:4012
+                    - url: http://localhost:8000
         adminer:
             loadBalancer:
                 servers:
-                    - url: http://localhost:4015
+                    - url: http://localhost:8080

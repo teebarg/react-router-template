@@ -23,7 +23,7 @@ export default function TableData({
     query,
 }: {
     rows: TableProps["rows"];
-    pagination: TableProps["pagination"];
+    pagination: any;
     query: string;
 }) {
     const revalidator = useRevalidator();

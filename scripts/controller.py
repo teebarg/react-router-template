@@ -1,5 +1,5 @@
 """
-React-fast-template Utility Script
+React-router-template Utility Script
 
 """
 

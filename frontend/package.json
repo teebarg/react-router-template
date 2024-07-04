@@ -1,14 +1,14 @@
 {
-    "name": "react-fast-template",
+    "name": "react-router",
     "version": "0.0.1",
     "type": "module",
     "description": "Starter kit for modern web applications",
     "repository": {
         "type": "git",
-        "url": "https://github.com/teebarg/react-fast-template.git"
+        "url": "https://github.com/teebarg/react-router.git"
     },
     "bugs": {
-        "url": "https://github.com/teebarg/react-fast-template/issues",
+        "url": "https://github.com/teebarg/react-router/issues",
         "email": "teebarg01@gmail.com"
     },
     "license": "MIT",
@@ -34,6 +34,7 @@
         "@react-aria/visually-hidden": "^3.8.11",
         "@react-oauth/google": "^0.12.1",
         "@tanstack/react-query": "^5.40.0",
+        "@tanstack/react-query-devtools": "^5.49.2",
         "classnames": "^2.3.2",
         "framer-motion": "^11.2.10",
         "is-mobile": "^4.0.0",

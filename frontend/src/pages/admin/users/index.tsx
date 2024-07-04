@@ -4,7 +4,6 @@ import { LoaderFunction, redirect, useLoaderData, useNavigate } from "react-rout
 import { Button } from "@nextui-org/react";
 import TableData from "../homepage/components/TableData";
 import userService from "@/services/user.service";
-import { useCookie } from "@/hooks/use-cookie";
 import { User } from "@/models/user";
 import { Pagination } from "@/types";
 import { useQueryParams } from "@/hooks/use-query-params";
@@ -13,38 +12,39 @@ import { Excel } from "@/components/core/excel-uploader";
 interface Props {}
 interface userData {
     togs?: Record<string, any>[];
-    users: User[];
+    data: User[];
     pagination: Pagination;
     error: boolean;
     errorMessage: string;
 }
 
-const usersLoader: LoaderFunction = async ({ request }) => {
-    const url = new URL(request.url);
-    const name = url.searchParams.get("name") ?? "";
-    const page = url.searchParams.get("page");
-    const { removeCookie } = useCookie();
-    try {
-        const { data, ...pagination } = await userService.getUsers({ name, page });
-        return { users: data, pagination, error: false };
-    } catch (error: any) {
-        if ([422].includes(error.status)) {
-            return redirect("/admin");
-        }
-        if ([401].includes(error.status)) {
-            removeCookie("user");
+const usersQuery = ({ name, page }: { name: string; page: string }) => ({
+    queryKey: ["users", { name, page }],
+    queryFn: async () => {
+        return await userService.getUsers({ name, page });
+    },
+});
+
+const usersLoader =
+    (isAuthenticated: any, queryClient: any): LoaderFunction =>
+    async ({ request }) => {
+        const url = new URL(request.url);
+        const name = url.searchParams.get("name") ?? "";
+        const page = url.searchParams.get("page") ?? "";
+
+        if (!isAuthenticated) {
             const params = new URLSearchParams();
             params.set("from", new URL(request.url).pathname);
             return redirect("/login?" + params.toString());
         }
-        return { users: null, error: true, errorMessage: error.message };
-    }
-};
+        const query = usersQuery({ name, page });
+        return queryClient.ensureQueryData(query);
+    };
 
 const Users: React.FC<Props> = () => {
     const navigate = useNavigate();
     const { name } = useQueryParams();
-    const { users, pagination } = useLoaderData() as userData;
+    const { data: users, ...pagination } = useLoaderData() as userData;
 
     return (
         <React.Fragment>

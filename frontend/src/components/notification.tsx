@@ -25,7 +25,7 @@ const Notification: React.FC<Props> = () => {
     const id = "nK12eRTbo";
 
     useEffect(() => {
-        const domain = import.meta.env.DEV ? "ws://localhost:4010" : `wss://${import.meta.env.VITE_DOMAIN}`;
+        const domain = import.meta.env.DEV ? "ws://localhost:4030" : `wss://${import.meta.env.VITE_DOMAIN}`;
         const url = `${domain}/api/ws/${id}`;
         connect(url);
         return () => {

@@ -3,12 +3,12 @@ services:
     image: traefik:v2.9
     command:
       - traefik
-      - --entrypoints.dev.address=:4010
+      - --entrypoints.dev.address=:4030
       - --providers.file.filename=/config.yml
       - --api.insecure=true
     ports:
-      - 4010:4010
-      - 4011:8080
+      - 4030:4030
+      - 4031:8080
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ./lb.yml:/config.yml:ro
@@ -18,7 +18,7 @@ services:
   backend:
     image: '${DOCKER_IMAGE_BACKEND?Variable not set}:${TAG-latest}'
     ports:
-      - 4012:8000
+      - 4032:8000
     networks:
       - traefik-network
     env_file:
@@ -35,7 +35,7 @@ services:
   frontend:
     image: '${DOCKER_IMAGE_FRONTEND?Variable not set}:${TAG-latest}'
     ports:
-      - 4013:5173
+      - 4033:5173
     networks:
       - traefik-network
     depends_on:

@@ -6,12 +6,12 @@ Generate a backend and frontend stack using Python, including interactive API do
 
 ### Interactive API documentation
 
-[![API docs](img/docs.jpg)](https://github.com/teebarg/react-fast-template)
+[![API docs](img/docs.jpg)](https://github.com/teebarg/react-router)
 
 
 ### Dashboard Login
 
-[![API docs](img/login.jpg)](https://github.com/teebarg/react-fast-template)
+[![API docs](img/login.jpg)](https://github.com/teebarg/react-router)
 
 
 ## Features
@@ -49,7 +49,7 @@ Go to the directory where you want to create your project and run:
 
 ```bash
 pip install cookiecutter
-cookiecutter https://github.com/teebarg/react-fast-template
+cookiecutter https://github.com/teebarg/react-router
 ```
 
 ### Generate passwords

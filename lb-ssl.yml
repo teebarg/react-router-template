@@ -22,12 +22,12 @@ http:
         frontend:
             loadBalancer:
                 servers:
-                    - url: http://frontend:4011
+                    - url: http://frontend:5173
         backend:
             loadBalancer:
                 servers:
-                    - url: http://backend:4012
+                    - url: http://backend:8000
         adminer:
             loadBalancer:
                 servers:
-                    - url: http://adminer:4015
+                    - url: http://adminer:8080

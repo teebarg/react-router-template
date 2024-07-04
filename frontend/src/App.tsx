@@ -14,10 +14,12 @@ import useAddToHomeScreenPrompt from "@/hooks/useAddToHomeScreenPrompt";
 import { PwaBanner } from "@/components/pwa-banner";
 import { adminRoutes } from "@/routes/adminRoutes";
 import { tboRoutes } from "@/routes/tboRoutes";
+import { useQueryClient } from "@tanstack/react-query";
 
 function App() {
     const [promptEvent, promptToInstall] = useAddToHomeScreenPrompt();
-    const { logout, login } = useAuth();
+    const { isAuthenticated, logout, login } = useAuth();
+    const queryClient = useQueryClient();
     const router = createBrowserRouter([
         {
             id: "root",
@@ -42,7 +44,7 @@ function App() {
                             Component: AdminLayout,
                         };
                     },
-                    children: adminRoutes,
+                    children: adminRoutes(isAuthenticated, queryClient),
                     handle: { scrollMode: "pathname" },
                 },
                 {
@@ -59,7 +61,7 @@ function App() {
                     async lazy() {
                         const { Profile, profileLoader } = await import("@/pages/generic/profile");
                         return {
-                            loader: profileLoader,
+                            loader: profileLoader(isAuthenticated, queryClient),
                             Component: Profile,
                         };
                     },

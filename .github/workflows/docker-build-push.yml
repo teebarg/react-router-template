@@ -34,11 +34,11 @@ jobs:
               id: meta
               uses: docker/metadata-action@v4
               with:
-                images: ${{ secrets.DOCKER_USERNAME }}/react-fast-template-backend
+                images: ${{ secrets.DOCKER_USERNAME }}/react-router-backend
                 tags: |
                   type=raw,value=latest
                   type=sha
-            
+
             - name: Build and push Docker image
               uses: docker/build-push-action@v6
               with:

@@ -2,11 +2,11 @@ import isMobile from "@/utils/is-mobile";
 
 import type { Notifications } from "../types";
 
-const title = "React Fast Template";
+const title = "React Router";
 
 const email = "auther-email@gmail.com";
 
-const repository = "https://github.com/teebarg/react-fast-template";
+const repository = "https://github.com/teebarg/react-router-template";
 
 const messages = {
     app: {
