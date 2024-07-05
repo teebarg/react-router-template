@@ -5,6 +5,7 @@ import { Link } from "@nextui-org/link";
 import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
 import { useLocation, useNavigate, useRouteError } from "react-router-dom";
+import { useEffect } from "react";
 
 interface Props {}
 
@@ -13,22 +14,24 @@ const ErrorPage: React.FC<Props> = () => {
     const navigate = useNavigate();
     const location = useLocation();
 
-    if ([401].includes(error.status)) {
-        const params = new URLSearchParams();
-        params.set("from", location.pathname);
-        navigate("/login?" + params.toString());
-        return;
-    }
-    if ([400, 403].includes(error.status)) {
-        navigate("/");
-        return;
-    }
+    useEffect(() => {
+        if ([401].includes(error.status)) {
+            const params = new URLSearchParams();
+            params.set("from", location.pathname);
+            navigate("/login?" + params.toString());
+            return;
+        }
+        if ([400, 403].includes(error.status)) {
+            navigate("/");
+            return;
+        }
+    }, []);
 
     return (
         <div>
             <div className="h-screen flex flex-col">
                 <Navbar />
-                <div className="flex items-center justify-center flex-1">
+                <div className="flex items-center justify-center flex-1 pb-8">
                     <div className="max-w-lg mx-auto rounded-lg shadow-lg overflow-hidden bg-content1 p-8">
                         <div className="px-6 py-8">
                             <h1 className="text-4xl font-bold mb-1">Oops! Internal Server Error</h1>
