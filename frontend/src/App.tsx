@@ -10,6 +10,10 @@ import { PwaBanner } from "@/components/pwa-banner";
 import { useQueryClient } from "@tanstack/react-query";
 import root from "@/routes/root";
 import ErrorPage from "@/pages/ErrorPage";
+import { SlideOver } from "./components/core/slideOver";
+import React from "react";
+import { useButton } from "react-aria";
+import { useOverlayTriggerState } from "@react-stately/overlays";
 
 // Lazy load the sections
 const HotKeys = lazy(() => import("@/sections/HotKeys"));
@@ -20,6 +24,9 @@ function App() {
     const [promptEvent, promptToInstall] = useAddToHomeScreenPrompt();
     const auth = useAuth();
     const queryClient = useQueryClient();
+    let state = useOverlayTriggerState({});
+    let ref = React.useRef<HTMLButtonElement>(null);
+    let { buttonProps } = useButton({ onPress: state.open }, ref);
     const router = createBrowserRouter([
         {
             id: "root",
@@ -54,6 +61,22 @@ function App() {
                 <SW />
             </Suspense>
             <RouterProvider router={router} fallbackElement={<LoadingPage />} />
+            <button {...buttonProps} ref={ref} className="px-4 py-2 text-white bg-blue-500 rounded-md">
+                Open Slideover
+            </button>
+            {/* {state.isOpen && (
+                <SlideOver isOpen={state.isOpen} onClose={state.close}>
+                    <h2 className="text-lg font-semibold">Slideover Content</h2>
+                    <p>This is some content inside the slideover.</p>
+                </SlideOver>
+            )} */}
+            <SlideOver isOpen={state.isOpen} onClose={state.close}>
+                <h2 className="text-lg font-semibold">Slideover Content</h2>
+                <p>This is some content inside the slideover.</p>
+                <div className="h-80">
+                    hi
+                </div>
+            </SlideOver>
         </Fragment>
     );
 }
