@@ -38,6 +38,10 @@ h6 {
     font-family: var(--font-lexend);
 }
 
+.btn-custom {
+    @apply relative inline-flex items-center justify-center box-border appearance-none select-none whitespace-nowrap font-normal overflow-hidden outline-none px-4 h-10 text-small gap-2 rounded-medium;
+}
+
 .mask {
     mask-image: linear-gradient(
         to right,
