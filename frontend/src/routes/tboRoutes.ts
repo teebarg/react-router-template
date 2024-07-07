@@ -13,7 +13,6 @@ const tboRoutes = [
                 Component: Collections,
             };
         },
-        handle: { scrollMode: "pathname" },
     },
     {
         path: "product",
@@ -23,7 +22,6 @@ const tboRoutes = [
                 Component: Product,
             };
         },
-        handle: { scrollMode: "pathname" },
     },
     {
         path: "checkout",
@@ -33,7 +31,6 @@ const tboRoutes = [
                 Component: Checkout,
             };
         },
-        handle: { scrollMode: "pathname" },
     },
 ];
 

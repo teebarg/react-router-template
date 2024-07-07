@@ -1,5 +1,5 @@
-[![Analyses](https://github.com/teebarg/react-fast-template/actions/workflows/analyses.yml/badge.svg)](https://github.com/teebarg/react-fast-template/workflows/analyses.yml)
-[![E2E Tests](https://github.com/teebarg/react-fast-template/actions/workflows/tests:e2e.yml/badge.svg)](https://github.com/teebarg/react-fast-template/actions/workflows/tests:e2e.yml)
+[![Analyses](https://github.com/teebarg/react-router/actions/workflows/analyses.yml/badge.svg)](https://github.com/teebarg/react-router/workflows/analyses.yml)
+[![E2E Tests](https://github.com/teebarg/react-router/actions/workflows/tests:e2e.yml/badge.svg)](https://github.com/teebarg/react-router/actions/workflows/tests:e2e.yml)
 
 <a href="http://react-pwa.niyi.com.ng/" target="_blank" rel="noreferrer">
  <img src="./public/cover.png" title="Base App">

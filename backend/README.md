@@ -25,8 +25,8 @@ This is a FastAPI project built with Python 3.11. FastAPI is a modern, fast, web
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/teebarg/react-fast-template
-cd react-fast-template
+git clone https://github.com/teebarg/react-router
+cd react-router
 ```
 
 2. Create a virtual environment (optional but recommended):
@@ -61,7 +61,7 @@ The API will be available at <http://localhost:8000>.
 
 ## API Documentation
 
-Swagger UI: <http://localhost:4010/docs>
-ReDoc: <http://localhost:4010/redoc>
+Swagger UI: <http://localhost:4030/docs>
+ReDoc: <http://localhost:4030/redoc>
 
  sudo lsof -t -i tcp:8000 | xargs kill -9

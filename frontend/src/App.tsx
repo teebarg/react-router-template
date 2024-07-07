@@ -1,23 +1,25 @@
-import { Fragment } from "react";
-
-import HotKeys from "@/sections/HotKeys";
-import Notifications from "@/sections/Notifications";
-import SW from "@/sections/SW";
+import { Fragment, Suspense, lazy } from "react";
 
 import { RouterProvider, createBrowserRouter, redirect } from "react-router-dom";
 import NotFound from "@/pages/NotFound";
-import ErrorPage from "@/pages/ErrorPage";
 import asyncComponentLoader from "@/utils/loader";
 import LoadingPage from "@/components/loading";
 import { useAuth } from "@/store/auth-provider";
 import useAddToHomeScreenPrompt from "@/hooks/useAddToHomeScreenPrompt";
 import { PwaBanner } from "@/components/pwa-banner";
-import { adminRoutes } from "@/routes/adminRoutes";
-import { tboRoutes } from "@/routes/tboRoutes";
+import { useQueryClient } from "@tanstack/react-query";
+import root from "@/routes/root";
+import ErrorPage from "@/pages/ErrorPage";
+
+// Lazy load the sections
+const HotKeys = lazy(() => import("@/sections/HotKeys"));
+const Notifications = lazy(() => import("@/sections/Notifications"));
+const SW = lazy(() => import("@/sections/SW"));
 
 function App() {
     const [promptEvent, promptToInstall] = useAddToHomeScreenPrompt();
-    const { logout, login } = useAuth();
+    const auth = useAuth();
+    const queryClient = useQueryClient();
     const router = createBrowserRouter([
         {
             id: "root",
@@ -28,79 +30,12 @@ function App() {
             },
             Component: asyncComponentLoader(() => import("@/pages/layout")),
             errorElement: <ErrorPage />,
-            children: [
-                {
-                    index: true,
-                    Component: asyncComponentLoader(() => import("@/pages/Homepage")),
-                },
-                {
-                    path: "admin",
-                    async lazy() {
-                        const { adminLoader, AdminLayout } = await import("@/pages/admin/layout");
-                        return {
-                            loader: adminLoader,
-                            Component: AdminLayout,
-                        };
-                    },
-                    children: adminRoutes,
-                    handle: { scrollMode: "pathname" },
-                },
-                {
-                    path: "sandbox",
-                    Component: asyncComponentLoader(() => import("@/pages/generic/sandbox")),
-                },
-                {
-                    path: "tbo",
-                    Component: asyncComponentLoader(() => import("@/pages/tbo/components/layout")),
-                    children: tboRoutes,
-                },
-                {
-                    path: "profile",
-                    async lazy() {
-                        const { Profile, profileLoader } = await import("@/pages/generic/profile");
-                        return {
-                            loader: profileLoader,
-                            Component: Profile,
-                        };
-                    },
-                },
-                {
-                    path: "signup",
-                    async lazy() {
-                        const { SignUp } = await import("@/pages/auth/signup");
-                        const { SignUpAction } = await import("@/pages/auth/signup/action");
-                        return {
-                            action: SignUpAction({ login }),
-                            Component: SignUp,
-                        };
-                    },
-                },
-                {
-                    path: "login",
-                    async lazy() {
-                        const { Login } = await import("@/pages/auth/login");
-                        const { loginAction } = await import("@/pages/auth/login/action");
-                        return {
-                            action: loginAction({ login }),
-                            Component: Login,
-                        };
-                    },
-                },
-                {
-                    path: "playground",
-                    async lazy() {
-                        const { PlaygroundPage } = await import("@/pages/playground");
-                        return {
-                            Component: PlaygroundPage,
-                        };
-                    },
-                },
-            ],
+            children: root(queryClient, auth),
         },
         {
             path: "/logout",
             async action() {
-                await logout();
+                await auth.logout();
                 return redirect("/");
             },
         },
@@ -113,9 +48,11 @@ function App() {
     return (
         <Fragment>
             {promptEvent && <PwaBanner onClick={promptToInstall} />}
-            <Notifications />
-            <HotKeys />
-            <SW />
+            <Suspense fallback={<LoadingPage />}>
+                <Notifications />
+                <HotKeys />
+                <SW />
+            </Suspense>
             <RouterProvider router={router} fallbackElement={<LoadingPage />} />
         </Fragment>
     );

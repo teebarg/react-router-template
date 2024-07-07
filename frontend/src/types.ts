@@ -71,4 +71,14 @@ type ContactMessage = {
     message: string;
 };
 
+enum FileTypes {
+    png = "image/png",
+    jpeg = "image/jpeg",
+    jpg = "image/jpg",
+    csv = "text/csv",
+    xlsx = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    xls = "application/vnd.ms-excel",
+}
+
 export type { Pagination, Column, TableProps, Notifications, LoginUser, User, CreateUser, UpdateUser, ContactMessage };
+export { FileTypes };

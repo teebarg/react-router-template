@@ -1,7 +1,7 @@
 .PHONY: help startTest updateTest stopTest
 .EXPORT_ALL_VARIABLES:
 
-PROJECT_SLUG := "react-fast-template"
+PROJECT_SLUG := "react-router"
 APP_NAME := $(PROJECT_SLUG)-backend
 PRECOMMIT_CONFIG_PATH = "./dev_config/python/.pre-commit-config.yaml"
 DOCKER_HUB := beafdocker
@@ -48,7 +48,7 @@ test-frontend: ## Run frontend tests
 
 test-backend: ## Run backend tests
 	@echo "$(YELLOW)Running backend tests...$(RESET)"
-	docker exec react-fast-template-backend-1 ./test.sh
+	docker exec react-router-backend-1 ./test.sh
 
 test: ## Run project tests
 	@$(MAKE) -s test-frontend
@@ -86,7 +86,7 @@ prep: ## Prepare postges database
 
 prep-docker: ## Prepare postges database
 	@echo "$(YELLOW)Preparing docker database...$(RESET)"
-	docker exec react-fast-template-backend-1 ./prestart.sh
+	docker exec react-router-backend-1 ./prestart.sh
 
 
 # Backend Deployment
@@ -106,8 +106,8 @@ scaffold: ## Scaffold a resource
 pre-commit:
 	npx concurrently --kill-others-on-fail --prefix "[{name}]" --names "frontend:lint,frontend:test,frontend:build,backend:lint,backend:test" \
 	--prefix-colors "bgRed.bold.white,bgGreen.bold.white,bgBlue.bold.white,bgMagenta.bold.white" \
-    "docker exec react-fast-template-frontend-1 npm run lint:check" \
-    "docker exec react-fast-template-frontend-1 npm run test:unit" \
-    "docker exec react-fast-template-frontend-1 npm run build" \
-	"docker exec react-fast-template-backend-1 make format" \
-	"docker exec react-fast-template-backend-1 make test"
+    "docker exec react-router-frontend-1 npm run lint:check" \
+    "docker exec react-router-frontend-1 npm run test:unit" \
+    "docker exec react-router-frontend-1 npm run build" \
+	"docker exec react-router-backend-1 make format" \
+	"docker exec react-router-backend-1 make test"

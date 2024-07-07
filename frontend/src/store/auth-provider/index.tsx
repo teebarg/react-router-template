@@ -18,9 +18,9 @@ interface AuthProviderProps {
 }
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-    const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
-    const [currentUser, setcurrentUser] = useState<LoginUser>({} as LoginUser);
     const { getCookie, removeCookie, setCookie } = useCookie();
+    const [isAuthenticated, setIsAuthenticated] = useState<boolean>(Boolean(getCookie("user")));
+    const [currentUser, setcurrentUser] = useState<LoginUser>(getCookie("user") as LoginUser);
 
     useEffect(() => {
         // Check if the user is already authenticated (e.g., from Cookie)

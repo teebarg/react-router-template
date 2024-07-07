@@ -1,11 +1,13 @@
-import React, { useState } from "react";
+import React from "react";
 import { useRevalidator } from "react-router-dom";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { Button } from "@nextui-org/react";
 import useNotifications from "@/store/notifications";
 import { Password, Email, Input, Switch } from "nextui-hook-form";
 import userService from "@/services/user.service";
-import type { User } from "@/types";
+import type { UpdateUser, User } from "@/types";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQueryParams } from "@/hooks/use-query-params";
 
 type Inputs = {
     firstname: string;
@@ -24,10 +26,42 @@ interface Props {
 
 const UserForm: React.FC<Props> = ({ type = "create", onClose, currentUser }) => {
     const revalidator = useRevalidator();
-    const [isPending, setIsPending] = useState<boolean>(false);
+    const queryClient = useQueryClient();
+    const { name = "", page } = useQueryParams();
 
     const [, notify] = useNotifications();
     const isCreate = type === "create";
+
+    // Mutations
+    const createMutation = useMutation({
+        mutationFn: userService.createUser,
+        onSuccess: () => {
+            queryClient.removeQueries({ queryKey: ["users"] });
+            revalidator.revalidate();
+            notify.success("User created successfully");
+            reset();
+        },
+        onError(error) {
+            notify.error(JSON.parse(error.message)?.detail);
+        },
+    });
+
+    const updateMutation = useMutation({
+        mutationFn: async (body: UpdateUser) => {
+            if (!currentUser?.id) {
+                return;
+            }
+            return userService.updateUser(body, currentUser.id);
+        },
+        onSuccess: () => {
+            queryClient.removeQueries({ queryKey: ["users", { name, page }] });
+            revalidator.revalidate();
+            notify.success("User updated successfully");
+        },
+        onError(error) {
+            notify.error(JSON.parse(error.message)?.detail);
+        },
+    });
 
     const {
         reset,
@@ -38,28 +72,11 @@ const UserForm: React.FC<Props> = ({ type = "create", onClose, currentUser }) =>
     } = useForm<Inputs>({ defaultValues: currentUser });
 
     const onSubmit: SubmitHandler<Inputs> = async (data) => {
-        setIsPending(true);
         const body = data;
-        try {
-            if (isCreate) {
-                await userService.createUser(body);
-                onClose?.();
-            } else {
-                if (!currentUser?.id) {
-                    return;
-                }
-                await userService.updateUser(body, currentUser.id);
-            }
-
-            if (isCreate) {
-                reset();
-            }
-            revalidator.revalidate();
-            notify.success(`User ${isCreate ? "created" : "updated"} successfully`);
-        } catch (error) {
-            notify.error(`An error occurred: ${error}`);
-        } finally {
-            setIsPending(false);
+        if (isCreate) {
+            createMutation.mutate(body);
+        } else {
+            updateMutation.mutate(body);
         }
     };
     return (
@@ -87,7 +104,7 @@ const UserForm: React.FC<Props> = ({ type = "create", onClose, currentUser }) =>
                                 Close
                             </Button>
                             <div>
-                                {isPending ? (
+                                {createMutation.isPending || updateMutation.isPending ? (
                                     <Button color="primary" isLoading variant="shadow" isDisabled className="min-w-32">
                                         Logging in...
                                     </Button>

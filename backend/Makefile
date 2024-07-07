@@ -1,7 +1,7 @@
 # Variables
-PROJECT_SLUG := react-fast-template
+PROJECT_SLUG := react-router
 APP_NAME := $(PROJECT_SLUG)-backend
-PORT := 4012
+PORT := 4032
 
 YELLOW=$(shell tput -Txterm setaf 3)
 
@@ -10,7 +10,7 @@ build:
 	docker build -t $(APP_NAME) .
 
 run:
-	docker run -p $(PORT):8000 --name $(APP_NAME) -v /Users/user/Documents/gigs/niyi/lab/react-fast-template/backend:/app:ro $(APP_NAME)
+	docker run -p $(PORT):8000 --name $(APP_NAME) -v /Users/user/Documents/gigs/niyi/lab/react-router/backend:/app:ro $(APP_NAME)
 
 stop:
 	docker stop $(APP_NAME)
