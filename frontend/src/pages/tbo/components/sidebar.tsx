@@ -1,12 +1,19 @@
 import { CustomCheckbox } from "@/components/core/checkbox";
 import { Accordion, AccordionItem, Checkbox, CheckboxGroup, Input, Slider } from "@nextui-org/react";
 import React from "react";
-import { brands, categories, genders, indicators, sizes } from "../data";
+import { brands, categories, genders, sizes } from "../data";
+
+function isInRange(number: number, range: [number, number]) {
+    const [lowerBound, upperBound] = range;
+    return number >= lowerBound && number <= upperBound;
+}
 
 interface ComponentProps {}
 
 const CollectionsSideBar: React.FC<ComponentProps> = () => {
     const [groupSelected, setGroupSelected] = React.useState<string[]>([]);
+    const [categoriesSelected, setCategoriesSelected] = React.useState<string[]>(["children-shoes"]);
+    const [value, setValue] = React.useState<number[]>([20, 70]);
     return (
         <div className="hidden h-full max-w-[20rem] overflow-x-hidden overflow-y-scroll sm:flex">
             <div className="h-full max-h-fit w-full max-w-sm rounded-medium p-6 bg-default-50">
@@ -22,28 +29,31 @@ const CollectionsSideBar: React.FC<ComponentProps> = () => {
                             <div className="flex flex-col gap-3">
                                 <div className="flex flex-col gap-1">
                                     <div className="flex h-12 w-full items-end justify-between px-2">
-                                        {indicators.map(({ height, dataOn }, index) => (
+                                        {Array.from({ length: 11 }, (_, index) => index * 10).map((item: number, index: number) => (
                                             <span
                                                 key={index}
-                                                className="relative h-12 w-1 rounded-full bg-default-100 after:absolute after:bottom-0 after:h-0 after:w-full after:rounded-full after:bg-primary after:transition-all after:!duration-500 after:content-[''] data-[in-range=true]:after:h-full"
-                                                style={{ height }}
-                                                data-in-range={dataOn}
+                                                className="relative w-1 rounded-full bg-default-100 after:absolute after:bottom-0 after:h-0 after:w-full after:rounded-full after:bg-primary after:transition-all after:!duration-500 after:content-[''] data-[in-range=true]:after:h-full"
+                                                style={{ height: `${item}%` }}
+                                                data-in-range={isInRange(item, value)}
                                             ></span>
                                         ))}
                                     </div>
                                     <Slider
+                                        value={value}
+                                        onChange={setValue}
                                         showTooltip={false}
-                                        step={50}
+                                        step={10}
                                         minValue={0}
-                                        maxValue={1000}
+                                        maxValue={100}
                                         hideValue={true}
                                         size="sm"
-                                        defaultValue={[50, 500]}
                                     />
                                 </div>
                             </div>
                             <div className="flex items-center">
                                 <Input
+                                    value={Number(value[0])}
+                                    onValueChange={(number: string) => setValue((prev: any) => [Number(number), prev[1]])}
                                     label="Price"
                                     placeholder="0.00"
                                     labelPlacement="outside"
@@ -56,6 +66,8 @@ const CollectionsSideBar: React.FC<ComponentProps> = () => {
                                 />
                                 <hr className="shrink-0 bg-divider border-none h-divider mx-2 w-2" role="separator" />
                                 <Input
+                                    value={Number(value[1])}
+                                    onValueChange={(number: string) => setValue((prev: any) => [prev[0], Number(number)])}
                                     label="Price"
                                     placeholder="0.00"
                                     labelPlacement="outside"
@@ -88,7 +100,7 @@ const CollectionsSideBar: React.FC<ComponentProps> = () => {
                 <div className="flex flex-col gap-3">
                     <Accordion defaultExpandedKeys={["1"]}>
                         <AccordionItem key="1" aria-label="Category" title="Category">
-                            <CheckboxGroup defaultValue={["children-toys"]}>
+                            <CheckboxGroup value={categoriesSelected} onChange={setCategoriesSelected}>
                                 {categories.map((item, index) => (
                                     <Checkbox key={index} value={item.slug}>
                                         {item.title}

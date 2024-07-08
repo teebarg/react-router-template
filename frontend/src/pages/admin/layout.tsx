@@ -6,6 +6,7 @@ import AdminNavbar from "@/components/admin-navbar";
 import { useCookie } from "@/hooks/use-cookie";
 import authService from "@/services/auth.service";
 import { useAuth } from "@/store/auth-provider";
+import { Progress } from "@nextui-org/react";
 
 const adminLoader: LoaderFunction = async ({ request }) => {
     const { removeCookie } = useCookie();
@@ -62,12 +63,7 @@ const AdminLayout: React.FC<Props> = () => {
     }, []);
     return (
         <React.Fragment>
-            <div
-                className="spinner"
-                style={{
-                    display: navigation.state === "idle" ? "none" : "block",
-                }}
-            ></div>
+            {navigation.state === "loading" && <Progress size="sm" isIndeterminate aria-label="Loading..." className="w-full" />}
             <div className="flex min-h-screen">
                 <div className="hidden sm:block min-w-[20rem] h-screen overflow-y-auto">
                     <Sidebar />

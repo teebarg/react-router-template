@@ -43,7 +43,7 @@ const categories: CategoryInterface[] = [
         slug: "children-gadget",
     },
     {
-        title: "Children's Toys",
+        title: "Baby Suits",
         description: "Find the best toys for your kids",
         image: "https://nextui-docs-v2.vercel.app/images/fruit-5.jpeg",
         link: "/children-roy",
@@ -79,137 +79,6 @@ const openingHours = [
     {
         day: "Sunday",
         time: "9:00am - 12:00pm",
-    },
-];
-
-const indicators = [
-    {
-        height: "90%",
-        dataOn: false,
-    },
-    {
-        height: "30%",
-        dataOn: false,
-    },
-    {
-        height: "30%",
-        dataOn: true,
-    },
-    {
-        height: "30%",
-        dataOn: true,
-    },
-    {
-        height: "89%",
-        dataOn: true,
-    },
-    {
-        height: "49%",
-        dataOn: true,
-    },
-    {
-        height: "45%",
-        dataOn: true,
-    },
-    {
-        height: "37%",
-        dataOn: true,
-    },
-    {
-        height: "48%",
-        dataOn: true,
-    },
-    {
-        height: "43%",
-        dataOn: false,
-    },
-    {
-        height: "69%",
-        dataOn: false,
-    },
-    {
-        height: "69%",
-        dataOn: false,
-    },
-    {
-        height: "82%",
-        dataOn: false,
-    },
-    {
-        height: "43%",
-        dataOn: false,
-    },
-    {
-        height: "47%",
-        dataOn: false,
-    },
-    {
-        height: "96%",
-        dataOn: false,
-    },
-    {
-        height: "31%",
-        dataOn: false,
-    },
-    {
-        height: "44%",
-        dataOn: false,
-    },
-    {
-        height: "47%",
-        dataOn: false,
-    },
-    {
-        height: "51%",
-        dataOn: false,
-    },
-    {
-        height: "36%",
-        dataOn: false,
-    },
-    {
-        height: "79%",
-        dataOn: false,
-    },
-    {
-        height: "99%",
-        dataOn: false,
-    },
-    {
-        height: "33%",
-        dataOn: false,
-    },
-    {
-        height: "64%",
-        dataOn: false,
-    },
-    {
-        height: "53%",
-        dataOn: false,
-    },
-    {
-        height: "54%",
-        dataOn: false,
-    },
-    {
-        height: "37%",
-        dataOn: false,
-    },
-    {
-        height: "89%",
-        dataOn: false,
-    },
-    {
-        height: "30%",
-        dataOn: false,
-    },
-    {
-        height: "72%",
-        dataOn: false,
-    },
-    {
-        height: "54%",
-        dataOn: false,
     },
 ];
 
@@ -363,4 +232,4 @@ const cart: Cart[] = [
 ];
 
 export type { CategoryInterface, Product, Cart };
-export { categories, openingHours, sizes, indicators, genders, brands, filters, products, cart };
+export { categories, openingHours, sizes, genders, brands, filters, products, cart };
