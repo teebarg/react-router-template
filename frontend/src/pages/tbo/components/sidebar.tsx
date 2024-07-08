@@ -3,7 +3,7 @@ import { Accordion, AccordionItem, Checkbox, CheckboxGroup, Input, Slider } from
 import React from "react";
 import { brands, categories, genders, sizes } from "../data";
 
-function isInRange(number: number, range: [number, number]) {
+function isInRange(number: number, range: number[]) {
     const [lowerBound, upperBound] = range;
     return number >= lowerBound && number <= upperBound;
 }
@@ -13,7 +13,10 @@ interface ComponentProps {}
 const CollectionsSideBar: React.FC<ComponentProps> = () => {
     const [groupSelected, setGroupSelected] = React.useState<string[]>([]);
     const [categoriesSelected, setCategoriesSelected] = React.useState<string[]>(["children-shoes"]);
-    const [value, setValue] = React.useState<number[]>([20, 70]);
+    const [genderSelected, setGenderSelected] = React.useState<string[]>(["boys"]);
+    const [brandSelected, setBrandSelected] = React.useState<string[]>(["adidas"]);
+    const [priceRange, setPriceRange] = React.useState<number[]>([20, 70]);
+    
     return (
         <div className="hidden h-full max-w-[20rem] overflow-x-hidden overflow-y-scroll sm:flex">
             <div className="h-full max-h-fit w-full max-w-sm rounded-medium p-6 bg-default-50">
@@ -34,13 +37,19 @@ const CollectionsSideBar: React.FC<ComponentProps> = () => {
                                                 key={index}
                                                 className="relative w-1 rounded-full bg-default-100 after:absolute after:bottom-0 after:h-0 after:w-full after:rounded-full after:bg-primary after:transition-all after:!duration-500 after:content-[''] data-[in-range=true]:after:h-full"
                                                 style={{ height: `${item}%` }}
-                                                data-in-range={isInRange(item, value)}
+                                                data-in-range={isInRange(item, priceRange)}
                                             ></span>
                                         ))}
                                     </div>
                                     <Slider
-                                        value={value}
-                                        onChange={setValue}
+                                        value={priceRange}
+                                        onChange={(value: number | number[]) => {
+                                            if (typeof value == "number") {
+                                                setPriceRange([value]);
+                                                return;
+                                            }
+                                            setPriceRange(value);
+                                        }}
                                         showTooltip={false}
                                         step={10}
                                         minValue={0}
@@ -52,11 +61,9 @@ const CollectionsSideBar: React.FC<ComponentProps> = () => {
                             </div>
                             <div className="flex items-center">
                                 <Input
-                                    value={Number(value[0])}
-                                    onValueChange={(number: string) => setValue((prev: any) => [Number(number), prev[1]])}
-                                    label="Price"
+                                    value={priceRange[0].toString()}
+                                    onValueChange={(number: string) => setPriceRange((prev: any) => [Number(number), prev[1]])}
                                     placeholder="0.00"
-                                    labelPlacement="outside"
                                     startContent={
                                         <div className="pointer-events-none flex items-center">
                                             <span className="text-default-400 text-small">$</span>
@@ -66,11 +73,9 @@ const CollectionsSideBar: React.FC<ComponentProps> = () => {
                                 />
                                 <hr className="shrink-0 bg-divider border-none h-divider mx-2 w-2" role="separator" />
                                 <Input
-                                    value={Number(value[1])}
-                                    onValueChange={(number: string) => setValue((prev: any) => [prev[0], Number(number)])}
-                                    label="Price"
+                                    value={priceRange[1].toString()}
+                                    onValueChange={(number: string) => setPriceRange((prev: any) => [prev[0], Number(number)])}
                                     placeholder="0.00"
-                                    labelPlacement="outside"
                                     startContent={
                                         <div className="pointer-events-none flex items-center">
                                             <span className="text-default-400 text-small">$</span>
@@ -113,7 +118,7 @@ const CollectionsSideBar: React.FC<ComponentProps> = () => {
                 <div className="flex flex-col gap-3">
                     <Accordion defaultExpandedKeys={["1"]}>
                         <AccordionItem key="1" aria-label="Gender" title="Gender">
-                            <CheckboxGroup defaultValue={["boys"]}>
+                            <CheckboxGroup defaultValue={["boys"]} value={genderSelected} onChange={setGenderSelected}>
                                 {genders.map((item, index) => (
                                     <Checkbox key={index} value={item.slug}>
                                         {item.title}
@@ -126,7 +131,7 @@ const CollectionsSideBar: React.FC<ComponentProps> = () => {
                 <div className="flex flex-col gap-3">
                     <Accordion>
                         <AccordionItem key="1" aria-label="Brand" title="Brand">
-                            <CheckboxGroup defaultValue={["Puma"]}>
+                            <CheckboxGroup defaultValue={["Puma"]} value={brandSelected} onChange={setBrandSelected}>
                                 {brands.map((item, index) => (
                                     <Checkbox key={index} value={item.slug}>
                                         {item.title}
