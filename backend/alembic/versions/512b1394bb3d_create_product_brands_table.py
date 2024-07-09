@@ -1,4 +1,4 @@
-"""create product_brandss table
+"""create product_brands table
 
 Revision ID: 512b1394bb3d
 Revises: 202114576772
@@ -9,7 +9,6 @@ from typing import Sequence, Union
 
 from alembic import op
 import sqlalchemy as sa
-import sqlmodel.sql.sqltypes
 
 
 # revision identifiers, used by Alembic.
@@ -20,8 +19,15 @@ depends_on: Union[str, Sequence[str], None] = None
 
 
 def upgrade() -> None:
-    pass
+    op.create_table(
+        "product_brands",
+        sa.Column("product_id", sa.Integer(), nullable=False),
+        sa.Column("brand_id", sa.Integer(), nullable=False),
+        sa.ForeignKeyConstraint(
+            ["product_id", "brand_id"], ["product.id", "brand.id"]
+        ),
+    )
 
 
 def downgrade() -> None:
-    pass
+    op.drop_table("product_brands")

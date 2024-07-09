@@ -9,7 +9,6 @@ from typing import Sequence, Union
 
 from alembic import op
 import sqlalchemy as sa
-import sqlmodel.sql.sqltypes
 
 
 # revision identifiers, used by Alembic.
@@ -20,8 +19,15 @@ depends_on: Union[str, Sequence[str], None] = None
 
 
 def upgrade() -> None:
-    pass
+    op.create_table(
+        "product_collections",
+        sa.Column("product_id", sa.Integer(), nullable=False),
+        sa.Column("collection_id", sa.Integer(), nullable=False),
+        sa.ForeignKeyConstraint(
+            ["product_id", "collection_id"], ["product.id", "collection.id"]
+        ),
+    )
 
 
 def downgrade() -> None:
-    pass
+    op.drop_table("product_collections")

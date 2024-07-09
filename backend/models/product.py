@@ -11,6 +11,8 @@ class ProductBase(BaseModel):
     name: str
     description: str | None
     price: float
+    old_price: float
+    status: bool = False
 
 
 # Properties to receive via API on creation
