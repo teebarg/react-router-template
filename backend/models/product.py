@@ -13,6 +13,9 @@ class ProductBase(BaseModel):
     price: float
     old_price: float
     status: bool = False
+    collections: List["ProductCollection"] = Relationship(back_populates="products")
+    tags: List["ProductTag"] = Relationship(back_populates="products")
+    brands: List["ProductBrand"] = Relationship(back_populates="products")
 
 
 # Properties to receive via API on creation
@@ -28,15 +31,51 @@ class ProductUpdate(ProductBase):
 # Database model, database table inferred from class name
 class Product(ProductBase, table=True):
     id: int | None = Field(default=None, primary_key=True)
-    categories: List["ProductCategory"] = Relationship(back_populates="products")
 
-class Category(SQLModel, table=True):
+
+class BrandBase(BaseModel):
+    name: str = Field(index=True, unique=True)
+    products: List["ProductCollection"] = Relationship(back_populates="brands")
+
+
+# Properties to receive via API on creation
+class BrandCreate(BrandBase):
+    pass
+
+
+# Properties to receive via API on update, all are optional
+class BrandUpdate(BrandBase):
+    pass
+
+class Brand(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
     name: str = Field(index=True, unique=True)
-    products: List["ProductCategory"] = Relationship(back_populates="categories")
+    products: List["ProductCollection"] = Relationship(back_populates="tags")
 
-class ProductCategory(SQLModel, table=True):
-    product_id: int = Field(foreign_key="products.id", primary_key=True)
-    category_id: int = Field(foreign_key="categories.id", primary_key=True)
-    products: "Product" = Relationship(back_populates="categories")
-    categories: "Category" = Relationship(back_populates="products")
+class Collection(SQLModel, table=True):
+    id: int | None = Field(default=None, primary_key=True)
+    name: str = Field(index=True, unique=True)
+    products: List["ProductCollection"] = Relationship(back_populates="collections")
+
+class Tag(SQLModel, table=True):
+    id: int | None = Field(default=None, primary_key=True)
+    name: str = Field(index=True, unique=True)
+    products: List["ProductCollection"] = Relationship(back_populates="tags")
+
+class ProductBrand(SQLModel, table=True):
+    product_id: int = Field(foreign_key="product.id", primary_key=True)
+    brand_id: int = Field(foreign_key="brand.id", primary_key=True)
+    products: "Product" = Relationship(back_populates="collections")
+    brands: "Collection" = Relationship(back_populates="products")
+
+class ProductCollection(SQLModel, table=True):
+    product_id: int = Field(foreign_key="product.id", primary_key=True)
+    category_id: int = Field(foreign_key="collection.id", primary_key=True)
+    products: "Product" = Relationship(back_populates="collections")
+    collections: "Collection" = Relationship(back_populates="products")
+
+class ProductTag(SQLModel, table=True):
+    product_id: int = Field(foreign_key="product.id", primary_key=True)
+    tag_id: int = Field(foreign_key="tag.id", primary_key=True)
+    products: "Product" = Relationship(back_populates="tags")
+    tags: "Tag" = Relationship(back_populates="products")
