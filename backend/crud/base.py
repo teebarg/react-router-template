@@ -6,6 +6,8 @@ from pydantic import BaseModel
 from sqlalchemy.orm import Session
 from sqlmodel import or_, select
 
+from core.utils import generate_slug
+
 ModelType = TypeVar("ModelType", bound=Any)
 CreateSchemaType = TypeVar("CreateSchemaType", bound=BaseModel)
 UpdateSchemaType = TypeVar("UpdateSchemaType", bound=Any)
@@ -55,6 +57,12 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
     def get(self, db: Session, id: Any) -> Optional[ModelType]:
         return db.get(self.model, id)
 
+    def get_by_key(
+        self, *, db: Session, key: str = "name", value: str | int
+    ) -> ModelType | None:
+        statement = select(self.model).where(getattr(self.model, key) == value)
+        return db.exec(statement).first()
+
     def create(self, db: Session, *, obj_in: CreateSchemaType) -> ModelType:
         obj_in_data = jsonable_encoder(obj_in)
         db_obj = self.model(**obj_in_data)  # type: ignore
@@ -71,6 +79,7 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
             update_data = obj_in
         else:
             update_data = obj_in.model_dump(exclude_unset=True)
+        update_data.update({"slug": generate_slug(name=update_data.get("name", ""))})
         db_obj.sqlmodel_update(update_data)
         return self.sync(db=db, update=db_obj, type="update")
 

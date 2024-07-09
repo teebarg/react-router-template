@@ -1,3 +1,5 @@
+import re
+import unicodedata
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -106,3 +108,25 @@ def generate_contact_form_email(
         },
     )
     return EmailData(html_content=html_content, subject=subject)
+
+
+def generate_slug(name: str) -> str:
+    # Convert to lowercase
+    name = name.lower()
+
+    # Remove accents
+    name = unicodedata.normalize("NFKD", name).encode("ASCII", "ignore").decode("ASCII")
+
+    # Replace spaces with hyphens
+    name = re.sub(r"\s+", "-", name)
+
+    # Remove all other special characters
+    name = re.sub(r"[^a-z0-9\-]", "", name)
+
+    # Remove multiple hyphens
+    name = re.sub(r"-+", "-", name)
+
+    # Remove leading and trailing hyphens
+    name = name.strip("-")
+
+    return name
