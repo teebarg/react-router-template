@@ -5,6 +5,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from api.collection import router as collection_router
+from api.tag import router as tag_router
 from api.product import router as product_router
 from api.websocket import consume_events
 from api.websocket import router as websocket_router
@@ -32,6 +33,12 @@ app.include_router(
     collection_router,
     prefix="/api/collection",
     tags=["collections"],
+)
+
+app.include_router(
+    tag_router,
+    prefix="/api/tag",
+    tags=["tags"],
 )
 
 app.add_middleware(

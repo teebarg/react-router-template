@@ -2,6 +2,7 @@ from sqlmodel import Field, Relationship, SQLModel
 
 from models.base import BaseModel
 from models.collection import CollectionBase
+from models.tag import TagBase
 
 # Shared properties
 # class ProductBrand(SQLModel, table=True):
@@ -14,9 +15,9 @@ class ProductCollection(SQLModel, table=True):
     collection_id: int = Field(foreign_key="collection.id", primary_key=True)
 
 
-# class ProductTag(SQLModel, table=True):
-#     product_id: int = Field(foreign_key="product.id", primary_key=True)
-#     tag_id: int = Field(foreign_key="tag.id", primary_key=True)
+class ProductTag(SQLModel, table=True):
+    product_id: int = Field(foreign_key="product.id", primary_key=True)
+    tag_id: int = Field(foreign_key="tag.id", primary_key=True)
 
 
 # class BrandBase(BaseModel):
@@ -44,32 +45,10 @@ class Collection(CollectionBase, table=True):
         back_populates="collections", link_model=ProductCollection
     )
 
-
-# class Collections(SQLModel):
-#     collections: list[CollectionPublic]
-#     page: int
-#     per_page: int
-#     total_count: int
-#     total_pages: int
-
-
-# class TagBase(BaseModel):
-#     name: str = Field(index=True, unique=True)
-
-
-# # Properties to receive via API on creation
-# class TagCreate(TagBase):
-#     pass
-
-
-# # Properties to receive via API on update, all are optional
-# class TagUpdate(TagBase):
-#     pass
-
-
-# class Tag(TagBase, table=True):
-#     id: int | None = Field(default=None, primary_key=True)
-#     products: list["Product"] = Relationship(back_populates="tags", link_model=ProductTag)
+class Tag(TagBase, table=True):
+    id: int | None = Field(default=None, primary_key=True)
+    slug: str
+    products: list["Product"] = Relationship(back_populates="tags", link_model=ProductTag)
 
 
 class ProductBase(BaseModel):
@@ -97,13 +76,14 @@ class Product(ProductBase, table=True):
     collections: list["Collection"] = Relationship(
         back_populates="products", link_model=ProductCollection
     )
-    # tags: list["Tag"] = Relationship(back_populates="products", link_model=ProductTag)
+    tags: list["Tag"] = Relationship(back_populates="products", link_model=ProductTag)
     # brands: list["Brand"] = Relationship(back_populates="products", link_model=ProductBrand)
 
 
 class ProductPublic(ProductBase):
     id: int
     collections: list[Collection] = []
+    tags: list[Tag] = []
 
 
 class Products(SQLModel):
