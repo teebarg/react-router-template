@@ -3,26 +3,26 @@ from sqlmodel import Field, SQLModel
 from models.base import BaseModel
 
 
-class TagBase(BaseModel):
+class BrandBase(BaseModel):
     name: str = Field(index=True, unique=True)
     is_active: bool = True
 
 
-class TagCreate(TagBase):
+class BrandCreate(BrandBase):
     pass
 
 
-class TagUpdate(TagBase):
+class BrandUpdate(BrandBase):
     pass
 
 
-class TagPublic(TagBase):
+class BrandPublic(BrandBase):
     id: int
     slug: str
 
 
-class Tags(SQLModel):
-    tags: list[TagPublic]
+class Brands(SQLModel):
+    brands: list[BrandPublic]
     page: int
     per_page: int
     total_count: int

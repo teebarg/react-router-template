@@ -2,13 +2,13 @@ from sqlmodel import Session
 
 from core.utils import generate_slug
 from crud.base import CRUDBase
-from models.product import Tag
-from models.tag import TagCreate, TagUpdate
+from models.brand import BrandCreate, BrandUpdate
+from models.product import Brand
 
 
-class CRUDTag(CRUDBase[Tag, TagCreate, TagUpdate]):
-    def create(self, db: Session, obj_in: TagCreate) -> Tag:
-        db_obj = Tag.model_validate(
+class CRUDBrand(CRUDBase[Brand, BrandCreate, BrandUpdate]):
+    def create(self, db: Session, obj_in: BrandCreate) -> Brand:
+        db_obj = Brand.model_validate(
             obj_in,
             update={"slug": generate_slug(name=obj_in.name)},
         )
@@ -18,4 +18,4 @@ class CRUDTag(CRUDBase[Tag, TagCreate, TagUpdate]):
         return db_obj
 
 
-tag = CRUDTag(Tag)
+brand = CRUDBrand(Brand)

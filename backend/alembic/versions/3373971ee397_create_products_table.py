@@ -24,8 +24,8 @@ def upgrade() -> None:
     op.create_table(
         "product",
         sa.Column("id", sa.Integer(), nullable=False),
-        sa.Column("name", sa.String(length=255), nullable=True),
-        sa.Column("slug", sa.String(length=255), nullable=True),
+        sa.Column("name", sa.String(length=255), nullable=False),
+        sa.Column("slug", sa.String(length=255), nullable=False),
         sa.Column("description", sa.Text(), nullable=True),
         sa.Column("price", sa.Float(), nullable=False),
         sa.Column("old_price", sa.Float(), nullable=True),

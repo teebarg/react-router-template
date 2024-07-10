@@ -20,6 +20,7 @@ class CollectionUpdate(CollectionBase):
 
 class CollectionPublic(CollectionBase):
     id: int
+    slug: str
 
 
 class Collections(SQLModel):

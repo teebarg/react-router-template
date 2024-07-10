@@ -4,6 +4,7 @@ from fastapi import (
     HTTPException,
     Query,
 )
+from sqlalchemy.exc import IntegrityError
 from sqlmodel import func, or_, select
 
 import crud
@@ -11,8 +12,9 @@ from core.deps import (
     SessionDep,
     get_current_user,
 )
-
+from core.logging import logger
 from models.message import Message
+from models.product import Tag
 from models.tag import (
     TagCreate,
     TagPublic,
@@ -20,12 +22,9 @@ from models.tag import (
     TagUpdate,
 )
 
-from models.product import Tag
-
-from core.logging import logger
-
 # Create a router for tags
 router = APIRouter()
+
 
 @router.get(
     "/",
@@ -67,9 +66,7 @@ def index(
     )
 
 
-@router.post(
-    "/", response_model=TagPublic
-)
+@router.post("/", response_model=TagPublic)
 def create(*, db: SessionDep, create_data: TagCreate) -> TagPublic:
     """
     Create new tag.
@@ -86,9 +83,7 @@ def create(*, db: SessionDep, create_data: TagCreate) -> TagPublic:
 
 
 @router.get("/{id}", response_model=TagPublic)
-def read(
-    id: int, db: SessionDep
-) -> TagPublic:
+def read(id: int, db: SessionDep) -> TagPublic:
     """
     Get a specific tag by id.
     """
@@ -122,13 +117,11 @@ def update(
     try:
         db_tag = crud.tag.update(db=db, db_obj=db_tag, obj_in=update_data)
         return db_tag
+    except IntegrityError as e:
+        logger.error(f"Error updating tag, {e.orig.pgerror}")
+        raise HTTPException(status_code=422, detail=str(e.orig.pgerror)) from e
     except Exception as e:
-        logger.error(e)
-        if "psycopg2.errors.UniqueViolation" in str(e):
-            raise HTTPException(
-                status_code=422,
-                detail=str(e),
-            ) from e
+        logger.error(f"An error occurred: {e}")
         raise HTTPException(
             status_code=400,
             detail=str(e),
@@ -140,8 +133,14 @@ def delete(db: SessionDep, id: int) -> Message:
     """
     Delete a tag.
     """
-    tag = crud.tag.get(db=db, id=id)
-    if not tag:
-        raise HTTPException(status_code=404, detail="Tag not found")
-    crud.tag.remove(db=db, id=id)
-    return Message(message="Tag deleted successfully")
+    try:
+        tag = crud.tag.get(db=db, id=id)
+        if not tag:
+            raise HTTPException(status_code=404, detail="Tag not found")
+        crud.tag.remove(db=db, id=id)
+        return Message(message="Tag deleted successfully")
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=str(e),
+        ) from e
