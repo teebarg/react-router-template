@@ -71,6 +71,12 @@ type ContactMessage = {
     message: string;
 };
 
+type Generic = {
+    id?: string | number | undefined;
+    name?: string;
+    is_active?: boolean;
+};
+
 enum FileTypes {
     png = "image/png",
     jpeg = "image/jpeg",
@@ -80,5 +86,5 @@ enum FileTypes {
     xls = "application/vnd.ms-excel",
 }
 
-export type { Pagination, Column, TableProps, Notifications, LoginUser, User, CreateUser, UpdateUser, ContactMessage };
+export type { Pagination, Column, TableProps, Notifications, LoginUser, User, CreateUser, UpdateUser, ContactMessage, Generic };
 export { FileTypes };
