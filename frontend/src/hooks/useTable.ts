@@ -13,6 +13,7 @@ const useTable = () => {
         (key: string, value: string) => {
             const searchParams = new URLSearchParams(location.search);
             searchParams.set(key, value);
+            searchParams.set("page", "1");
             navigate(`${location.pathname}?${searchParams.toString()}`, { replace: true });
         },
         [navigate, location.search]
@@ -28,7 +29,7 @@ const useTable = () => {
     const onEdit = (modalRef: any, value: Generic) => {
         setMode("update");
         setCurrent((prev) => ({ ...prev, ...value }));
-        if (modalRef.current) {
+        if (modalRef?.current) {
             modalRef.current.onOpen();
         }
     };

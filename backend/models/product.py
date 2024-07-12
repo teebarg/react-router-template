@@ -49,6 +49,7 @@ class Tag(TagBase, table=True):
 class ProductBase(BaseModel):
     name: str
     description: str | None = ""
+    image: str | None = ""
     price: float
     old_price: float = 0.0
     status: bool = False

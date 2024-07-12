@@ -2,7 +2,7 @@ import React, { useRef, useState } from "react";
 import { Chip, Tooltip } from "@nextui-org/react";
 import { EyeIcon, EditIcon, DeleteIcon } from "nui-react-icons";
 import { useNavigate, useRevalidator } from "react-router-dom";
-import type { Generic, TableProps } from "@/types";
+import type { TableProps } from "@/types";
 import Table from "@/components/table";
 import NextModal from "@/components/modal";
 import { TagForm } from "./tagForm";
@@ -10,6 +10,8 @@ import { Confirm } from "@/components/core/confirm";
 import useNotifications from "@/store/notifications";
 import tagService from "@/services/tag.service";
 import { useTable } from "@/hooks/useTable";
+import { useQueryClient } from "@tanstack/react-query";
+import { useQueryParams } from "@/hooks/use-query-params";
 
 interface ChildComponentHandles {
     onOpen: () => void;
@@ -18,16 +20,15 @@ interface ChildComponentHandles {
 
 export default function TableData({ rows = [], pagination, query }: { rows: TableProps["rows"]; pagination: any; query: string }) {
     const revalidator = useRevalidator();
+    const queryClient = useQueryClient();
+    const { name = "", page = "" } = useQueryParams();
     const modalRef = useRef<ChildComponentHandles>(null);
     const deleteModalRef = useRef<ChildComponentHandles>(null);
     const { current, mode, onAdd, onEdit, onDelete, onModalClose, updateQueryParams } = useTable();
-    // const [current, setCurrent] = useState<Generic>({ is_active: true });
-    // const [mode, setMode] = useState<"create" | "update">("create");
     const [isExporting, setIExporting] = useState<boolean>(false);
     const [, notify] = useNotifications();
 
     const navigate = useNavigate();
-    // const location = useLocation();
 
     const columns = [
         { name: "NAME", uid: "name", sortable: true },
@@ -37,39 +38,16 @@ export default function TableData({ rows = [], pagination, query }: { rows: Tabl
         { name: "ACTIONS", uid: "actions" },
     ];
 
-    const onSearchChange = (value: string) => {
-        updateQueryParams("name", value);
-    };
-
-    const handleEdit = (value: Generic) => {
-        onEdit(modalRef, value)
-    };
-
-    const addNew = () => {
-        onAdd(modalRef)
-    };
-
-    const handleModalClose = () => {
-        onModalClose(modalRef)
-    };
-
-    const handleDelete = (value: Generic) => {
-        onDelete(deleteModalRef, value)
-    };
-
-    const onCloseDelete = () => {
-        onModalClose(deleteModalRef)
-    };
-
     const onConfirmDelete = async () => {
         if (!current.id) {
             return;
         }
         try {
             await tagService.delete(current.id);
+            queryClient.removeQueries({ queryKey: ["tags", { name, page }] });
             revalidator.revalidate();
             notify.success("Tag deleted successfully");
-            onCloseDelete();
+            onModalClose(deleteModalRef);
         } catch (error) {
             notify.error(`An error deleting tag: ${error}`);
         }
@@ -112,12 +90,12 @@ export default function TableData({ rows = [], pagination, query }: { rows: Tabl
                         </Tooltip>
                         <Tooltip content="Edit tag">
                             <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
-                                <EditIcon onClick={() => handleEdit(row)} />
+                                <EditIcon onClick={() => onEdit(modalRef, row)} />
                             </span>
                         </Tooltip>
                         <Tooltip color="danger" content="Delete tag">
                             <span className="text-lg text-danger cursor-pointer active:opacity-50">
-                                <DeleteIcon onClick={() => handleDelete(row)} />
+                                <DeleteIcon onClick={() => onDelete(deleteModalRef, row)} />
                             </span>
                         </Tooltip>
                     </div>
@@ -130,9 +108,9 @@ export default function TableData({ rows = [], pagination, query }: { rows: Tabl
     return (
         <React.Fragment>
             <Table
-                onAddNew={addNew}
+                onAddNew={() => onAdd(modalRef)}
                 callbackFunction={rowRender}
-                onSearchChange={onSearchChange}
+                onSearchChange={(value: string) => updateQueryParams("name", value)}
                 columns={columns}
                 rows={rows}
                 pagination={pagination}
@@ -142,10 +120,10 @@ export default function TableData({ rows = [], pagination, query }: { rows: Tabl
                 isExporting={isExporting}
             />
             <NextModal ref={modalRef} size="lg">
-                <TagForm current={current} onClose={handleModalClose} type={mode} />
+                <TagForm current={current} onClose={() => onModalClose(modalRef)} type={mode} />
             </NextModal>
             <NextModal ref={deleteModalRef} size="md">
-                <Confirm onClose={onCloseDelete} onConfirm={onConfirmDelete} />
+                <Confirm onClose={() => onModalClose(deleteModalRef)} onConfirm={onConfirmDelete} />
             </NextModal>
         </React.Fragment>
     );

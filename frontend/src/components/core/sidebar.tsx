@@ -117,8 +117,8 @@ const Sidebar: React.FC<Props> = () => {
             icon: <EcommerceIcon />,
             menuItems: [
                 {
-                    label: "Product",
-                    href: "/product",
+                    label: "Products",
+                    href: "/admin/store/products",
                 },
                 {
                     label: "Tags",

@@ -11,6 +11,16 @@ const storeRoutes = (queryClient: any) => {
                 };
             },
         },
+        {
+            path: "products",
+            async lazy() {
+                const { Products, productsLoader } = await import("@/pages/admin/store/products");
+                return {
+                    loader: productsLoader(queryClient),
+                    Component: Products,
+                };
+            },
+        },
     ];
 };
 
