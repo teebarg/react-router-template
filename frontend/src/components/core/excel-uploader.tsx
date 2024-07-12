@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from "react";
-import userService from "@/services/user.service";
 import useNotifications from "@/store/notifications";
 import { useWebSocket } from "@/hooks/use-websocket";
 import { Button, Progress } from "@nextui-org/react";
 import { DragNDrop } from "./dragNDrop";
 
-interface Props {}
+interface Props {
+    onUpload: (id: string, formData: any) => void;
+    wsUrl: string
+}
 
-const Excel: React.FC<Props> = () => {
+const Excel: React.FC<Props> = ({ onUpload, wsUrl }) => {
     const id = "nK12eRTbo";
     const [, notify] = useNotifications();
     const [file, setFile] = useState<File>();
@@ -17,9 +19,7 @@ const Excel: React.FC<Props> = () => {
     const currentMessage = wsMessages[wsMessages.length - 1];
 
     useEffect(() => {
-        const domain = import.meta.env.DEV ? "ws://localhost:2222" : `wss://${import.meta.env.VITE_DOMAIN}`;
-        const url = `${domain}/api/ws/users/${id}`;
-        initializeWebsocket(url);
+        initializeWebsocket(wsUrl);
         return () => {
             disconnectWebsocket();
         };
@@ -44,7 +44,7 @@ const Excel: React.FC<Props> = () => {
         formData.append("batch", "batch1");
 
         try {
-            await userService.excelUpload({ id, formData });
+            await onUpload(id, formData);
         } catch (error) {
             notify.error(`Error uploading file: ${error}`);
         } finally {

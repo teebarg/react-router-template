@@ -46,6 +46,15 @@ const Users: React.FC<Props> = () => {
     const { name } = useQueryParams();
     const { data: users, ...pagination } = useLoaderData() as userData;
 
+    const id = "nK12eRTbo";
+
+    const domain = import.meta.env.DEV ? "ws://localhost:2222" : `wss://${import.meta.env.VITE_AUTH_DOMAIN}`;
+    const wsUrl = `${domain}/api/ws/users/${id}`;
+
+    const handleUpload = async (id: string, formData: any) => {
+        await userService.excelUpload({ id, formData });
+    };
+
     return (
         <React.Fragment>
             <Meta title="Users" />
@@ -53,7 +62,7 @@ const Users: React.FC<Props> = () => {
                 <div className="max-w-7xl mx-auto p-8">
                     <h1 className="text-2xl font-semibold mb-2">Users:</h1>
                     <div className="py-4">
-                        <Excel />
+                        <Excel onUpload={handleUpload} wsUrl={wsUrl} />
                     </div>
                     <TableData rows={users} pagination={pagination} query={name} />
                     <Button color="secondary" onClick={() => navigate(-1)} className="mt-6">

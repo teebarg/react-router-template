@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useRef, useState } from "react";
 import { Chip, Badge, Avatar, Tooltip } from "@nextui-org/react";
 import { CheckIcon, EyeIcon, EditIcon, DeleteIcon } from "nui-react-icons";

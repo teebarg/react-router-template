@@ -72,6 +72,32 @@ class TagService {
         }
         return await res.json();
     }
+
+    async excelUpload({ id, formData }: { id: string; formData: any }): Promise<Record<string, string>> {
+        const res = await fetch(`${API_URL}/tag/excel/${id}`, {
+            method: "POST",
+            body: formData,
+            credentials: "include",
+        });
+        if (!res.ok) {
+            const errorText = await res.text();
+            throw new UnauthorizedError(errorText, res.status);
+        }
+        return await res.json();
+    }
+
+    async export(): Promise<Record<string, string>> {
+        const res = await fetch(`${API_URL}/tag/export`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
+        });
+        if (!res.ok) {
+            const errorText = await res.text();
+            throw new UnauthorizedError(errorText, res.status);
+        }
+        return await res.json();
+    }
 }
 
 export default new TagService();

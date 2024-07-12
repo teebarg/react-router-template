@@ -1,9 +1,7 @@
-"use client";
-
 import React, { useRef, useState } from "react";
 import { Chip, Tooltip } from "@nextui-org/react";
 import { EyeIcon, EditIcon, DeleteIcon } from "nui-react-icons";
-import { useLocation, useNavigate, useRevalidator } from "react-router-dom";
+import { useNavigate, useRevalidator } from "react-router-dom";
 import type { Generic, TableProps } from "@/types";
 import Table from "@/components/table";
 import NextModal from "@/components/modal";
@@ -11,6 +9,7 @@ import { TagForm } from "./tagForm";
 import { Confirm } from "@/components/core/confirm";
 import useNotifications from "@/store/notifications";
 import tagService from "@/services/tag.service";
+import { useTable } from "@/hooks/useTable";
 
 interface ChildComponentHandles {
     onOpen: () => void;
@@ -21,13 +20,14 @@ export default function TableData({ rows = [], pagination, query }: { rows: Tabl
     const revalidator = useRevalidator();
     const modalRef = useRef<ChildComponentHandles>(null);
     const deleteModalRef = useRef<ChildComponentHandles>(null);
-    const [current, setCurrent] = useState<Generic>({ is_active: true });
-    const [mode, setMode] = useState<"create" | "update">("create");
+    const { current, mode, onAdd, onEdit, onDelete, onModalClose, updateQueryParams } = useTable();
+    // const [current, setCurrent] = useState<Generic>({ is_active: true });
+    // const [mode, setMode] = useState<"create" | "update">("create");
     const [isExporting, setIExporting] = useState<boolean>(false);
     const [, notify] = useNotifications();
 
     const navigate = useNavigate();
-    const location = useLocation();
+    // const location = useLocation();
 
     const columns = [
         { name: "NAME", uid: "name", sortable: true },
@@ -37,57 +37,28 @@ export default function TableData({ rows = [], pagination, query }: { rows: Tabl
         { name: "ACTIONS", uid: "actions" },
     ];
 
-    const updateQueryParams = React.useCallback(
-        (key: string, value: string) => {
-            const searchParams = new URLSearchParams(location.search);
-            searchParams.set(key, value);
-            navigate(`${location.pathname}?${searchParams.toString()}`, { replace: true });
-        },
-        [navigate, location.search]
-    );
-
     const onSearchChange = (value: string) => {
         updateQueryParams("name", value);
     };
 
     const handleEdit = (value: Generic) => {
-        setMode("update");
-        setCurrent((prev) => ({ ...prev, ...value }));
-        if (modalRef.current) {
-            modalRef.current.onOpen();
-        }
+        onEdit(modalRef, value)
     };
 
     const addNew = () => {
-        setMode("create");
-        if (modalRef.current) {
-            modalRef.current.onOpen();
-        }
+        onAdd(modalRef)
     };
 
     const handleModalClose = () => {
-        setCurrent({ is_active: true } as Generic);
-        if (modalRef.current) {
-            modalRef.current.onClose();
-        }
-    };
-
-    const handleView = (id: number | string) => {
-        navigate(`/admin/tag/${id}`);
+        onModalClose(modalRef)
     };
 
     const handleDelete = (value: Generic) => {
-        setCurrent((prev) => ({ ...prev, ...value }));
-        if (deleteModalRef.current) {
-            deleteModalRef.current.onOpen();
-        }
+        onDelete(deleteModalRef, value)
     };
 
     const onCloseDelete = () => {
-        setCurrent({ is_active: true } as Generic);
-        if (deleteModalRef.current) {
-            deleteModalRef.current.onClose();
-        }
+        onModalClose(deleteModalRef)
     };
 
     const onConfirmDelete = async () => {
@@ -98,7 +69,6 @@ export default function TableData({ rows = [], pagination, query }: { rows: Tabl
             await tagService.delete(current.id);
             revalidator.revalidate();
             notify.success("Tag deleted successfully");
-            setCurrent({ is_active: true } as Generic);
             onCloseDelete();
         } catch (error) {
             notify.error(`An error deleting tag: ${error}`);
@@ -107,7 +77,7 @@ export default function TableData({ rows = [], pagination, query }: { rows: Tabl
     const onExport = async () => {
         setIExporting(true);
         try {
-            // await tagService.export();
+            await tagService.export();
             notify.success("Data exported successfully, check your email.");
         } catch (error) {
             notify.error(`An error occurred error exporting tag data: ${error}`);
@@ -137,7 +107,7 @@ export default function TableData({ rows = [], pagination, query }: { rows: Tabl
                     <div className="relative flex items-center gap-2">
                         <Tooltip content="Details">
                             <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
-                                <EyeIcon onClick={() => handleView(row.id)} />
+                                <EyeIcon onClick={() => navigate(`/admin/tag/${row.id}`)} />
                             </span>
                         </Tooltip>
                         <Tooltip content="Edit tag">

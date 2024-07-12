@@ -85,6 +85,24 @@ async def ws_notification_endpoint(websocket: WebSocket, user_id: str):
         manager.disconnect(websocket)
 
 
+@router.websocket("/upload/{id}")
+async def upload_ws(websocket: WebSocket, id: str):
+    """
+    Handles the WebSocket endpoint.
+
+    Args:
+        websocket (WebSocket): The WebSocket connection.
+
+    Returns:
+        None
+    """
+    await manager.connect(id=id, websocket=websocket)
+    try:
+        await websocket.receive_text()
+    except WebSocketDisconnect:
+        manager.disconnect(websocket)
+
+
 async def consume_events():
     try:
         connection = await aio_pika.connect_robust(f"amqp://{settings.RABBITMQ_HOST}")

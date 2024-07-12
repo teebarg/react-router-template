@@ -23,7 +23,7 @@ interface Props {
 const TagForm: React.FC<Props> = ({ type = "create", onClose, current }) => {
     const revalidator = useRevalidator();
     const queryClient = useQueryClient();
-    const { name = "", page } = useQueryParams();
+    const { name = "", page = "" } = useQueryParams();
 
     const [, notify] = useNotifications();
     const isCreate = type === "create";
@@ -32,7 +32,7 @@ const TagForm: React.FC<Props> = ({ type = "create", onClose, current }) => {
     const createMutation = useMutation({
         mutationFn: tagService.create,
         onSuccess: () => {
-            queryClient.removeQueries({ queryKey: ["users"] });
+            queryClient.removeQueries({ queryKey: ["tags"] });
             revalidator.revalidate();
             notify.success("Tag created successfully");
             reset();
@@ -50,7 +50,7 @@ const TagForm: React.FC<Props> = ({ type = "create", onClose, current }) => {
             return tagService.update(body, current.id);
         },
         onSuccess: () => {
-            queryClient.removeQueries({ queryKey: ["users", { name, page }] });
+            queryClient.removeQueries({ queryKey: ["tags", { name, page }] });
             revalidator.revalidate();
             notify.success("Tag updated successfully");
         },

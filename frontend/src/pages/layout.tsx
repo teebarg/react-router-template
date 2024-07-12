@@ -9,7 +9,7 @@ const Layout: React.FC<Props> = () => {
 
     return (
         <React.Fragment>
-            {state === "loading" && <Progress size="sm" isIndeterminate aria-label="Loading..." className="" color="secondary" />}
+            {state === "loading" && <Progress size="sm" isIndeterminate aria-label="Loading..." color="default" />}
             <Outlet />
         </React.Fragment>
     );

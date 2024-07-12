@@ -32,6 +32,15 @@ const Tags: React.FC<Props> = () => {
     const { name } = useQueryParams();
     const { tags, ...pagination } = useLoaderData() as any;
 
+    const id = "nK12eRTbo";
+
+    const domain = import.meta.env.DEV ? "ws://localhost:4030" : `wss://${import.meta.env.VITE_DOMAIN}`;
+    const wsUrl = `${domain}/api/ws/upload/${id}`;
+
+    const handleUpload = async (id: string, formData: any) => {
+        await tagService.excelUpload({ id, formData });
+    };
+
     return (
         <React.Fragment>
             <Meta title="Tags" />
@@ -39,7 +48,7 @@ const Tags: React.FC<Props> = () => {
                 <div className="max-w-7xl mx-auto p-8">
                     <h1 className="text-2xl font-semibold mb-2">Tags:</h1>
                     <div className="py-4">
-                        <Excel />
+                        <Excel onUpload={handleUpload} wsUrl={wsUrl}/>
                     </div>
                     <TableData rows={tags} pagination={pagination} query={name} />
                     <Button color="secondary" onClick={() => navigate(-1)} className="mt-6">

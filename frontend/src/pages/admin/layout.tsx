@@ -1,12 +1,11 @@
 import React, { useEffect } from "react";
-import { Outlet, ScrollRestoration, redirect, useLocation, useNavigate, useNavigation } from "react-router-dom";
+import { Outlet, ScrollRestoration, redirect, useLocation, useNavigate } from "react-router-dom";
 import type { LoaderFunction, Location, useMatches } from "react-router-dom";
 import Sidebar from "@/components/core/sidebar";
 import AdminNavbar from "@/components/admin-navbar";
 import { useCookie } from "@/hooks/use-cookie";
 import authService from "@/services/auth.service";
 import { useAuth } from "@/store/auth-provider";
-import { Progress } from "@nextui-org/react";
 
 const adminLoader: LoaderFunction = async ({ request }) => {
     const { removeCookie } = useCookie();
@@ -30,7 +29,6 @@ const adminLoader: LoaderFunction = async ({ request }) => {
 interface Props {}
 
 const AdminLayout: React.FC<Props> = () => {
-    const navigation = useNavigation();
     const location = useLocation();
     const navigate = useNavigate();
     const { isAuthenticated } = useAuth();
@@ -63,7 +61,6 @@ const AdminLayout: React.FC<Props> = () => {
     }, []);
     return (
         <React.Fragment>
-            {navigation.state === "loading" && <Progress size="sm" isIndeterminate aria-label="Loading..." className="w-full" />}
             <div className="flex min-h-screen">
                 <div className="hidden sm:block min-w-[20rem] h-screen overflow-y-auto">
                     <Sidebar />

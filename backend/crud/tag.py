@@ -1,5 +1,8 @@
-from sqlmodel import Session
+from typing import Any, Dict
 
+from sqlmodel import Session, select
+
+from core.logging import logger
 from core.utils import generate_slug
 from crud.base import CRUDBase
 from models.product import Tag
@@ -16,6 +19,20 @@ class CRUDTag(CRUDBase[Tag, TagCreate, TagUpdate]):
         db.commit()
         db.refresh(db_obj)
         return db_obj
+
+    async def bulk_upload(self, db: Session, *, tags: list[Dict[str, Any]]) -> Tag:
+        for tag in tags:
+            try:
+                if model := db.exec(
+                    select(Tag).where(Tag.name == tag.get("name"))
+                ).first():
+                    model.sqlmodel_update(tag)
+                else:
+                    model = Tag(**tag)
+                    db.add(model)
+                db.commit()
+            except Exception as e:
+                logger.error(e)
 
 
 tag = CRUDTag(Tag)
