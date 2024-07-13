@@ -31,6 +31,8 @@ export default function TableData({ rows = [], pagination, query }: { rows: Tabl
     const { current, mode, onEdit, onDelete, onModalClose, updateQueryParams } = useTable();
     const [isExporting, setIExporting] = useState<boolean>(false);
     const [, notify] = useNotifications();
+    const form = useRef<ChildComponentHandles>(null);
+    console.log("🚀 ~ TableData ~ form:", form)
 
     const navigate = useNavigate();
 
@@ -152,7 +154,7 @@ export default function TableData({ rows = [], pagination, query }: { rows: Tabl
             <SlideOver
                 isOpen={state.isOpen}
                 onClose={state.close}
-                className="bg-default-100"
+                className="bg-default-50"
                 title={`${mode == "create" ? "Add" : "Edit"} Products`}
                 footer={
                     <div className="flex gap-2 justify-end p-2">
