@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Any, Dict, Generic, Optional, Type, TypeVar, Union
 
 from fastapi.encoders import jsonable_encoder
@@ -125,9 +125,9 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         return db_obj
 
     def sync(self, db: Session, update: ModelType, type: str = "create") -> ModelType:
-        update.updated_at = datetime.now()
+        update.updated_at = datetime.now(timezone.utc)
         if type == "create":
-            update.created_at = datetime.now()
+            update.created_at = datetime.now(timezone.utc)
         db.add(update)
         db.commit()
         db.refresh(update)

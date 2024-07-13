@@ -46,9 +46,9 @@ const Collections: React.FC<Props> = () => {
             <Meta title="Collections" />
             <div>
                 <div className="max-w-7xl mx-auto p-8">
-                    <h1 className="text-2xl font-semibold mb-2">Collections:</h1>
+                    <h1 className="text-2xl font-semibold mb-2">Collections</h1>
                     <div className="py-4">
-                        <Excel onUpload={handleUpload} wsUrl={wsUrl}/>
+                        <Excel onUpload={handleUpload} wsUrl={wsUrl} revalidateKey="collections"/>
                     </div>
                     <TableData rows={ collections } pagination={pagination} query={name} />
                     <Button color="secondary" onClick={() => navigate(-1)} className="mt-6">

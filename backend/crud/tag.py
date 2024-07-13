@@ -20,11 +20,11 @@ class CRUDTag(CRUDBase[Tag, TagCreate, TagUpdate]):
         db.refresh(db_obj)
         return db_obj
 
-    async def bulk_upload(self, db: Session, *, tags: list[Dict[str, Any]]) -> Tag:
-        for tag in tags:
+    async def bulk_upload(self, db: Session, *, records: list[Dict[str, Any]]) -> None:
+        for tag in records:
             try:
                 if model := db.exec(
-                    select(Tag).where(Tag.name == tag.get("name"))
+                    select(Tag).where(Tag.slug == tag.get("slug"))
                 ).first():
                     model.sqlmodel_update(tag)
                 else:

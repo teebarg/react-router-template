@@ -3,20 +3,33 @@ import useNotifications from "@/store/notifications";
 import { useWebSocket } from "@/hooks/use-websocket";
 import { Button, Progress } from "@nextui-org/react";
 import { DragNDrop } from "./dragNDrop";
+import useWatch from "@/hooks/use-watch";
+import { useRevalidator } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface Props {
     onUpload: (id: string, formData: any) => void;
-    wsUrl: string
+    wsUrl: string;
+    revalidateKey?: string;
 }
 
-const Excel: React.FC<Props> = ({ onUpload, wsUrl }) => {
+const Excel: React.FC<Props> = ({ onUpload, wsUrl, revalidateKey = "" }) => {
     const id = "nK12eRTbo";
+    const revalidator = useRevalidator();
+    const queryClient = useQueryClient();
     const [, notify] = useNotifications();
     const [file, setFile] = useState<File>();
     const [status, setStatus] = useState<boolean>(false);
     const { messages: wsMessages, connect: initializeWebsocket, disconnect: disconnectWebsocket } = useWebSocket({ type: ["sheet-processor"] });
 
     const currentMessage = wsMessages[wsMessages.length - 1];
+
+    useWatch(currentMessage, (newValue: any) => {
+        if (newValue.status === "Completed") {
+            queryClient.removeQueries({ queryKey: [revalidateKey] });
+            revalidator.revalidate();
+        }
+    });
 
     useEffect(() => {
         initializeWebsocket(wsUrl);

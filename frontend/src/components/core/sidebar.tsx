@@ -121,6 +121,10 @@ const Sidebar: React.FC<Props> = () => {
                     href: "/admin/store/products",
                 },
                 {
+                    label: "Collections",
+                    href: "/admin/store/collections",
+                },
+                {
                     label: "Tags",
                     href: "/admin/store/tags",
                 },

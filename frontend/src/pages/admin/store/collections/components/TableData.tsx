@@ -123,7 +123,7 @@ export default function TableData({ rows = [], pagination, query }: { rows: Tabl
                 <CollectionsForm current={current} onClose={() => onModalClose(modalRef)} type={mode} />
             </NextModal>
             <NextModal ref={deleteModalRef} size="md">
-                <Confirm onClose={() => onModalClose(deleteModalRef)} onConfirm={onConfirmDelete} />
+                <Confirm onClose={() => onModalClose(deleteModalRef)} onConfirm={onConfirmDelete} title="Delete Collection" />
             </NextModal>
         </React.Fragment>
     );

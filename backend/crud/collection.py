@@ -1,5 +1,8 @@
-from sqlmodel import Session
+from typing import Any, Dict
 
+from sqlmodel import Session, select
+
+from core.logging import logger
 from core.utils import generate_slug
 from crud.base import CRUDBase
 from models.collection import CollectionCreate, CollectionUpdate
@@ -16,6 +19,20 @@ class CRUDCollection(CRUDBase[Collection, CollectionCreate, CollectionUpdate]):
         db.commit()
         db.refresh(db_obj)
         return db_obj
+
+    async def bulk_upload(self, db: Session, *, records: list[Dict[str, Any]]) -> None:
+        for collection in records:
+            try:
+                if model := db.exec(
+                    select(Collection).where(Collection.name == collection.get("slug"))
+                ).first():
+                    model.sqlmodel_update(collection)
+                else:
+                    model = Collection(**collection)
+                    db.add(model)
+                db.commit()
+            except Exception as e:
+                logger.error(e)
 
 
 collection = CRUDCollection(Collection)

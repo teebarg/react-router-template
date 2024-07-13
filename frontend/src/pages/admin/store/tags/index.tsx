@@ -46,9 +46,9 @@ const Tags: React.FC<Props> = () => {
             <Meta title="Tags" />
             <div>
                 <div className="max-w-7xl mx-auto p-8">
-                    <h1 className="text-2xl font-semibold mb-2">Tags:</h1>
+                    <h1 className="text-2xl font-semibold mb-2">Tags</h1>
                     <div className="py-4">
-                        <Excel onUpload={handleUpload} wsUrl={wsUrl}/>
+                        <Excel onUpload={handleUpload} wsUrl={wsUrl} revalidateKey="tags"/>
                     </div>
                     <TableData rows={tags} pagination={pagination} query={name} />
                     <Button color="secondary" onClick={() => navigate(-1)} className="mt-6">

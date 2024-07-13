@@ -1,13 +1,23 @@
+from typing import Annotated
+
 from fastapi import (
     APIRouter,
+    BackgroundTasks,
+    Depends,
+    File,
+    Form,
     HTTPException,
     Query,
+    UploadFile,
 )
+from sqlalchemy.exc import IntegrityError
 from sqlmodel import func, or_, select
 
 import crud
+from core import deps
 from core.deps import (
     SessionDep,
+    get_current_user,
 )
 from core.logging import logger
 from models.collection import (
@@ -17,6 +27,7 @@ from models.collection import (
 )
 from models.message import Message
 from models.product import Collection
+from services.export import export, process_file, validate_file
 
 # Create a router for collections
 router = APIRouter()
@@ -24,7 +35,7 @@ router = APIRouter()
 
 @router.get(
     "/",
-    # dependencies=[Depends(get_current_user)],
+    dependencies=[Depends(get_current_user)],
     response_model=Collections,
 )
 def index(
@@ -91,7 +102,7 @@ def read(id: int, db: SessionDep) -> Collection:
 
 @router.patch(
     "/{id}",
-    # dependencies=[Depends(get_current_user)],
+    dependencies=[Depends(get_current_user)],
     response_model=Collection,
 )
 def update(
@@ -114,13 +125,11 @@ def update(
             db=db, db_obj=db_collection, obj_in=update_data
         )
         return db_collection
+    except IntegrityError as e:
+        logger.error(f"Error updating collection, {e.orig.pgerror}")
+        raise HTTPException(status_code=422, detail=str(e.orig.pgerror)) from e
     except Exception as e:
         logger.error(e)
-        if "psycopg2.errors.UniqueViolation" in str(e):
-            raise HTTPException(
-                status_code=422,
-                detail=f"{e}",
-            ) from e
         raise HTTPException(
             status_code=400,
             detail=f"{e}",
@@ -137,3 +146,36 @@ def delete(db: SessionDep, id: int) -> Message:
         raise HTTPException(status_code=404, detail="Collection not found")
     crud.collection.remove(db=db, id=id)
     return Message(message="Collection deleted successfully")
+
+
+@router.post("/excel/{task_id}")
+async def upload_collections(
+    file: Annotated[UploadFile, File()],
+    batch: Annotated[str, Form()],
+    task_id: str,
+    db: SessionDep,
+    background_tasks: BackgroundTasks,
+):
+    await validate_file(file=file)
+
+    contents = await file.read()
+    background_tasks.add_task(
+        process_file, contents, task_id, db, crud.collection.bulk_upload
+    )
+    return {"batch": batch, "message": "File upload started"}
+
+
+@router.post("/export")
+async def export_collections(
+    current_user: deps.CurrentUser, db: SessionDep, bucket: deps.Storage
+):
+    try:
+        collections = db.exec(select(Collection))
+        file_url = await export(
+            data=collections, name="Collection", bucket=bucket, email=current_user.email
+        )
+
+        return {"message": "Data Export successful", "file_url": file_url}
+    except Exception as e:
+        logger.error(f"Export collections error: {e}")
+        raise HTTPException(status_code=500, detail=str(e)) from e

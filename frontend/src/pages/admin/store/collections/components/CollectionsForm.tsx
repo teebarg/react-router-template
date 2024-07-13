@@ -23,7 +23,7 @@ interface Props {
 const CollectionsForm: React.FC<Props> = ({ type = "create", onClose, current }) => {
     const revalidator = useRevalidator();
     const queryClient = useQueryClient();
-    const { name = "", page } = useQueryParams();
+    const { name = "", page = "" } = useQueryParams();
 
     const [, notify] = useNotifications();
     const isCreate = type === "create";
