@@ -6,8 +6,8 @@ import { buildUrl } from "@/utils/util";
 const API_URL = import.meta.env.VITE_API_DOMAIN;
 
 class TagService {
-    async all({ name, page }: { name: string; page: string | null }): Promise<Tags & Pagination[]> {
-        const url = buildUrl(`${API_URL}/tag/`, { name, page, per_page: 5 });
+    async all({ name, page, per_page = 5 }: { name: string; page: string | null; per_page?: number }): Promise<Tags & Pagination[]> {
+        const url = buildUrl(`${API_URL}/tag/`, { name, page, per_page });
         const res = await fetch(url, {
             method: "GET",
             headers: { "Content-Type": "application/json" },

@@ -6,6 +6,7 @@ import { useQueryParams } from "@/hooks/use-query-params";
 import { Excel } from "@/components/core/excel-uploader";
 import TableData from "./components/TableData";
 import productService from "@/services/product.service";
+import tagService from "@/services/tag.service";
 
 interface Props {}
 
@@ -16,6 +17,13 @@ const productsQuery = ({ name, page }: { name: string; page: string }) => ({
     },
 });
 
+const tagsQuery = () => ({
+    queryKey: ["tags"],
+    queryFn: async () => {
+        return await tagService.all({ name: "", page: "1", per_page: 100 });
+    },
+});
+
 const productsLoader =
     (queryClient: any): LoaderFunction =>
     async ({ request }) => {
@@ -23,14 +31,21 @@ const productsLoader =
         const name = url.searchParams.get("name") ?? "";
         const page = url.searchParams.get("page") ?? "";
 
-        const query = productsQuery({ name, page });
-        return queryClient.ensureQueryData(query);
+        const productQuery = productsQuery({ name, page });
+        const tagQuery = tagsQuery();
+
+        const [prodData, tagData] = await Promise.all([queryClient.ensureQueryData(productQuery), queryClient.ensureQueryData(tagQuery)]);
+
+        return { prodData, tagData };
     };
 
 const Products: React.FC<Props> = () => {
     const navigate = useNavigate();
     const { name } = useQueryParams();
-    const { products, ...pagination } = useLoaderData() as any;
+    const { prodData, tagData } = useLoaderData() as any;
+
+    const { products, ...pagination } = prodData;
+    const { tags } = tagData;
 
     const id = "nK12eRTbo";
 
@@ -46,11 +61,11 @@ const Products: React.FC<Props> = () => {
             <Meta title="products" />
             <div>
                 <div className="max-w-7xl mx-auto p-8">
-                    <h1 className="text-2xl font-semibold mb-2">Products:</h1>
+                    <h1 className="text-2xl font-semibold mb-2">Products</h1>
                     <div className="py-4">
-                        <Excel onUpload={handleUpload} wsUrl={wsUrl}/>
+                        <Excel onUpload={handleUpload} wsUrl={wsUrl} revalidateKey="products" />
                     </div>
-                    <TableData rows={ products } pagination={pagination} query={name} />
+                    <TableData rows={products} pagination={pagination} query={name} tags={tags} />
                     <Button color="secondary" onClick={() => navigate(-1)} className="mt-6">
                         Back
                     </Button>

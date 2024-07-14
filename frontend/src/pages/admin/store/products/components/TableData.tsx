@@ -22,7 +22,7 @@ interface ChildComponentHandles {
     onClose: () => void;
 }
 
-export default function TableData({ rows = [], pagination, query }: { rows: TableProps["rows"]; pagination: any; query: string }) {
+export default function TableData({ rows = [], pagination, query, tags }: { rows: TableProps["rows"]; pagination: any; query: string; tags: any[] }) {
     const state = useOverlayTriggerState({});
     const revalidator = useRevalidator();
     const queryClient = useQueryClient();
@@ -31,8 +31,7 @@ export default function TableData({ rows = [], pagination, query }: { rows: Tabl
     const { current, mode, onEdit, onDelete, onModalClose, updateQueryParams } = useTable();
     const [isExporting, setIExporting] = useState<boolean>(false);
     const [, notify] = useNotifications();
-    const form = useRef<ChildComponentHandles>(null);
-    console.log("🚀 ~ TableData ~ form:", form)
+    // const form = useRef<ChildComponentHandles>(null);
 
     const navigate = useNavigate();
 
@@ -56,7 +55,7 @@ export default function TableData({ rows = [], pagination, query }: { rows: Tabl
         }
         try {
             await productService.delete(current.id);
-            queryClient.removeQueries({ queryKey: ["productss", { name, page }] });
+            queryClient.removeQueries({ queryKey: ["products", { name, page }] });
             revalidator.revalidate();
             notify.success("products deleted successfully");
             onModalClose(deleteModalRef);
