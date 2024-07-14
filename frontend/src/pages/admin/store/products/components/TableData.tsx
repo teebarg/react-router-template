@@ -166,7 +166,7 @@ export default function TableData({ rows = [], pagination, query, tags }: { rows
                     </div>
                 }
             >
-                <ProductForm current={current} onClose={state.close} type={mode} />
+                <ProductForm current={current} onClose={state.close} type={mode} tags={tags} />
             </SlideOver>
             <NextModal ref={deleteModalRef} size="md">
                 <Confirm onClose={() => onModalClose(deleteModalRef)} onConfirm={onConfirmDelete} />

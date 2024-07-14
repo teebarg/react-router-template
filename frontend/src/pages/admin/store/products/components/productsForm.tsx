@@ -20,15 +20,17 @@ type Inputs = {
 interface Props {
     current?: Generic;
     type?: "create" | "update";
-    tags?: { value: string | number; label: string }[];
+    // tags?: { value: string | number; label: string }[];
+    tags?: any[];
     collections?: { value: string | number; label: string }[];
     onClose?: () => void;
 }
 
 const ProductForm: React.FC<Props> = ({ type = "create", onClose, current, tags = [], collections = [] }) => {
+    console.log("🚀 ~ tags:", tags);
     const revalidator = useRevalidator();
     const queryClient = useQueryClient();
-    const { name = "", page } = useQueryParams();
+    const { name = "", page = "" } = useQueryParams();
 
     const [, notify] = useNotifications();
     const isCreate = type === "create";
@@ -64,6 +66,13 @@ const ProductForm: React.FC<Props> = ({ type = "create", onClose, current, tags 
         },
     });
 
+    const tagOptions = React.useMemo(() => {
+        return tags.map((item) => {
+            return { id: item.id, value: item.id, label: item.name };
+        });
+    }, tags);
+    console.log(tagOptions);
+
     const {
         reset,
         control,
@@ -74,15 +83,27 @@ const ProductForm: React.FC<Props> = ({ type = "create", onClose, current, tags 
 
     const onSubmit: SubmitHandler<Inputs> = async (data) => {
         const body = data;
-        if (isCreate) {
-            createMutation.mutate(body);
-        } else {
-            updateMutation.mutate(body);
-        }
+        console.log("🚀 ~ constonSubmit:SubmitHandler<Inputs>= ~ body:", body)
+        const tags = data.tags
+            ?.split(",")
+            ?.filter((i) => i)
+            .map((item: string) => item);
+        const collections = data.collections
+            ?.split(",")
+            ?.filter((i) => i)
+            .map((item: string) => item);
+
+        console.log(tags)
+        console.log(collections)
+        // if (isCreate) {
+        //     createMutation.mutate(body);
+        // } else {
+        //     updateMutation.mutate(body);
+        // }
     };
     return (
         <React.Fragment>
-            <div className="mx-auto w-full px-4 pb-8">
+            <div className="mx-auto w-full pb-8">
                 <div className="mt-8">
                     <form className="h-full flex flex-col" onSubmit={handleSubmit(onSubmit)}>
                         <div className="flex min-h-0 flex-1 flex-col overflow-y-scroll py-6">
@@ -104,7 +125,7 @@ const ProductForm: React.FC<Props> = ({ type = "create", onClose, current, tags 
                                         name="tags"
                                         label="Tags"
                                         control={control}
-                                        options={tags}
+                                        options={tagOptions}
                                         error={errors?.tags}
                                         description="Product Tags"
                                         selectionMode="multiple"
@@ -131,7 +152,7 @@ const ProductForm: React.FC<Props> = ({ type = "create", onClose, current, tags 
                                 </div>
                             </div>
                         </div>
-                        {/* <div className="flex flex-shrink-0 justify-end p-4 space-x-2 border-t border-default-200">
+                        <div className="flex flex-shrink-0 justify-end p-4 space-x-2 border-t border-default-200">
                             <Button color="danger" onPress={onClose} variant="shadow">
                                 Cancel
                             </Button>
@@ -144,7 +165,7 @@ const ProductForm: React.FC<Props> = ({ type = "create", onClose, current, tags 
                             >
                                 {isCreate ? "Submit" : "Update"}
                             </Button>
-                        </div> */}
+                        </div>
                     </form>
                 </div>
             </div>

@@ -46,6 +46,7 @@ const Products: React.FC<Props> = () => {
 
     const { products, ...pagination } = prodData;
     const { tags } = tagData;
+    console.log("🚀 ~ tags:", tags)
 
     const id = "nK12eRTbo";
 

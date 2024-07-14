@@ -37,9 +37,9 @@ const SlideOver: React.FC<SlideoverProps> = ({ isOpen, onClose, children, title,
                     {...dialogProps}
                     {...modalProps}
                     ref={ref}
-                    className={`fixed top-0 w-1/4 h-screen shadow-lg transform transition-transform duration-300 z-50 py-5 ${className} ${location[direction]}`}
+                    className={`fixed top-0 w-1/4 h-screen shadow-lg transform transition-transform duration-300 z-50 py-5 px-2 ${className} ${location[direction]}`}
                 >
-                    <Button isIconOnly onPress={onClose} className="absolute top-4 right-4 bg-transparent">
+                    <Button isIconOnly onPress={onClose} className="absolute top-4 right-2 bg-transparent">
                         <CancelIcon size={24} />
                     </Button>
                     <div className="flex flex-col h-full">
