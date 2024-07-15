@@ -1,4 +1,4 @@
-from typing import Annotated
+from typing import Annotated, Any
 
 from fastapi import (
     APIRouter,
@@ -179,3 +179,22 @@ async def export_collections(
     except Exception as e:
         logger.error(f"Export collections error: {e}")
         raise HTTPException(status_code=500, detail=str(e)) from e
+
+
+@router.get(
+    "/autocomplete/",
+)
+async def autocomplete(
+    db: SessionDep,
+    search: str = "",
+) -> Any:
+    """
+    Retrieve collections for autocomplete.
+    """
+    statement = select(Collection)
+    if search:
+        statement = statement.where(or_(Collection.name.like(f"%{search}%"), Collection.slug.like(f"%{search}%")))
+
+    data = db.exec(statement)
+
+    return {"results": data}
