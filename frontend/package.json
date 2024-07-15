@@ -38,7 +38,7 @@
         "classnames": "^2.3.2",
         "framer-motion": "^11.2.10",
         "is-mobile": "^4.0.0",
-        "nextui-hook-form": "0.1.0",
+        "nextui-hook-form": "^0.1.0",
         "notistack": "^3.0.1",
         "nui-react-icons": "^0.0.1",
         "react": "^18.2.0",

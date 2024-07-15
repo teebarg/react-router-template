@@ -86,7 +86,7 @@ class TagService {
         return await res.json();
     }
 
-    async search(search?: string): Promise<Record<string, any[]>> {
+    async search(search: string = ""): Promise<Record<string, any[]>> {
         const res = await fetch(`${API_URL}/tag/autocomplete/?search=${search}`, {
             method: "GET",
             headers: { "Content-Type": "application/json" },

@@ -22,6 +22,10 @@ interface ChildComponentHandles {
     onClose: () => void;
 }
 
+interface ChildRef {
+    submit: () => void;
+}
+
 export default function TableData({
     rows = [],
     pagination,
@@ -44,6 +48,7 @@ export default function TableData({
     const [isExporting, setIExporting] = useState<boolean>(false);
     const [, notify] = useNotifications();
     // const form = useRef<ChildComponentHandles>(null);
+    const formRef = useRef<ChildRef>(null);
 
     const navigate = useNavigate();
 
@@ -167,16 +172,16 @@ export default function TableData({
                 onClose={state.close}
                 className="bg-default-50"
                 title={`${mode == "create" ? "Add" : "Edit"} Products`}
-                footer={
-                    <div className="flex gap-2 justify-end p-2">
-                        <Button onPress={state.close} color="danger" className="min-w-32">
-                            Cancel
-                        </Button>
-                        <Button variant="shadow" color="primary" className="min-w-32">
-                            Submit
-                        </Button>
-                    </div>
-                }
+                // footer={
+                //     <div className="flex gap-2 justify-end p-2">
+                //         <Button onPress={state.close} color="danger" className="min-w-32">
+                //             Cancel
+                //         </Button>
+                //         <Button variant="shadow" color="primary" className="min-w-32" onPress={() => formRef?.current?.submit()}>
+                //             Submit
+                //         </Button>
+                //     </div>
+                // }
             >
                 <ProductForm current={current} onClose={state.close} type={mode} tags={tags} collections={collections} />
             </SlideOver>

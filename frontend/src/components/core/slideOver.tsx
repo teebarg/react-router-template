@@ -44,9 +44,9 @@ const SlideOver: React.FC<SlideoverProps> = ({ isOpen, onClose, children, title,
                     </Button>
                     <div className="flex flex-col h-full">
                         <div className="text-2xl mb-4 font-semibold pl-2">{title}</div>
-                        <ScrollShadow className="w-full h-full max-h-full flex-1 px-2">
+                        <div className="w-full h-full max-h-full flex-1 px-2">
                             <React.Fragment>{children}</React.Fragment>
-                        </ScrollShadow>
+                        </div>
                         <React.Fragment>{footer}</React.Fragment>
                     </div>
                 </div>

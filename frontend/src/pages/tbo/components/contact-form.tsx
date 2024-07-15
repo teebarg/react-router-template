@@ -97,7 +97,7 @@ export default function ContactForm() {
                 />
 
                 <div className="flex gap-4">
-                    <CheckBox name="agreement" register={register} control={control} required />
+                    <CheckBox name="agreement" control={control} required />
                     <p className="text-gray-700">I allow this website to store my submission so they can respond to my inquiry.</p>
                 </div>
 
