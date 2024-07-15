@@ -1,4 +1,4 @@
-from typing import Annotated
+from typing import Annotated, Any
 
 from fastapi import (
     APIRouter,
@@ -183,3 +183,22 @@ async def export_tags(
     except Exception as e:
         logger.error(f"Export tags error: {e}")
         raise HTTPException(status_code=500, detail=str(e)) from e
+
+
+@router.get(
+    "/autocomplete/",
+)
+async def autocomplete(
+    db: SessionDep,
+    search: str = "",
+) -> Any:
+    """
+    Retrieve tags for autocomplete.
+    """
+    statement = select(Tag)
+    if search:
+        statement = statement.where(or_(Tag.name.like(f"%{search}%"), Tag.slug.like(f"%{search}%")))
+
+    data = db.exec(statement)
+
+    return {"results": data}
