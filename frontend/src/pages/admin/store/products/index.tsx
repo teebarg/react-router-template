@@ -7,6 +7,7 @@ import { Excel } from "@/components/core/excel-uploader";
 import TableData from "./components/TableData";
 import productService from "@/services/product.service";
 import tagService from "@/services/tag.service";
+import collectionsService from "@/services/collections.service";
 
 interface Props {}
 
@@ -18,9 +19,16 @@ const productsQuery = ({ name, page }: { name: string; page: string }) => ({
 });
 
 const tagsQuery = () => ({
-    queryKey: ["tags"],
+    queryKey: ["all-tags"],
     queryFn: async () => {
-        return await tagService.all({ name: "", page: "1", per_page: 100 });
+        return await tagService.search();
+    },
+});
+
+const collectionsQuery = () => ({
+    queryKey: ["all-collections"],
+    queryFn: async () => {
+        return await collectionsService.search();
     },
 });
 
@@ -33,20 +41,25 @@ const productsLoader =
 
         const productQuery = productsQuery({ name, page });
         const tagQuery = tagsQuery();
+        const collectionQuery = collectionsQuery();
 
-        const [prodData, tagData] = await Promise.all([queryClient.ensureQueryData(productQuery), queryClient.ensureQueryData(tagQuery)]);
+        const [prodData, tagData, collectionData] = await Promise.all([
+            queryClient.ensureQueryData(productQuery),
+            queryClient.ensureQueryData(tagQuery),
+            queryClient.ensureQueryData(collectionQuery),
+        ]);
 
-        return { prodData, tagData };
+        return { prodData, tagData, collectionData };
     };
 
 const Products: React.FC<Props> = () => {
     const navigate = useNavigate();
     const { name } = useQueryParams();
-    const { prodData, tagData } = useLoaderData() as any;
+    const { prodData, tagData, collectionData } = useLoaderData() as any;
 
     const { products, ...pagination } = prodData;
-    const { tags } = tagData;
-    console.log("🚀 ~ tags:", tags)
+    const { results:tags } = tagData;
+    const { results:collections } = collectionData;
 
     const id = "nK12eRTbo";
 
@@ -66,7 +79,7 @@ const Products: React.FC<Props> = () => {
                     <div className="py-4">
                         <Excel onUpload={handleUpload} wsUrl={wsUrl} revalidateKey="products" />
                     </div>
-                    <TableData rows={products} pagination={pagination} query={name} tags={tags} />
+                    <TableData rows={products} pagination={pagination} query={name} tags={tags} collections={collections} />
                     <Button color="secondary" onClick={() => navigate(-1)} className="mt-6">
                         Back
                     </Button>

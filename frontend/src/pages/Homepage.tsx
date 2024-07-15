@@ -1,18 +1,20 @@
 import React from "react";
 import { GithubIcon } from "nui-react-icons";
-import { Button, Image, ScrollShadow } from "@nextui-org/react";
+import { Image, ScrollShadow, SelectItem, Select as NUISelect } from "@nextui-org/react";
 import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
 import { sponsors } from "./data";
 import { Cookie } from "@/components/cookie";
 import Meta from "@/components/Meta";
-import { SlideOver } from "@/components/core/slideOver";
-import { useOverlayTriggerState } from "@react-stately/overlays";
+import { Select } from "nextui-hook-form";
+import { useForm } from "react-hook-form";
 
 interface Props {}
 
 const Homepage: React.FC<Props> = () => {
-    const state = useOverlayTriggerState({});
+    const { control } = useForm<any>({
+        defaultValues: {},
+    });
     const features = [
         {
             name: "Push to deploy",
@@ -62,6 +64,26 @@ const Homepage: React.FC<Props> = () => {
                         </div>
                     </div>
                     <div className="bg-content2 py-10 px-6">
+                        {/* <NUISelect isRequired label="Favorite Animal" placeholder="Select an animal" defaultSelectedKeys={["cat"]} className="max-w-xs">
+                            {[
+                                { value: "cat", label: "Cat" },
+                                { value: "dog", label: "Dog" },
+                            ].map((animal) => (
+                                <SelectItem key={animal.value}>{animal.label}</SelectItem>
+                            ))}
+                        </NUISelect> */}
+                        <Select
+                            name="tags"
+                            label="Tags"
+                            control={control}
+                            options={[
+                                { value: "cat", label: "Cat" },
+                                { value: "dog", label: "Dog" },
+                            ]}
+                            description="Product Tags"
+                            selectionMode="multiple"
+                            placeholder="Select Tags"
+                        />
                         <div className="max-w-4xl mx-auto">
                             <dl className="grid max-w-xl grid-cols-1 gap-x-8 gap-y-10 lg:max-w-none lg:grid-cols-2 lg:gap-y-16">
                                 {features.map((feature) => (
@@ -111,34 +133,6 @@ const Homepage: React.FC<Props> = () => {
                         </div>
                     </div>
                 </main>
-                <Button onPress={state.open}>Open Slideover</Button>
-
-                <SlideOver
-                    isOpen={state.isOpen}
-                    onClose={state.close}
-                    className="bg-default-100"
-                    title="Overlay Modal"
-                    footer={
-                        <div className="flex gap-2 justify-end p-2">
-                            <Button onPress={state.close} color="danger" className="min-w-32">
-                                Cancel
-                            </Button>
-                            <Button variant="shadow" color="primary" className="min-w-32">
-                                Submit
-                            </Button>
-                        </div>
-                    }
-                >
-                    <div className="bg-blue-500">
-                        <h2 className="text-lg font-semibold">Slideover Content</h2>
-                        <p>This is some content inside the slideover.</p>
-                        <div className="h-[1500px]">
-                            {" "}
-                            Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quisquam sequi maiores magni culpa fugit molestiae, earum
-                            repellendus officiis obcaecati accusantium facilis officia aperiam hic corrupti aliquid sint itaque cumque iusto.
-                        </div>
-                    </div>
-                </SlideOver>
                 <Cookie />
                 <Footer />
             </div>

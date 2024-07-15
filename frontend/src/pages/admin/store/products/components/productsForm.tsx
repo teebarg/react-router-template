@@ -18,22 +18,25 @@ type Inputs = {
 };
 
 interface Props {
-    current?: Generic;
+    current?: any;
     type?: "create" | "update";
     // tags?: { value: string | number; label: string }[];
     tags?: any[];
-    collections?: { value: string | number; label: string }[];
+    // collections?: { value: string | number; label: string }[];
+    collections?: any[];
     onClose?: () => void;
 }
 
-const ProductForm: React.FC<Props> = ({ type = "create", onClose, current, tags = [], collections = [] }) => {
-    console.log("🚀 ~ tags:", tags);
+const ProductForm: React.FC<Props> = ({ type = "create", onClose, current = { name: "", is_active: true }, tags = [], collections = [] }) => {
     const revalidator = useRevalidator();
     const queryClient = useQueryClient();
     const { name = "", page = "" } = useQueryParams();
 
     const [, notify] = useNotifications();
     const isCreate = type === "create";
+
+    const selectedTags = current?.tags?.map((item: any) => item.id) ?? [];
+    const selectedCollections = current?.collections?.map((item: any) => item.id) ?? [];
 
     // Mutations
     const createMutation = useMutation({
@@ -66,6 +69,12 @@ const ProductForm: React.FC<Props> = ({ type = "create", onClose, current, tags 
         },
     });
 
+    const collectionOptions = React.useMemo(() => {
+        return collections.map((item) => {
+            return { id: item.id, value: item.id, label: item.name };
+        });
+    }, collections);
+
     const tagOptions = React.useMemo(() => {
         return tags.map((item) => {
             return { id: item.id, value: item.id, label: item.name };
@@ -73,17 +82,27 @@ const ProductForm: React.FC<Props> = ({ type = "create", onClose, current, tags 
     }, tags);
     console.log(tagOptions);
 
+    console.log(collectionOptions);
+
     const {
         reset,
         control,
         register,
         handleSubmit,
         formState: { errors },
-    } = useForm<Inputs>({ defaultValues: current });
+    } = useForm<Inputs>({
+        defaultValues: {
+            name: current.name,
+            is_active: current.is_active,
+            price: current.price ?? 0,
+            collections: selectedCollections.join(","),
+            tags: selectedTags.join(","),
+        },
+    });
 
     const onSubmit: SubmitHandler<Inputs> = async (data) => {
         const body = data;
-        console.log("🚀 ~ constonSubmit:SubmitHandler<Inputs>= ~ body:", body)
+        console.log("🚀 ~ constonSubmit:SubmitHandler<Inputs>= ~ body:", body);
         const tags = data.tags
             ?.split(",")
             ?.filter((i) => i)
@@ -93,8 +112,8 @@ const ProductForm: React.FC<Props> = ({ type = "create", onClose, current, tags 
             ?.filter((i) => i)
             .map((item: string) => item);
 
-        console.log(tags)
-        console.log(collections)
+        console.log(tags);
+        console.log(collections);
         // if (isCreate) {
         //     createMutation.mutate(body);
         // } else {
@@ -125,22 +144,25 @@ const ProductForm: React.FC<Props> = ({ type = "create", onClose, current, tags 
                                         name="tags"
                                         label="Tags"
                                         control={control}
-                                        options={tagOptions}
+                                        options={[
+                                            { key: "cat", label: "Cat" },
+                                            { key: "dog", label: "Dog" },
+                                        ]}
                                         error={errors?.tags}
                                         description="Product Tags"
                                         selectionMode="multiple"
                                         placeholder="Select Tags"
                                     />
-                                    <Select
+                                    {/* <Select
                                         name="collections"
                                         label="Collections"
                                         control={control}
-                                        options={collections}
+                                        options={tagOptions}
                                         error={errors?.collections}
                                         description="Product Collections"
                                         selectionMode="multiple"
                                         placeholder="Select Collections"
-                                    />
+                                    /> */}
                                     <Number
                                         name="price"
                                         label="Product Price"

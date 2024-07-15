@@ -22,7 +22,19 @@ interface ChildComponentHandles {
     onClose: () => void;
 }
 
-export default function TableData({ rows = [], pagination, query, tags }: { rows: TableProps["rows"]; pagination: any; query: string; tags: any[] }) {
+export default function TableData({
+    rows = [],
+    pagination,
+    query,
+    tags = [],
+    collections = [],
+}: {
+    rows: TableProps["rows"];
+    pagination: any;
+    query: string;
+    tags: any[];
+    collections: any[];
+}) {
     const state = useOverlayTriggerState({});
     const revalidator = useRevalidator();
     const queryClient = useQueryClient();
@@ -45,9 +57,9 @@ export default function TableData({ rows = [], pagination, query, tags }: { rows
     ];
 
     const handleEdit = (row: any) => {
-        onEdit(null, row)
-        state.open()
-    }
+        onEdit(null, row);
+        state.open();
+    };
 
     const onConfirmDelete = async () => {
         if (!current.id) {
@@ -166,7 +178,7 @@ export default function TableData({ rows = [], pagination, query, tags }: { rows
                     </div>
                 }
             >
-                <ProductForm current={current} onClose={state.close} type={mode} tags={tags} />
+                <ProductForm current={current} onClose={state.close} type={mode} tags={tags} collections={collections} />
             </SlideOver>
             <NextModal ref={deleteModalRef} size="md">
                 <Confirm onClose={() => onModalClose(deleteModalRef)} onConfirm={onConfirmDelete} />

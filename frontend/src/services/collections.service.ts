@@ -74,6 +74,19 @@ class CollectionsService {
         return await res.json();
     }
 
+    async search(search?: string): Promise<Record<string, any[]>> {
+        const res = await fetch(`${API_URL}/collection/autocomplete/?${search}`, {
+            method: "GET",
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
+        });
+        if (!res.ok) {
+            const errorText = await res.text();
+            throw new UnauthorizedError(errorText, res.status);
+        }
+        return await res.json();
+    }
+
     async excelUpload({ id, formData }: { id: string; formData: any }): Promise<Record<string, string>> {
         const res = await fetch(`${API_URL}/collection/excel/${id}`, {
             method: "POST",

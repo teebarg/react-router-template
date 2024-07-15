@@ -86,6 +86,19 @@ class TagService {
         return await res.json();
     }
 
+    async search(search?: string): Promise<Record<string, any[]>> {
+        const res = await fetch(`${API_URL}/tag/autocomplete/?${search}`, {
+            method: "GET",
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
+        });
+        if (!res.ok) {
+            const errorText = await res.text();
+            throw new UnauthorizedError(errorText, res.status);
+        }
+        return await res.json();
+    }
+
     async export(): Promise<Record<string, string>> {
         const res = await fetch(`${API_URL}/tag/export`, {
             method: "POST",
