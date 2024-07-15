@@ -1,20 +1,15 @@
 import React from "react";
 import { GithubIcon } from "nui-react-icons";
-import { Image, ScrollShadow, SelectItem, Select as NUISelect } from "@nextui-org/react";
+import { Image, ScrollShadow } from "@nextui-org/react";
 import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
 import { sponsors } from "./data";
 import { Cookie } from "@/components/cookie";
 import Meta from "@/components/Meta";
-import { Select } from "nextui-hook-form";
-import { useForm } from "react-hook-form";
 
 interface Props {}
 
 const Homepage: React.FC<Props> = () => {
-    const { control } = useForm<any>({
-        defaultValues: {},
-    });
     const features = [
         {
             name: "Push to deploy",
@@ -64,26 +59,6 @@ const Homepage: React.FC<Props> = () => {
                         </div>
                     </div>
                     <div className="bg-content2 py-10 px-6">
-                        {/* <NUISelect isRequired label="Favorite Animal" placeholder="Select an animal" defaultSelectedKeys={["cat"]} className="max-w-xs">
-                            {[
-                                { value: "cat", label: "Cat" },
-                                { value: "dog", label: "Dog" },
-                            ].map((animal) => (
-                                <SelectItem key={animal.value}>{animal.label}</SelectItem>
-                            ))}
-                        </NUISelect> */}
-                        <Select
-                            name="tags"
-                            label="Tags"
-                            control={control}
-                            options={[
-                                { value: "cat", label: "Cat" },
-                                { value: "dog", label: "Dog" },
-                            ]}
-                            description="Product Tags"
-                            selectionMode="multiple"
-                            placeholder="Select Tags"
-                        />
                         <div className="max-w-4xl mx-auto">
                             <dl className="grid max-w-xl grid-cols-1 gap-x-8 gap-y-10 lg:max-w-none lg:grid-cols-2 lg:gap-y-16">
                                 {features.map((feature) => (

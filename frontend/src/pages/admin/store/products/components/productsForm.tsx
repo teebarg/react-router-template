@@ -144,25 +144,22 @@ const ProductForm: React.FC<Props> = ({ type = "create", onClose, current = { na
                                         name="tags"
                                         label="Tags"
                                         control={control}
-                                        options={[
-                                            { key: "cat", label: "Cat" },
-                                            { key: "dog", label: "Dog" },
-                                        ]}
+                                        options={tagOptions}
                                         error={errors?.tags}
                                         description="Product Tags"
                                         selectionMode="multiple"
                                         placeholder="Select Tags"
                                     />
-                                    {/* <Select
+                                    <Select
                                         name="collections"
                                         label="Collections"
                                         control={control}
-                                        options={tagOptions}
+                                        options={collectionOptions}
                                         error={errors?.collections}
                                         description="Product Collections"
                                         selectionMode="multiple"
                                         placeholder="Select Collections"
-                                    /> */}
+                                    />
                                     <Number
                                         name="price"
                                         label="Product Price"
