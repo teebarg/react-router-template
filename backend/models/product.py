@@ -52,17 +52,19 @@ class ProductBase(BaseModel):
     image: str | None = ""
     price: float
     old_price: float = 0.0
-    status: bool = False
+    is_active: bool = True
 
 
 # Properties to receive via API on creation
 class ProductCreate(ProductBase):
-    pass
+    collections: list[int] = []
+    tags: list[int] = []
 
 
 # Properties to receive via API on update, all are optional
 class ProductUpdate(ProductBase):
-    pass
+    collections: list[int] = []
+    tags: list[int] = []
 
 
 # Database model, database table inferred from class name

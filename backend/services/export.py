@@ -59,12 +59,12 @@ async def send_status_update(task_id: str):
     )
 
 
-async def export(data: list, name: str, bucket: Any, email: str) -> str:
+async def export(data: list, name: str, bucket: Any, email: str, columns: list = []) -> str:
     # Get the current date
     current_date = datetime.now().strftime("%Y-%m-%d")
     filename = f"{name}_export_{current_date}.csv"
-    csv = data_to_csv(items=data, filename=filename)
-    file_url = upload_to_firebase(file_path=csv, bucket=bucket)
+    csv = data_to_csv(columns=columns, items=data, filename=filename)
+    file_url = await upload_to_firebase(file_path=csv, bucket=bucket)
 
     # Send download link
     email_data = generate_data_export_email(download_link=file_url)

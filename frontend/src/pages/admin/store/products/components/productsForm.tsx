@@ -3,25 +3,29 @@ import { useRevalidator } from "react-router-dom";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { Button } from "@nextui-org/react";
 import useNotifications from "@/store/notifications";
-import { Input, Number, Select, Switch } from "nextui-hook-form";
+import { Input, Number, Select, Switch, TextArea } from "nextui-hook-form";
 import type { Generic } from "@/types";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useQueryParams } from "@/hooks/use-query-params";
 import productService from "@/services/product.service";
+import { imgSrc } from "@/utils/util";
+import { ImageUpload } from "@/components/core/ImageUpload";
 
 type Inputs = {
     name: string;
     is_active: boolean;
-    tags: string;
-    collections: string;
+    tags: Set<number | string>;
+    collections: Set<number | string>;
     price: number;
+    old_price: number;
+    description: string;
 };
 
 interface Props {
     current?: any;
     type?: "create" | "update";
-    tags?: { id: number; label: string }[];
-    collections?: { id: number; label: string }[];
+    tags?: { id: number; name: string }[];
+    collections?: { id: number; name: string }[];
     onClose?: () => void;
 }
 
@@ -40,43 +44,6 @@ const ProductForm = forwardRef<ChildRef, Props>(
 
         const selectedTags = current?.tags?.map((item: any) => item.id) ?? [];
         const selectedCollections = current?.collections?.map((item: any) => item.id) ?? [];
-
-        const {
-            reset,
-            control,
-            register,
-            handleSubmit,
-            formState: { errors },
-        } = useForm<Inputs>({
-            defaultValues: {
-                name: current.name,
-                is_active: current.is_active,
-                price: current.price ?? 0,
-                collections: selectedCollections.join(","),
-                tags: selectedTags.join(","),
-            },
-        });
-
-        const onSubmit: SubmitHandler<Inputs> = async (data) => {
-            const body = data;
-            console.log("🚀 ~ constonSubmit:SubmitHandler<Inputs>= ~ body:", body);
-            const tags = data.tags
-                ?.split(",")
-                ?.filter((i) => i)
-                .map((item: string) => item);
-            const collections = data.collections
-                ?.split(",")
-                ?.filter((i) => i)
-                .map((item: string) => item);
-
-            console.log(tags);
-            console.log(collections);
-            // if (isCreate) {
-            //     createMutation.mutate(body);
-            // } else {
-            //     updateMutation.mutate(body);
-            // }
-        };
 
         useImperativeHandle(ref, () => ({
             submit: () => handleSubmit(onSubmit),
@@ -124,126 +91,126 @@ const ProductForm = forwardRef<ChildRef, Props>(
                 return { value: item.id, label: item.name };
             });
         }, tags);
-        console.log(tagOptions);
 
-        console.log(collectionOptions);
+        const {
+            reset,
+            control,
+            register,
+            handleSubmit,
+            formState: { errors },
+        } = useForm<Inputs>({
+            defaultValues: {
+                name: current.name,
+                is_active: current.is_active,
+                price: current.price ?? 0,
+                old_price: current.old_price ?? 0,
+                collections: new Set(selectedCollections),
+                tags: new Set(selectedTags),
+                description: current.description,
+            },
+        });
 
-        // const {
-        //     reset,
-        //     control,
-        //     register,
-        //     handleSubmit,
-        //     formState: { errors },
-        // } = useForm<Inputs>({
-        //     defaultValues: {
-        //         name: current.name,
-        //         is_active: current.is_active,
-        //         price: current.price ?? 0,
-        //         collections: selectedCollections.join(","),
-        //         tags: selectedTags.join(","),
-        //     },
-        // });
+        const onSubmit: SubmitHandler<Inputs> = async (data) => {
+            const { collections, tags, ...body }: any = data;
+            body["tags"] = [...tags];
+            body["collections"] = [...collections];
 
-        // const onSubmit: SubmitHandler<Inputs> = async (data) => {
-        //     const body = data;
-        //     console.log("🚀 ~ constonSubmit:SubmitHandler<Inputs>= ~ body:", body);
-        //     const tags = data.tags
-        //         ?.split(",")
-        //         ?.filter((i) => i)
-        //         .map((item: string) => item);
-        //     const collections = data.collections
-        //         ?.split(",")
-        //         ?.filter((i) => i)
-        //         .map((item: string) => item);
+            if (isCreate) {
+                createMutation.mutate(body);
+            } else {
+                updateMutation.mutate(body);
+            }
+        };
 
-        //     console.log(tags);
-        //     console.log(collections);
-        //     // if (isCreate) {
-        //     //     createMutation.mutate(body);
-        //     // } else {
-        //     //     updateMutation.mutate(body);
-        //     // }
-        // };
+        const handleUpload = async (data: any) => {
+            try {
+                await productService.imageUpload(current.id, data);
+                queryClient.removeQueries({ queryKey: ["products", { name, page }] });
+                revalidator.revalidate();
+                notify.success("Imsge uploaded successfully");
+            } catch (error) {
+                notify.error(`${error}`);
+            }
+        };
         return (
             <React.Fragment>
                 <div className="mx-auto w-full pb-8">
-                    <div className="mt-8">
-                        <form className="h-full flex flex-col" onSubmit={handleSubmit(onSubmit)}>
-                            <div className="flex min-h-0 flex-1 flex-col overflow-y-scroll py-6">
-                                <div className="relative flex-1">
-                                    <div className="space-y-8 max-w-sm mt-4">
-                                        {/* Image uploader */}
-                                        {/* <div>
-                                        <span className="block text-sm font-medium">Product Image</span>
-                                        {!isCreate && <ImageUpload onData={setFile} defaultImage={product.image ? imgSrc(product.image) : ""} />}
-                                        {file && (
-                                            <Button type="button" onPress={handleUpload} color="primary" isLoading={imageLoader} className="mt-1">
-                                                Update Image
-                                            </Button>
+                    <form className="h-full flex flex-col" onSubmit={handleSubmit(onSubmit)}>
+                        <div className="flex min-h-0 flex-1 flex-col overflow-y-scroll py-6">
+                            <div className="relative flex-1">
+                                <div className="space-y-8 ">
+                                    {/* Image uploader */}
+                                    <div>
+                                        <span className="block text-sm font-medium mb-1">Product Image</span>
+                                        {!isCreate && (
+                                            <ImageUpload onUpload={handleUpload} defaultImage={current.image ? imgSrc(current.image) : ""} />
                                         )}
-                                    </div> */}
-                                        <Input register={register} name="name" label="Name" placeholder="Ex. Gown" required error={errors?.name} />
-                                        <Switch name="is_active" label="Active" control={control} />
-                                        <Select
-                                            name="tags"
-                                            label="Tags"
-                                            control={control}
-                                            options={tagOptions}
-                                            error={errors?.tags}
-                                            description="Product Tags"
-                                            selectionMode="multiple"
-                                            placeholder="Select Tags"
-                                        />
-                                        <Select
-                                            name="collections"
-                                            label="Collections"
-                                            control={control}
-                                            options={collectionOptions}
-                                            error={errors?.collections}
-                                            description="Product Collections"
-                                            selectionMode="multiple"
-                                            placeholder="Select Collections"
-                                        />
-                                        <Number
-                                            name="price"
-                                            label="Product Price"
-                                            placeholder="Ex. 2500"
-                                            register={register}
-                                            error={errors?.price}
-                                            required
-                                        />
-                                        <Number
-                                            name="price"
-                                            label="Old Price"
-                                            placeholder="Ex. 2500"
-                                            register={register}
-                                            error={errors?.price}
-                                            defaultValue={0}
-                                        />
-                                        <div className="h-[500px] bg-blue-500">Hi</div>
                                     </div>
+                                    <Input register={register} name="name" label="Name" placeholder="Ex. Gown" required error={errors?.name} />
+                                    <Switch name="is_active" label="Active" control={control} />
+                                    <TextArea register={register} name="description" label="Description" placeholder="Product description" />
+                                    <Select
+                                        name="tags"
+                                        label="Tags"
+                                        control={control}
+                                        options={tagOptions}
+                                        error={errors?.tags}
+                                        description="Product Tags"
+                                        selectionMode="multiple"
+                                        placeholder="Select Tags"
+                                    />
+                                    <Select
+                                        name="collections"
+                                        label="Collections"
+                                        control={control}
+                                        options={collectionOptions}
+                                        error={errors?.collections}
+                                        description="Product Collections"
+                                        selectionMode="multiple"
+                                        placeholder="Select Collections"
+                                    />
+                                    <Number
+                                        name="price"
+                                        label="Product Price"
+                                        placeholder="Ex. 2500"
+                                        register={register}
+                                        error={errors?.price}
+                                        defaultValue={0}
+                                        required
+                                    />
+                                    <Number
+                                        name="old_price"
+                                        label="Old Price"
+                                        placeholder="Ex. 2500"
+                                        register={register}
+                                        error={errors?.price}
+                                        defaultValue={0}
+                                    />
                                 </div>
                             </div>
-                            <div className="flex flex-shrink-0 justify-end p-4 space-x-2 border-t border-default-200 absolute bottom-0 bg-red-500 w-full right-0 z-50">
-                                <Button color="danger" onPress={onClose} variant="shadow">
-                                    Cancel
-                                </Button>
-                                <Button
-                                    type="submit"
-                                    color="primary"
-                                    isDisabled={createMutation.isPending || updateMutation.isPending}
-                                    isLoading={createMutation.isPending || updateMutation.isPending}
-                                    variant="shadow"
-                                >
-                                    {isCreate ? "Submit" : "Update"}
-                                </Button>
-                            </div>
-                        </form>
-                    </div>
+                        </div>
+                        <div className="flex flex-shrink-0 justify-end py-4 px-8 space-x-2 absolute bottom-0 bg-default-50 w-full right-0 z-50">
+                            <Button color="danger" onPress={onClose} variant="shadow" className="min-w-32">
+                                Cancel
+                            </Button>
+                            <Button
+                                type="submit"
+                                color="primary"
+                                isDisabled={createMutation.isPending || updateMutation.isPending}
+                                isLoading={createMutation.isPending || updateMutation.isPending}
+                                variant="shadow"
+                                className="min-w-32"
+                            >
+                                {isCreate ? "Submit" : "Update"}
+                            </Button>
+                        </div>
+                    </form>
                 </div>
             </React.Fragment>
         );
     }
 );
+
+ProductForm.displayName = "ProductForm";
 
 export { ProductForm };

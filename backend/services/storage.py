@@ -3,7 +3,7 @@ from google.cloud.storage.bucket import Bucket
 from core.logging import logger
 
 
-def upload_to_firebase(file_path: str, bucket: Bucket) -> str:
+async def upload_to_firebase(file_path: str, bucket: Bucket) -> str:
     try:
         blob = bucket.blob(file_path)
         blob.upload_from_filename(file_path)

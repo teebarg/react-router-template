@@ -1,5 +1,5 @@
 import React, { useRef, useState } from "react";
-import { Avatar, Badge, Button, Chip, Tooltip } from "@nextui-org/react";
+import { Avatar, Badge, Chip, Tooltip } from "@nextui-org/react";
 import { EyeIcon, EditIcon, DeleteIcon } from "nui-react-icons";
 import { useNavigate, useRevalidator } from "react-router-dom";
 import type { TableProps } from "@/types";
@@ -20,10 +20,6 @@ import { useOverlayTriggerState } from "@react-stately/overlays";
 interface ChildComponentHandles {
     onOpen: () => void;
     onClose: () => void;
-}
-
-interface ChildRef {
-    submit: () => void;
 }
 
 export default function TableData({
@@ -47,8 +43,6 @@ export default function TableData({
     const { current, mode, onEdit, onDelete, onModalClose, updateQueryParams } = useTable();
     const [isExporting, setIExporting] = useState<boolean>(false);
     const [, notify] = useNotifications();
-    // const form = useRef<ChildComponentHandles>(null);
-    const formRef = useRef<ChildRef>(null);
 
     const navigate = useNavigate();
 
@@ -104,6 +98,8 @@ export default function TableData({
                 );
             case "name":
                 return <div className="font-bold">{row?.name}</div>;
+            case "desc":
+                return <div className="font-bold">{row?.description}</div>;
             case "price":
                 return <p>{currency(Number(row?.price) ?? 0)}</p>;
             case "tags":
@@ -183,7 +179,7 @@ export default function TableData({
                 //     </div>
                 // }
             >
-                <ProductForm current={current} onClose={state.close} type={mode} tags={tags} collections={collections} />
+                {state.isOpen && <ProductForm current={current} onClose={state.close} type={mode} tags={tags} collections={collections} />}
             </SlideOver>
             <NextModal ref={deleteModalRef} size="md">
                 <Confirm onClose={() => onModalClose(deleteModalRef)} onConfirm={onConfirmDelete} />

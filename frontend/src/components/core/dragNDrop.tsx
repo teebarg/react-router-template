@@ -10,9 +10,11 @@ interface DragNDropProps {
     onSelect: (files: File[]) => void;
     onError?: (message: string) => void;
     maxFileSize?: number;
+    allowsMultiple?: boolean;
+    acceptedFiles?: FileTypes[];
 }
 
-const DragNDrop: React.FC<DragNDropProps> = ({ onSelect, onError, maxFileSize = 1500 }) => {
+const DragNDrop: React.FC<DragNDropProps> = ({ onSelect, onError, maxFileSize = 1500, allowsMultiple = true, acceptedFiles = [FileTypes.xlsx] }) => {
     const [files, setFiles] = React.useState<File[]>([]);
 
     useWatch(files, (newValue: File[]) => {
@@ -37,7 +39,7 @@ const DragNDrop: React.FC<DragNDropProps> = ({ onSelect, onError, maxFileSize = 
         setFiles([]);
     };
 
-    const acceptedFiles = [FileTypes.xlsx, FileTypes.png];
+    // const acceptedFiles = [FileTypes.xlsx, FileTypes.png];
 
     return (
         <DropZone
@@ -53,13 +55,13 @@ const DragNDrop: React.FC<DragNDropProps> = ({ onSelect, onError, maxFileSize = 
                 handleSelectedFiles(selectedFiles);
             }}
         >
-            {files && (
+            {files[0] && (
                 <button type="button" className="absolute top-3 right-4" onClick={handleCancel}>
                     <CancelIcon size={24} aria-hidden="true" />
                 </button>
             )}
             <FileTrigger
-                allowsMultiple
+                allowsMultiple={allowsMultiple}
                 acceptedFileTypes={acceptedFiles}
                 onSelect={(e: FileList | null) => {
                     const files = Array.from(e ?? []);
@@ -74,12 +76,16 @@ const DragNDrop: React.FC<DragNDropProps> = ({ onSelect, onError, maxFileSize = 
                     <p>
                         Drop your files here or <button className="link">browse.</button>
                     </p>
-                    <button className="btn-custom group min-w-48 bg-primary text-primary-foreground">Upload</button>
+                    <button type="button" className="btn-custom group min-w-48 bg-primary text-primary-foreground">
+                        Select
+                    </button>
                 </div>
             </FileTrigger>
             <div slot="label" className="mt-4">
                 {files?.map((file: File, index: number) => (
-                    <span key={index} className="block">{file.name}</span>
+                    <span key={index} className="block">
+                        {file.name}
+                    </span>
                 ))}
             </div>
         </DropZone>

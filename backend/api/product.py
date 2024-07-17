@@ -1,16 +1,23 @@
-from typing import Any
+from io import BytesIO
+from typing import Annotated, Any
 
 from fastapi import (
     APIRouter,
+    BackgroundTasks,
+    File,
+    Form,
     HTTPException,
     Query,
+    UploadFile,
 )
 from sqlmodel import func, or_, select
 
 import crud
+from core import deps
 from core.deps import (
     SessionDep,
 )
+from core.logging import logger
 from models.message import Message
 from models.product import (
     Product,
@@ -19,6 +26,7 @@ from models.product import (
     Products,
     ProductUpdate,
 )
+from services.export import export, process_file, validate_file
 
 # Create a router for products
 router = APIRouter()
@@ -123,3 +131,82 @@ def delete(db: SessionDep, id: int) -> Message:
         raise HTTPException(status_code=404, detail="Product not found")
     crud.product.remove(db=db, id=id)
     return Message(message="Product deleted successfully")
+
+
+@router.post("/excel/{id}")
+async def upload_products(
+    file: Annotated[UploadFile, File()],
+    batch: Annotated[str, Form()],
+    id: str,
+    db: SessionDep,
+    background_tasks: BackgroundTasks,
+):
+    await validate_file(file=file)
+
+    contents = await file.read()
+    background_tasks.add_task(process_file, contents, id, db, crud.product.bulk_upload)
+    return {"batch": batch, "message": "File upload started"}
+
+
+@router.post("/export")
+async def export_products(
+    current_user: deps.CurrentUser, db: SessionDep, bucket: deps.Storage
+) -> Any:
+    from sqlalchemy.sql import text
+    try:
+        statement = "SELECT name, description FROM product;"
+        products = db.exec(text(statement))
+
+        # products = db.exec(select(Product))
+        # print("🚀 ~ products normal:", products)
+        # products = db.exec(select(Product.name, Product.description))
+        # print("🚀 ~ products slection:", products)
+        # products = db.exec(select(Product.name))
+        # print("🚀 ~ products:", products)
+        # # print("🚀 ~ products:", products[0])
+        # result = [{"name": product.name, "description": product.description}for product in products]
+        # return result
+        # # products = db.exec(select(Product.name, Product.description))
+        # print("🚀 ~ products:", products)
+        # return {"message": ""}
+
+        file_url = await export(
+            columns=["name", "description"], data=products, name="Product", bucket=bucket, email=current_user.email
+        )
+
+        return {"message": "Data Export successful", "file_url": file_url}
+    except Exception as e:
+        logger.error(f"Export products error: {e}")
+        raise HTTPException(status_code=500, detail=str(e)) from e
+
+
+# Upload Image
+@router.patch("/{id}/image", response_model=Any)
+async def upload_product_image(
+    id: str,
+    file: Annotated[UploadFile, File()],
+    db=SessionDep,
+    bucket=deps.Storage,
+):
+    """
+    Upload a product image.
+    """
+    try:
+        await validate_file(file=file)
+        contents = await file.read()
+
+        file_name = f"{id}.jpeg"
+
+        blob = bucket.blob(file_name)
+        blob.upload_from_file(BytesIO(contents), content_type=file.content_type)
+
+        if product := crud.product.get(db=db, id=id):
+            return crud.product.update(
+                db=db, db_obj=product, obj_in={"image": file_name}
+            )
+        raise HTTPException(status_code=404, detail="Product not found.")
+    except Exception as e:
+        logger.error(f"An exception occurred while trying to upload image: {e}")
+        raise HTTPException(
+            status_code=500, detail=f"Error while uploading product image. {e}"
+        ) from e

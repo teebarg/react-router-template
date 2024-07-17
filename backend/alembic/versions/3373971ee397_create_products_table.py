@@ -30,7 +30,7 @@ def upgrade() -> None:
         sa.Column("price", sa.Float(), nullable=False),
         sa.Column("old_price", sa.Float(), nullable=True),
         sa.Column("image", sa.String(length=255), nullable=True),
-        sa.Column("status", sa.Boolean(), nullable=False, default=False),
+        sa.Column("is_active", sa.Boolean(), nullable=False, default=True),
         sa.Column("created_at", sa.DateTime(), nullable=True),
         sa.Column("updated_at", sa.DateTime(), nullable=True),
         sa.PrimaryKeyConstraint("id"),

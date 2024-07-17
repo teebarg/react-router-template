@@ -98,6 +98,18 @@ class ProductService {
         }
         return await res.json();
     }
+    async imageUpload(id: string, formData: any): Promise<Record<string, string>> {
+        const res = await fetch(`${API_URL}/product/${id}/image`, {
+            method: "PATCH",
+            body: formData,
+            credentials: "include",
+        });
+        if (!res.ok) {
+            const errorText = await res.text();
+            throw new UnauthorizedError(errorText, res.status);
+        }
+        return await res.json();
+    }
 }
 
 export default new ProductService();

@@ -197,7 +197,9 @@ async def autocomplete(
     """
     statement = select(Tag)
     if search:
-        statement = statement.where(or_(Tag.name.like(f"%{search}%"), Tag.slug.like(f"%{search}%")))
+        statement = statement.where(
+            or_(Tag.name.like(f"%{search}%"), Tag.slug.like(f"%{search}%"))
+        )
 
     data = db.exec(statement)
 

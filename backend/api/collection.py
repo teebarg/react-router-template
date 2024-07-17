@@ -193,7 +193,11 @@ async def autocomplete(
     """
     statement = select(Collection)
     if search:
-        statement = statement.where(or_(Collection.name.like(f"%{search}%"), Collection.slug.like(f"%{search}%")))
+        statement = statement.where(
+            or_(
+                Collection.name.like(f"%{search}%"), Collection.slug.like(f"%{search}%")
+            )
+        )
 
     data = db.exec(statement)
 
