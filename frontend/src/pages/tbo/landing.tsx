@@ -6,13 +6,45 @@ import { LocationIcon, MailIcon } from "nui-react-icons";
 import ContactForm from "./components/contact-form";
 import { Fade } from "react-awesome-reveal";
 import { openingHours, products } from "./data";
-import { Link } from "react-router-dom";
+import { Link, LoaderFunction, useLoaderData } from "react-router-dom";
 import { ProductItem } from "./components/product-item";
 import { imgSrc } from "@/utils/util";
+import { useCookie } from "@/hooks/use-cookie";
+import productService from "@/services/product.service";
+import { Product } from "@/models/product";
+
+const arrivalQuery = {
+    queryKey: ["tbo-arrival"],
+    queryFn: async () => {
+        return await productService.all({ tag: "arrival", per_page: 4 });
+    },
+};
+const trendingQuery = {
+    queryKey: ["tbo-trending"],
+    queryFn: async () => {
+        return await productService.all({ tag: "trending", per_page: 4 });
+    },
+};
+
+const tboLoader =
+    (queryClient: any): LoaderFunction =>
+    async ({ request }) => {
+        const [trendingData, NewArrivalData] = await Promise.all([
+            queryClient.ensureQueryData(trendingQuery),
+            queryClient.ensureQueryData(arrivalQuery),
+        ]);
+        return { trendingData, NewArrivalData };
+    };
 
 interface Props {}
 
-const Landing: React.FC<Props> = () => {
+const Tbo: React.FC<Props> = () => {
+    const { trendingData, NewArrivalData } = useLoaderData() as any;
+    const { products: trending } = trendingData;
+    console.log("🚀 ~ trending:", trending);
+    const { products: arrival } = NewArrivalData;
+    console.log("🚀 ~ arrival:", arrival);
+
     return (
         <React.Fragment>
             <Meta title="Children clothing" />
@@ -81,7 +113,7 @@ const Landing: React.FC<Props> = () => {
                     <div className="max-w-7xl mx-auto relative py-8 px-4 md:px-0">
                         <p className="text-lg uppercase text-primary mb-2 font-semibold">Trending</p>
                         <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
-                            {products.slice(0, 4).map((product, index) => (
+                            {trending.map((product: Product, index: number) => (
                                 <ProductItem key={index} product={product} />
                             ))}
                         </div>
@@ -173,4 +205,4 @@ const Landing: React.FC<Props> = () => {
     );
 };
 
-export default Landing;
+export { tboLoader, Tbo };

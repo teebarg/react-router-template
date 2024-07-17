@@ -172,7 +172,11 @@ async def export_collections(
     try:
         collections = db.exec(select(Collection))
         file_url = await export(
-            data=collections, name="Collection", bucket=bucket, email=current_user.email
+            columns=["name", "slug"],
+            data=collections,
+            name="Collection",
+            bucket=bucket,
+            email=current_user.email,
         )
 
         return {"message": "Data Export successful", "file_url": file_url}

@@ -42,8 +42,9 @@ const useTable = () => {
     };
 
     const onModalClose = (modalRef: any) => {
+        setMode("create");
         setCurrent({ is_active: true } as Generic);
-        if (modalRef.current) {
+        if (modalRef?.current) {
             modalRef.current.onClose();
         }
     };

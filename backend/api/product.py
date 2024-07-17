@@ -153,25 +153,17 @@ async def export_products(
     current_user: deps.CurrentUser, db: SessionDep, bucket: deps.Storage
 ) -> Any:
     from sqlalchemy.sql import text
+
     try:
-        statement = "SELECT name, description FROM product;"
+        statement = "SELECT name, slug, description, price, old_price FROM product;"
         products = db.exec(text(statement))
 
-        # products = db.exec(select(Product))
-        # print("🚀 ~ products normal:", products)
-        # products = db.exec(select(Product.name, Product.description))
-        # print("🚀 ~ products slection:", products)
-        # products = db.exec(select(Product.name))
-        # print("🚀 ~ products:", products)
-        # # print("🚀 ~ products:", products[0])
-        # result = [{"name": product.name, "description": product.description}for product in products]
-        # return result
-        # # products = db.exec(select(Product.name, Product.description))
-        # print("🚀 ~ products:", products)
-        # return {"message": ""}
-
         file_url = await export(
-            columns=["name", "description"], data=products, name="Product", bucket=bucket, email=current_user.email
+            columns=["name", "slug", "description", "price", "old_price"],
+            data=products,
+            name="Product",
+            bucket=bucket,
+            email=current_user.email,
         )
 
         return {"message": "Data Export successful", "file_url": file_url}
@@ -185,8 +177,8 @@ async def export_products(
 async def upload_product_image(
     id: str,
     file: Annotated[UploadFile, File()],
-    db=SessionDep,
-    bucket=deps.Storage,
+    db: SessionDep,
+    bucket: deps.Storage,
 ):
     """
     Upload a product image.
@@ -206,7 +198,7 @@ async def upload_product_image(
             )
         raise HTTPException(status_code=404, detail="Product not found.")
     except Exception as e:
-        logger.error(f"An exception occurred while trying to upload image: {e}")
+        logger.error(f"{e}")
         raise HTTPException(
             status_code=500, detail=f"Error while uploading product image. {e}"
         ) from e

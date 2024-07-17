@@ -1,8 +1,8 @@
 import { Button, Card, CardBody, CardFooter, Image } from "@nextui-org/react";
-import type { Product } from "../data";
 import { StarIcon } from "nui-react-icons";
 import { useNavigate } from "react-router-dom";
 import { currency, imgSrc } from "@/utils/util";
+import { Product } from "@/models/product";
 
 interface ComponentProps {
     product: Product;
@@ -24,20 +24,20 @@ const ProductItem: React.FC<ComponentProps> = ({ product }) => {
                     shadow="sm"
                     radius="none"
                     width="100%"
-                    alt={product.title}
+                    alt={product.name}
                     className="object-contain h-[300px]"
-                    src={imgSrc(`products%2F${product.img}`)}
+                    src={imgSrc(`products%2F${product.image}`)}
                     fallbackSrc="https://via.placeholder.com/300x200"
                 />
             </CardBody>
             <CardFooter className="block">
                 <div className="flex gap-1">
                     <p className="text-xl text-[#C8102E]">{currency(product.price)}</p>
-                    {product.oldPrice && <p className="text-default-500 line-through">{currency(product.oldPrice)}</p>}
+                    {product.old_price > 0 && <p className="text-default-500 line-through">{currency(product.old_price)}</p>}
                 </div>
-                <div className="h-12">
+                <div className="h-20">
                     <div className="flex text-small justify-between mt-2">
-                        <p className="font-medium text-default-700 text-base">{product.title}</p>
+                        <p className="font-medium text-default-700 text-base">{product.name}</p>
                         {product.rating && (
                             <div className="flex items-center">
                                 <StarIcon className="text-default-500" role="img" size={16} />
@@ -45,7 +45,7 @@ const ProductItem: React.FC<ComponentProps> = ({ product }) => {
                             </div>
                         )}
                     </div>
-                    <p className="text-left text-small text-default-500">{product.desc}</p>
+                    <p className="text-left text-small text-default-500 truncate mt-1">{product.description}</p>
                 </div>
                 <Button color="primary" variant="shadow" className="w-full mt-3 h-12">
                     Add to Cart

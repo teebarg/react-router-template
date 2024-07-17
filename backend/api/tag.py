@@ -176,7 +176,11 @@ async def export_tags(
     try:
         tags = db.exec(select(Tag))
         file_url = await export(
-            data=tags, name="Tag", bucket=bucket, email=current_user.email
+            columns=["name", "slug"],
+            data=tags,
+            name="Tag",
+            bucket=bucket,
+            email=current_user.email,
         )
 
         return {"message": "Data Export successful", "file_url": file_url}

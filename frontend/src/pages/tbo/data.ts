@@ -1,3 +1,5 @@
+import { Product } from "@/models/product";
+
 interface CategoryInterface {
     title: string;
     description: string;
@@ -130,66 +132,57 @@ const filters = [
     { key: "most-popular", label: "Most Popular" },
 ];
 
-interface Product {
-    title: string;
-    desc?: string;
-    img: string;
-    price: number;
-    oldPrice?: number;
-    rating?: number;
-}
-
 const products: Product[] = [
     {
-        title: "Orange",
-        img: "1.avif",
-        desc: "Lorem ipsum lorem sentif",
+        name: "Orange",
+        image: "1.avif",
+        description: "Lorem ipsum lorem sentif",
         price: 1500,
-        oldPrice: 2500,
+        old_price: 2500,
         rating: 4.25,
     },
     {
-        title: "Tangerine",
-        img: "2.avif",
+        name: "Tangerine",
+        image: "2.avif",
         price: 4500,
         rating: 4.65,
     },
     {
-        title: "Raspberry",
-        img: "3.avif",
-        desc: "Lorem ipsum lorem sentif",
+        name: "Raspberry",
+        image: "3.avif",
+        description: "Lorem ipsum lorem sentif",
         price: 5000.5,
-        oldPrice: 80000,
+        old_price: 80000,
         rating: 4.75,
     },
     {
-        title: "Lemon",
-        img: "4.avif",
+        name: "Lemon",
+        image: "4.avif",
         price: 41500,
         rating: 2.65,
     },
     {
-        title: "Avocado",
-        img: "5.avif",
+        name: "Avocado",
+        image: "5.avif",
         price: 42500,
         rating: 4.15,
     },
     {
-        title: "Lemon 2",
-        img: "6.avif",
+        name: "Lemon 2",
+        image: "6.avif",
         price: 450000,
         rating: 4.65,
     },
     {
-        title: "Banana",
-        img: "7.png",
-        desc: "Lorem ipsum lorem sentif",
+        name: "Banana",
+        image: "7.png",
+        description: "Lorem ipsum lorem sentif",
         price: 500,
         rating: 3.24,
     },
     {
-        title: "Watermelon",
-        img: "8.avif",
+        name: "Watermelon",
+        image: "8.avif",
         price: 40,
         rating: 4.65,
     },
@@ -231,5 +224,5 @@ const cart: Cart[] = [
     },
 ];
 
-export type { CategoryInterface, Product, Cart };
+export type { CategoryInterface, Cart };
 export { categories, openingHours, sizes, genders, brands, filters, products, cart };

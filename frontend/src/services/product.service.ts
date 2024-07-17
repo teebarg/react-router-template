@@ -6,8 +6,18 @@ import { buildUrl } from "@/utils/util";
 const API_URL = import.meta.env.VITE_API_DOMAIN;
 
 class ProductService {
-    async all({ name, page }: { name: string; page: string | null }): Promise<Products & Pagination[]> {
-        const url = buildUrl(`${API_URL}/product/`, { name, page, per_page: 5 });
+    async all({
+        name,
+        tag,
+        page,
+        per_page = 5,
+    }: {
+        name?: string;
+        tag: string;
+        page?: string | null;
+        per_page?: number;
+    }): Promise<Products & Pagination[]> {
+        const url = buildUrl(`${API_URL}/product/`, { name, tag, page, per_page });
         const res = await fetch(url, {
             method: "GET",
             headers: { "Content-Type": "application/json" },

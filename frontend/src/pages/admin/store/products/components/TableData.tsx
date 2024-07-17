@@ -50,7 +50,8 @@ export default function TableData({
         { name: "Image", uid: "image" },
         { name: "Name", uid: "name", sortable: true },
         { name: "Description", uid: "desc" },
-        { name: "Price", uid: "price", sortable: true },
+        { name: "Price", uid: "price" },
+        { name: "Old Price", uid: "old_price" },
         { name: "Created_at", uid: "create" },
         { name: "Actions", uid: "actions" },
     ];
@@ -86,6 +87,11 @@ export default function TableData({
         }
     };
 
+    const handleSlideOverClose = () => {
+        onModalClose(null)
+        state.close();
+    };
+
     const rowRender = React.useCallback((row: Record<string, any>, columnKey: string | number) => {
         const cellValue = row[columnKey];
 
@@ -97,11 +103,13 @@ export default function TableData({
                     </Badge>
                 );
             case "name":
-                return <div className="font-bold">{row?.name}</div>;
+                return <div className="font-bold truncate max-w-32">{row?.name}</div>;
             case "desc":
-                return <div className="font-bold">{row?.description}</div>;
+                return <div className="font-bold truncate max-w-32">{row?.description}</div>;
             case "price":
                 return <p>{currency(Number(row?.price) ?? 0)}</p>;
+            case "old_price":
+                return <p>{currency(Number(row?.old_price) ?? 0)}</p>;
             case "tags":
                 return (
                     <div className="flex flex-wrap gap-1">
@@ -165,7 +173,7 @@ export default function TableData({
             />
             <SlideOver
                 isOpen={state.isOpen}
-                onClose={state.close}
+                onClose={handleSlideOverClose}
                 className="bg-default-50"
                 title={`${mode == "create" ? "Add" : "Edit"} Products`}
                 // footer={
@@ -179,7 +187,7 @@ export default function TableData({
                 //     </div>
                 // }
             >
-                {state.isOpen && <ProductForm current={current} onClose={state.close} type={mode} tags={tags} collections={collections} />}
+                {state.isOpen && <ProductForm current={current} onClose={handleSlideOverClose} type={mode} tags={tags} collections={collections} />}
             </SlideOver>
             <NextModal ref={deleteModalRef} size="md">
                 <Confirm onClose={() => onModalClose(deleteModalRef)} onConfirm={onConfirmDelete} />

@@ -53,6 +53,7 @@ class ProductBase(BaseModel):
     price: float
     old_price: float = 0.0
     is_active: bool = True
+    ratings: float = 5.0
 
 
 # Properties to receive via API on creation
