@@ -1,5 +1,3 @@
-import { Product } from "@/models/product";
-
 interface CategoryInterface {
     title: string;
     description: string;
@@ -132,62 +130,6 @@ const filters = [
     { key: "most-popular", label: "Most Popular" },
 ];
 
-const products: Product[] = [
-    {
-        name: "Orange",
-        image: "1.avif",
-        description: "Lorem ipsum lorem sentif",
-        price: 1500,
-        old_price: 2500,
-        rating: 4.25,
-    },
-    {
-        name: "Tangerine",
-        image: "2.avif",
-        price: 4500,
-        rating: 4.65,
-    },
-    {
-        name: "Raspberry",
-        image: "3.avif",
-        description: "Lorem ipsum lorem sentif",
-        price: 5000.5,
-        old_price: 80000,
-        rating: 4.75,
-    },
-    {
-        name: "Lemon",
-        image: "4.avif",
-        price: 41500,
-        rating: 2.65,
-    },
-    {
-        name: "Avocado",
-        image: "5.avif",
-        price: 42500,
-        rating: 4.15,
-    },
-    {
-        name: "Lemon 2",
-        image: "6.avif",
-        price: 450000,
-        rating: 4.65,
-    },
-    {
-        name: "Banana",
-        image: "7.png",
-        description: "Lorem ipsum lorem sentif",
-        price: 500,
-        rating: 3.24,
-    },
-    {
-        name: "Watermelon",
-        image: "8.avif",
-        price: 40,
-        rating: 4.65,
-    },
-];
-
 interface Cart {
     name: string;
     color: string;
@@ -225,4 +167,4 @@ const cart: Cart[] = [
 ];
 
 export type { CategoryInterface, Cart };
-export { categories, openingHours, sizes, genders, brands, filters, products, cart };
+export { categories, openingHours, sizes, genders, brands, filters, cart };

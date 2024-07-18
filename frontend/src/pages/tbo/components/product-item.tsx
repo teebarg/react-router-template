@@ -37,7 +37,7 @@ const ProductItem: React.FC<ComponentProps> = ({ product }) => {
                 </div>
                 <div className="h-20">
                     <div className="flex text-small justify-between mt-2">
-                        <p className="font-medium text-default-700 text-base">{product.name}</p>
+                        <p className="font-medium text-default-700 text-base line-clamp-2">{product.name}</p>
                         {product.rating && (
                             <div className="flex items-center">
                                 <StarIcon className="text-default-500" role="img" size={16} />

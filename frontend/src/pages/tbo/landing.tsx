@@ -5,11 +5,10 @@ import { Button, Image } from "@nextui-org/react";
 import { LocationIcon, MailIcon } from "nui-react-icons";
 import ContactForm from "./components/contact-form";
 import { Fade } from "react-awesome-reveal";
-import { openingHours, products } from "./data";
+import { openingHours } from "./data";
 import { Link, LoaderFunction, useLoaderData } from "react-router-dom";
 import { ProductItem } from "./components/product-item";
 import { imgSrc } from "@/utils/util";
-import { useCookie } from "@/hooks/use-cookie";
 import productService from "@/services/product.service";
 import { Product } from "@/models/product";
 
@@ -28,7 +27,7 @@ const trendingQuery = {
 
 const tboLoader =
     (queryClient: any): LoaderFunction =>
-    async ({ request }) => {
+    async () => {
         const [trendingData, NewArrivalData] = await Promise.all([
             queryClient.ensureQueryData(trendingQuery),
             queryClient.ensureQueryData(arrivalQuery),
@@ -41,9 +40,7 @@ interface Props {}
 const Tbo: React.FC<Props> = () => {
     const { trendingData, NewArrivalData } = useLoaderData() as any;
     const { products: trending } = trendingData;
-    console.log("🚀 ~ trending:", trending);
     const { products: arrival } = NewArrivalData;
-    console.log("🚀 ~ arrival:", arrival);
 
     return (
         <React.Fragment>
@@ -140,7 +137,7 @@ const Tbo: React.FC<Props> = () => {
                             items including clothes, shoes, and accessories for your little ones.`}
                         </p>
                         <div className="grid sm:grid-cols-4 gap-8 mt-6">
-                            {products.slice(4, 8).map((product, index) => (
+                            {arrival.map((product: Product, index: number) => (
                                 <ProductItem key={index} product={product} />
                             ))}
                         </div>

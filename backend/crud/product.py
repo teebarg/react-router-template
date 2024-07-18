@@ -1,15 +1,48 @@
 from typing import Any, Dict, Optional
 
-from sqlmodel import Session, select
+from sqlmodel import Session, or_, select
 
 import crud
 from core.logging import logger
 from core.utils import generate_slug
 from crud.base import CRUDBase
-from models.product import Collection, Product, ProductCreate, ProductUpdate, Tag
+from models.product import (
+    Collection,
+    Product,
+    ProductCollection,
+    ProductCreate,
+    ProductTag,
+    ProductUpdate,
+    Tag,
+)
 
 
 class CRUDProduct(CRUDBase[Product, ProductCreate, ProductUpdate]):
+    def get_multi(
+        self,
+        db: Session,
+        filters: list,
+        tag: str,
+        collection: str,
+        per_page: int,
+        offset: int,
+        sort: str = "desc",
+    ) -> list[Product]:
+        statement = select(self.model)
+        if tag:
+            statement = statement.join(ProductTag).join(Tag).where(Tag.slug == tag)
+        if collection:
+            statement = (
+                statement.join(ProductCollection)
+                .join(Collection)
+                .where(Collection.slug == collection)
+            )
+        if filters:
+            statement = statement.where(or_(*filters))
+        if sort == "desc":
+            statement = statement.order_by(self.model.created_at.desc())
+        return db.exec(statement.offset(offset).limit(per_page))
+
     def create(self, db: Session, obj_in: ProductCreate) -> Product:
         db_obj = Product.model_validate(
             obj_in,

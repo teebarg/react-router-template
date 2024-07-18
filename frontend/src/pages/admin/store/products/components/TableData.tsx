@@ -99,7 +99,7 @@ export default function TableData({
             case "image":
                 return (
                     <Badge content="" color={row.is_active ? "success" : "danger"} shape="circle" placement="bottom-right">
-                        <Avatar radius="md" src={imgSrc(row.image ?? "")} />
+                        <Avatar radius="md" src={imgSrc(`products%2F${row.image ?? ""}`)} />
                     </Badge>
                 );
             case "name":

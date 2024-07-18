@@ -1,5 +1,3 @@
-import asyncComponentLoader from "@/utils/loader";
-
 const tboRoutes = (isAuthenticated: any, queryClient: any) => {
     return [
         {
@@ -13,14 +11,25 @@ const tboRoutes = (isAuthenticated: any, queryClient: any) => {
             },
         },
         {
-            path: "collections",
+            path: "collection/:slug",
             async lazy() {
-                const { Collections } = await import("@/pages/tbo/collections");
+                const { Collections, collectionsLoader } = await import("@/pages/tbo/collections");
                 return {
+                    loader: collectionsLoader(queryClient),
                     Component: Collections,
                 };
             },
         },
+        // {
+        //     path: "collection/:slug",
+        //     async lazy() {
+        //         const { User, userLoader } = await import("@/pages/admin/user");
+        //         return {
+        //             loader: userLoader,
+        //             Component: User,
+        //         };
+        //     },
+        // },
         {
             path: "product",
             async lazy() {

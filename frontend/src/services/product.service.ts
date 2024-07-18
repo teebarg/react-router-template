@@ -9,15 +9,17 @@ class ProductService {
     async all({
         name,
         tag,
+        collection,
         page,
         per_page = 5,
     }: {
         name?: string;
-        tag: string;
+        tag?: string;
+        collection?: string;
         page?: string | null;
         per_page?: number;
     }): Promise<Products & Pagination[]> {
-        const url = buildUrl(`${API_URL}/product/`, { name, tag, page, per_page });
+        const url = buildUrl(`${API_URL}/product/`, { name, tag, collection, page, per_page });
         const res = await fetch(url, {
             method: "GET",
             headers: { "Content-Type": "application/json" },

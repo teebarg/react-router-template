@@ -5,7 +5,7 @@ from core.logging import logger
 
 async def upload_to_firebase(file_path: str, bucket: Bucket) -> str:
     try:
-        blob = bucket.blob(file_path)
+        blob = bucket.blob(f"docs/{file_path}")
         blob.upload_from_filename(file_path)
         blob.make_public()
         return blob.public_url

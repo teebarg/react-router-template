@@ -1,15 +1,38 @@
 import { BreadcrumbItem, Breadcrumbs, Button, Select, SelectItem } from "@nextui-org/react";
 import React from "react";
 import { CollectionsSideBar } from "./components/sidebar";
-import { filters, products } from "./data";
+import { filters } from "./data";
 import { ProductItem } from "./components/product-item";
 import TBONavbar from "./components/navbar";
 import Meta from "@/components/Meta";
 import { FunnelIcon } from "nui-react-icons";
+import { Link, LoaderFunction, useLoaderData } from "react-router-dom";
+import productService from "@/services/product.service";
+import { Product } from "@/models/product";
+import { PaginationComponent } from "@/components/core/pagination";
 
 interface ComponentProps {}
 
+const tagsQuery = ({ name, page, collection }: { name: string; page: string; collection: string | undefined }) => ({
+    queryKey: ["collections-page", { name, page, collection }],
+    queryFn: async () => {
+        return await productService.all({ name, collection, page, per_page: 20 });
+    },
+});
+
+const collectionsLoader =
+    (queryClient: any): LoaderFunction =>
+    async ({ request, params }) => {
+        const url = new URL(request.url);
+        const name = url.searchParams.get("name") ?? "";
+        const page = url.searchParams.get("page") ?? "";
+
+        const query = tagsQuery({ name, page, collection: params.slug });
+        return queryClient.ensureQueryData(query);
+    };
+
 const Collections: React.FC<ComponentProps> = () => {
+    const { products, ...pagination } = useLoaderData() as any;
     return (
         <React.Fragment>
             <Meta title="Children Clothings | Collections" />
@@ -52,12 +75,30 @@ const Collections: React.FC<ComponentProps> = () => {
                             </div>
                         </header>
                         <main className="mt-4 h-full w-full overflow-visible px-1">
-                            <div className="block rounded-medium border-medium border-dashed border-divider p-2">
-                                <div className="grid w-full gap-4 grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                                    {products.map((product, index) => (
-                                        <ProductItem key={index} product={product} />
-                                    ))}
-                                </div>
+                            <div className="block rounded-medium border-medium border-dashed border-divider px-2 py-4 min-h-[50vh]">
+                                {products.length === 0 ? (
+                                    <div className="flex flex-col items-center justify-center min-h-[60vh] bg-content1">
+                                        <div className="max-w-md mx-auto text-center">
+                                            <svg className="w-20 h-20 mx-auto text-danger" viewBox="0 0 24 24" fill="currentColor">
+                                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" />
+                                            </svg>
+                                            <h1 className="text-4xl font-bold mt-6">Oops! No Products Found</h1>
+                                            <p className="text-default-500 mt-4">{`There are no products in this category`}</p>
+                                            <Link to="/tbo" className="bg-primary text-white font-semibold py-2 px-4 rounded mt-6 inline-block">
+                                                Go to Home
+                                            </Link>
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <React.Fragment>
+                                        <div className="grid w-full gap-4 grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                                            {products.map((product: Product, index: number) => (
+                                                <ProductItem key={index} product={product} />
+                                            ))}
+                                        </div>
+                                        {pagination.pages > 1 && <PaginationComponent pagination={pagination} />}
+                                    </React.Fragment>
+                                )}
                             </div>
                         </main>
                     </div>
@@ -67,4 +108,4 @@ const Collections: React.FC<ComponentProps> = () => {
     );
 };
 
-export { Collections };
+export { Collections, collectionsLoader };

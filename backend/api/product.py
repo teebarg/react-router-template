@@ -20,11 +20,15 @@ from core.deps import (
 from core.logging import logger
 from models.message import Message
 from models.product import (
+    Collection,
     Product,
+    ProductCollection,
     ProductCreate,
     ProductPublic,
     Products,
+    ProductTag,
     ProductUpdate,
+    Tag,
 )
 from services.export import export, process_file, validate_file
 
@@ -39,6 +43,8 @@ router = APIRouter()
 def index(
     db: SessionDep,
     name: str = "",
+    tag: str = "",
+    collection: str = "",
     page: int = Query(default=1, gt=0),
     per_page: int = Query(default=20, le=100),
 ) -> Any:
@@ -49,6 +55,16 @@ def index(
     filters = crud.product.build_query(query)
 
     count_statement = select(func.count()).select_from(Product)
+    if tag:
+        count_statement = (
+            count_statement.join(ProductTag).join(Tag).where(Tag.slug == tag)
+        )
+    if collection:
+        count_statement = (
+            count_statement.join(ProductCollection)
+            .join(Collection)
+            .where(Collection.slug == collection)
+        )
     if filters:
         count_statement = count_statement.where(or_(*filters))
     total_count = db.exec(count_statement).one()
@@ -56,6 +72,8 @@ def index(
     products = crud.product.get_multi(
         db=db,
         filters=filters,
+        collection=collection,
+        tag=tag,
         per_page=per_page,
         offset=(page - 1) * per_page,
     )
@@ -189,7 +207,7 @@ async def upload_product_image(
 
         file_name = f"{id}.jpeg"
 
-        blob = bucket.blob(file_name)
+        blob = bucket.blob(f"products/{file_name}")
         blob.upload_from_file(BytesIO(contents), content_type=file.content_type)
 
         if product := crud.product.get(db=db, id=id):

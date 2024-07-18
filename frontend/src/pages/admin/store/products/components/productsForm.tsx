@@ -143,7 +143,7 @@ const ProductForm = forwardRef<ChildRef, Props>(
                                     <div>
                                         <span className="block text-sm font-medium mb-1">Product Image</span>
                                         {!isCreate && (
-                                            <ImageUpload onUpload={handleUpload} defaultImage={current.image ? imgSrc(current.image) : ""} />
+                                            <ImageUpload onUpload={handleUpload} defaultImage={current.image ? imgSrc(`products%2F${current.image}`) : ""} />
                                         )}
                                     </div>
                                     <Input register={register} name="name" label="Name" placeholder="Ex. Gown" required error={errors?.name} />
