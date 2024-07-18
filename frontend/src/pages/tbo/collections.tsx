@@ -6,7 +6,7 @@ import { ProductItem } from "./components/product-item";
 import TBONavbar from "./components/navbar";
 import Meta from "@/components/Meta";
 import { FunnelIcon } from "nui-react-icons";
-import { Link, LoaderFunction, useLoaderData } from "react-router-dom";
+import { Link, LoaderFunction, useLoaderData, useParams } from "react-router-dom";
 import productService from "@/services/product.service";
 import { Product } from "@/models/product";
 import { PaginationComponent } from "@/components/core/pagination";
@@ -33,6 +33,7 @@ const collectionsLoader =
 
 const Collections: React.FC<ComponentProps> = () => {
     const { products, ...pagination } = useLoaderData() as any;
+    const { slug } = useParams();
     return (
         <React.Fragment>
             <Meta title="Children Clothings | Collections" />
@@ -40,15 +41,17 @@ const Collections: React.FC<ComponentProps> = () => {
             <div className=" h-full w-full px-2 lg:px-24 py-4 mt-4">
                 <Breadcrumbs>
                     <BreadcrumbItem>Home</BreadcrumbItem>
-                    <BreadcrumbItem>Collections</BreadcrumbItem>
-                    <BreadcrumbItem>Shoes</BreadcrumbItem>
+                    <BreadcrumbItem>
+                        <Link to={"/tbo/collections"}>Collections</Link>
+                    </BreadcrumbItem>
+                    {slug && <BreadcrumbItem className="capitalize">{slug}</BreadcrumbItem>}
                 </Breadcrumbs>
                 <div className="flex gap-6 mt-6">
                     <CollectionsSideBar />
                     <div className="w-full flex-1 flex-col">
                         <header className="relative z-20 flex flex-col gap-2 rounded-medium bg-default-50 px-4 pb-3 pt-2 md:pt-3">
                             <div className="flex items-center gap-1 md:hidden md:gap-2">
-                                <h2 className="text-large font-medium">Shoes</h2>
+                                <h2 className="text-large font-medium capitalize">{slug}</h2>
                                 <span className="text-small text-default-400">(1240)</span>
                             </div>
                             <div className="flex items-center justify-between gap-2 ">
@@ -58,7 +61,7 @@ const Collections: React.FC<ComponentProps> = () => {
                                         Filters
                                     </Button>
                                     <div className="hidden items-center gap-1 md:flex">
-                                        <h2 className="text-medium font-medium">Shoes</h2>
+                                        <h2 className="text-medium font-medium capitalize">{slug}</h2>
                                         <span className="text-small text-default-400">(1240)</span>
                                     </div>
                                 </div>

@@ -11,7 +11,7 @@ const tboRoutes = (isAuthenticated: any, queryClient: any) => {
             },
         },
         {
-            path: "collection/:slug",
+            path: "collections/:slug",
             async lazy() {
                 const { Collections, collectionsLoader } = await import("@/pages/tbo/collections");
                 return {
@@ -20,16 +20,16 @@ const tboRoutes = (isAuthenticated: any, queryClient: any) => {
                 };
             },
         },
-        // {
-        //     path: "collection/:slug",
-        //     async lazy() {
-        //         const { User, userLoader } = await import("@/pages/admin/user");
-        //         return {
-        //             loader: userLoader,
-        //             Component: User,
-        //         };
-        //     },
-        // },
+        {
+            path: "collections",
+            async lazy() {
+                const { Collections, collectionsLoader } = await import("@/pages/tbo/collections");
+                return {
+                    loader: collectionsLoader(queryClient),
+                    Component: Collections,
+                };
+            },
+        },
         {
             path: "product",
             async lazy() {

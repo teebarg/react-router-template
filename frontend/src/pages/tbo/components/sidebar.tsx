@@ -2,6 +2,10 @@ import { CustomCheckbox } from "@/components/core/checkbox";
 import { Accordion, AccordionItem, Checkbox, CheckboxGroup, Input, Slider } from "@nextui-org/react";
 import React from "react";
 import { brands, categories, genders, sizes } from "../data";
+import { Link } from "react-router-dom";
+import useWatch from "@/hooks/use-watch";
+import { useUpdateQuery } from "@/hooks/useUpdateQuery";
+import { useQueryParams } from "@/hooks/use-query-params";
 
 function isInRange(number: number, range: number[]) {
     const [lowerBound, upperBound] = range;
@@ -11,16 +15,44 @@ function isInRange(number: number, range: number[]) {
 interface ComponentProps {}
 
 const CollectionsSideBar: React.FC<ComponentProps> = () => {
-    const [groupSelected, setGroupSelected] = React.useState<string[]>([]);
+    const { minPrice = 0, maxPrice = 10, sizes: sizesSelect = "" } = useQueryParams();
+    const { updateQuery } = useUpdateQuery(1000);
+
+    const [groupSelected, setGroupSelected] = React.useState<string[]>(sizesSelect.split(","));
+
     const [categoriesSelected, setCategoriesSelected] = React.useState<string[]>(["children-shoes"]);
     const [genderSelected, setGenderSelected] = React.useState<string[]>(["boys"]);
     const [brandSelected, setBrandSelected] = React.useState<string[]>(["adidas"]);
-    const [priceRange, setPriceRange] = React.useState<number[]>([20, 70]);
-    
+
+    const [priceRange, setPriceRange] = React.useState<number[]>([Number(minPrice), Number(maxPrice)]);
+
+    useWatch(priceRange, (newValue: any) => {
+        const [minPrice, maxPrice] = newValue;
+
+        updateQuery([
+            { key: "minPrice", value: minPrice },
+            { key: "maxPrice", value: maxPrice },
+            { key: "sizes", value: groupSelected },
+        ]);
+    });
+
     return (
-        <div className="hidden h-full max-w-[20rem] overflow-x-hidden overflow-y-scroll sm:flex">
-            <div className="h-full max-h-fit w-full max-w-sm rounded-medium p-6 bg-default-50">
-                <h2 className="text-large font-medium text-foreground">Filter by</h2>
+        <div className="hidden h-full max-w-[20rem] overflow-x-hidden overflow-y-scroll sm:flex max-h-[90vh] sticky top-16">
+            <div className="h-full w-full max-w-sm rounded-medium p-6 bg-default-50">
+                <div>
+                    <label className="text-small">Categories</label>
+                    <div className="block mb-6">
+                        {[
+                            { name: "Boys", slug: "boys" },
+                            { name: "Girls", slug: "girls" },
+                        ].map((item: any, index: number) => (
+                            <Link key={index} to={`/tbo/collections/${item.slug}`} className="block">
+                                {item.name}
+                            </Link>
+                        ))}
+                    </div>
+                </div>
+                <h2 className="text-sm font-medium text-foreground">Filter by</h2>
                 <hr className="shrink-0 border-none w-full h-divider my-3 bg-default-100" role="separator" />
                 <div className="overflow-y-auto -mx-6 h-full px-6 max-h-full pb-12">
                     <div className="flex flex-col gap-6">
@@ -129,8 +161,8 @@ const CollectionsSideBar: React.FC<ComponentProps> = () => {
                     </Accordion>
                 </div>
                 <div className="flex flex-col gap-3">
-                    <Accordion>
-                        <AccordionItem key="1" aria-label="Brand" title="Brand">
+                    <Accordion defaultExpandedKeys={["1"]} classNames="bg-red-500">
+                        <AccordionItem key="1" aria-label="Brand" title="Brand" classNames="bg-blue-500" >
                             <CheckboxGroup defaultValue={["Puma"]} value={brandSelected} onChange={setBrandSelected}>
                                 {brands.map((item, index) => (
                                     <Checkbox key={index} value={item.slug}>

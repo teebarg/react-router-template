@@ -70,8 +70,8 @@ class CRUDProduct(CRUDBase[Product, ProductCreate, ProductUpdate]):
             else:
                 update_data = obj_in.dict(exclude_unset=True)
             db_obj.sqlmodel_update(update_data)
-            if "name" in update_data:
-                db_obj.slug = generate_slug(name=update_data.get("name", ""))
+            # if "name" in update_data:
+            #     db_obj.slug = generate_slug(name=update_data.get("name", ""))
             if "tags" in update_data:
                 db_obj.tags = self.get_tag_update(db=db, update=obj_in)
             if "collections" in update_data:

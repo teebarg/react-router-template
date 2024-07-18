@@ -30,4 +30,16 @@ const capitalize = (str: string): string => {
     return str.charAt(0).toUpperCase() + str.slice(1);
 };
 
-export { imgSrc, capitalize, currency, buildUrl };
+const debounce = <T extends (...args: any[]) => void>(func: T, delay: number): ((...args: Parameters<T>) => void) => {
+    let timer: NodeJS.Timeout;
+    return (...args: Parameters<T>) => {
+        clearTimeout(timer);
+        timer = setTimeout(() => {
+            func(...args);
+        }, delay);
+    };
+};
+
+
+
+export { imgSrc, capitalize, currency, buildUrl, debounce };
