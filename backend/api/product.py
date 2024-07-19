@@ -10,7 +10,7 @@ from fastapi import (
     Query,
     UploadFile,
 )
-from sqlmodel import func, or_, select
+from sqlmodel import func, select
 
 import crud
 from core import deps
@@ -20,15 +20,11 @@ from core.deps import (
 from core.logging import logger
 from models.message import Message
 from models.product import (
-    Collection,
     Product,
-    ProductCollection,
     ProductCreate,
     ProductPublic,
     Products,
-    ProductTag,
     ProductUpdate,
-    Tag,
 )
 from services.export import export, process_file, validate_file
 
@@ -40,40 +36,38 @@ router = APIRouter()
     "/",
     response_model=Products,
 )
-def index(
+async def index(
     db: SessionDep,
+    sizes: str = None,
     name: str = "",
     tag: str = "",
     collection: str = "",
+    maxPrice: int = Query(default=1000000, gt=0),
+    minPrice: int = Query(default=1, gt=0),
     page: int = Query(default=1, gt=0),
     per_page: int = Query(default=20, le=100),
 ) -> Any:
     """
     Retrieve products.
     """
-    query = {"name": name}
-    filters = crud.product.build_query(query)
+    query = {
+        "name": name,
+        "tag": tag,
+        "collection": collection,
+        "sizes": sizes,
+        "price": [minPrice, maxPrice],
+    }
 
     count_statement = select(func.count()).select_from(Product)
-    if tag:
-        count_statement = (
-            count_statement.join(ProductTag).join(Tag).where(Tag.slug == tag)
-        )
-    if collection:
-        count_statement = (
-            count_statement.join(ProductCollection)
-            .join(Collection)
-            .where(Collection.slug == collection)
-        )
-    if filters:
-        count_statement = count_statement.where(or_(*filters))
+    count_statement = crud.product.generate_statement(
+        statement=count_statement, query=query
+    )
+    print(count_statement)
     total_count = db.exec(count_statement).one()
 
     products = crud.product.get_multi(
         db=db,
-        filters=filters,
-        collection=collection,
-        tag=tag,
+        query=query,
         per_page=per_page,
         offset=(page - 1) * per_page,
     )

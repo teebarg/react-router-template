@@ -1,37 +1,27 @@
 import React from "react";
 import { Button, Pagination as Pag } from "@nextui-org/react";
-import { useNavigate, useLocation } from "react-router-dom";
 import { Pagination } from "@/models/pagination";
+import { useUpdateQuery } from "@/hooks/useUpdateQuery";
 
 interface Props {
     pagination: Pagination;
 }
 
 const PaginationComponent: React.FC<Props> = ({ pagination }) => {
-    const navigate = useNavigate();
-    const location = useLocation();
+    const { updateQuery } = useUpdateQuery();
 
     const page = pagination?.page ?? 1;
 
-    const updateQueryParams = React.useCallback(
-        (key: string, value: string) => {
-            const searchParams = new URLSearchParams(location.search);
-            searchParams.set(key, value);
-            navigate(`${location.pathname}?${searchParams.toString()}`, { replace: true });
-        },
-        [navigate, location.search]
-    );
-
     const onNextPage = React.useCallback(() => {
-        updateQueryParams("page", `${page + 1}`);
+        updateQuery([{ key: "page", value: `${page + 1}` }]);
     }, [page]);
 
     const onPreviousPage = React.useCallback(() => {
-        updateQueryParams("page", `${page - 1}`);
+        updateQuery([{ key: "page", value: `${page - 1}` }]);
     }, [page]);
 
     const onPageChange = React.useCallback((page: number) => {
-        updateQueryParams("page", page.toString());
+        updateQuery([{ key: "page", value: page.toString() }]);
     }, []);
 
     return (

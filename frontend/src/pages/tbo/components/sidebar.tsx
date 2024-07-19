@@ -18,7 +18,7 @@ const CollectionsSideBar: React.FC<ComponentProps> = () => {
     const { minPrice = 0, maxPrice = 10, sizes: sizesSelect = "" } = useQueryParams();
     const { updateQuery } = useUpdateQuery(1000);
 
-    const [groupSelected, setGroupSelected] = React.useState<string[]>(sizesSelect.split(","));
+    const [sizesSelected, setSizesSelected] = React.useState<string[]>(sizesSelect ? sizesSelect.split(",") : []);
 
     const [categoriesSelected, setCategoriesSelected] = React.useState<string[]>(["children-shoes"]);
     const [genderSelected, setGenderSelected] = React.useState<string[]>(["boys"]);
@@ -32,21 +32,25 @@ const CollectionsSideBar: React.FC<ComponentProps> = () => {
         updateQuery([
             { key: "minPrice", value: minPrice },
             { key: "maxPrice", value: maxPrice },
-            { key: "sizes", value: groupSelected },
         ]);
+    });
+
+    useWatch(sizesSelected, (newValue: any) => {
+        updateQuery([{ key: "sizes", value: newValue }]);
     });
 
     return (
         <div className="hidden h-full max-w-[20rem] overflow-x-hidden overflow-y-scroll sm:flex max-h-[90vh] sticky top-16">
             <div className="h-full w-full max-w-sm rounded-medium p-6 bg-default-50">
                 <div>
-                    <label className="text-small">Categories</label>
+                    <label className="text-sm">Categories</label>
+                    <hr className="shrink-0 border-none w-full h-divider my-3 bg-default-100" role="separator" />
                     <div className="block mb-6">
                         {[
                             { name: "Boys", slug: "boys" },
                             { name: "Girls", slug: "girls" },
                         ].map((item: any, index: number) => (
-                            <Link key={index} to={`/tbo/collections/${item.slug}`} className="block">
+                            <Link key={index} to={`/tbo/collections/${item.slug}`} className="block text-base">
                                 {item.name}
                             </Link>
                         ))}
@@ -125,7 +129,7 @@ const CollectionsSideBar: React.FC<ComponentProps> = () => {
                         <p className="text-small text-default-400"></p>
                     </div>
                     <div className="relative flex flex-col gap-1" aria-label="Select amenities" role="group">
-                        <CheckboxGroup className="gap-1" orientation="horizontal" value={groupSelected} onChange={setGroupSelected}>
+                        <CheckboxGroup className="gap-1" orientation="horizontal" value={sizesSelected} onChange={setSizesSelected}>
                             {sizes.map((size, index) => (
                                 <CustomCheckbox key={index} value={size}>
                                     {size}
@@ -161,8 +165,8 @@ const CollectionsSideBar: React.FC<ComponentProps> = () => {
                     </Accordion>
                 </div>
                 <div className="flex flex-col gap-3">
-                    <Accordion defaultExpandedKeys={["1"]} classNames="bg-red-500">
-                        <AccordionItem key="1" aria-label="Brand" title="Brand" classNames="bg-blue-500" >
+                    <Accordion defaultExpandedKeys={["1"]}>
+                        <AccordionItem key="1" aria-label="Brand" title="Brand">
                             <CheckboxGroup defaultValue={["Puma"]} value={brandSelected} onChange={setBrandSelected}>
                                 {brands.map((item, index) => (
                                     <Checkbox key={index} value={item.slug}>

@@ -18,27 +18,51 @@ from models.product import (
 
 
 class CRUDProduct(CRUDBase[Product, ProductCreate, ProductUpdate]):
+    def generate_statement(self, statement, query: dict) -> str:
+        for key, value in query.items():
+            if value and key == "tag":
+                statement = (
+                    statement.join(ProductTag).join(Tag).where(Tag.slug == value)
+                )
+            if value and key == "collection":
+                statement = (
+                    statement.join(ProductCollection)
+                    .join(Collection)
+                    .where(Collection.slug == value)
+                )
+            # if sizes:
+            #     statement = statement.where(Product.description.in_(sizes))
+            if value and key == "sizes":
+                statement = statement.where(
+                    or_(*[Product.description.contains(size) for size in value])
+                )
+            if value and key == "price":
+                minPrice, maxPrice = value
+                statement = statement.where(Product.price.between(minPrice, maxPrice))
+            if value and key == "name":
+                statement = statement.where(Product.name.like(f"%{value}%"))
+        return statement
+
     def get_multi(
         self,
         db: Session,
-        filters: list,
-        tag: str,
-        collection: str,
+        query: dict,
         per_page: int,
         offset: int,
         sort: str = "desc",
     ) -> list[Product]:
         statement = select(self.model)
-        if tag:
-            statement = statement.join(ProductTag).join(Tag).where(Tag.slug == tag)
-        if collection:
-            statement = (
-                statement.join(ProductCollection)
-                .join(Collection)
-                .where(Collection.slug == collection)
-            )
-        if filters:
-            statement = statement.where(or_(*filters))
+        statement = crud.product.generate_statement(statement=statement, query=query)
+        # if tag:
+        #     statement = statement.join(ProductTag).join(Tag).where(Tag.slug == tag)
+        # if collection:
+        #     statement = (
+        #         statement.join(ProductCollection)
+        #         .join(Collection)
+        #         .where(Collection.slug == collection)
+        #     )
+        # if filters:
+        #     statement = statement.where(or_(*filters))
         if sort == "desc":
             statement = statement.order_by(self.model.created_at.desc())
         return db.exec(statement.offset(offset).limit(per_page))

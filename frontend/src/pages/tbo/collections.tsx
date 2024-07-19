@@ -13,21 +13,25 @@ import { PaginationComponent } from "@/components/core/pagination";
 
 interface ComponentProps {}
 
-const tagsQuery = ({ name, page, collection }: { name: string; page: string; collection: string | undefined }) => ({
-    queryKey: ["collections-page", { name, page, collection }],
-    queryFn: async () => {
-        return await productService.all({ name, collection, page, per_page: 20 });
-    },
-});
+const tagsQuery = (url: any, collection: string | undefined) => {
+    const name = url.searchParams.get("name") ?? "";
+    const page = url.searchParams.get("page") ?? "";
+    const sizes = url.searchParams.get("sizes") ?? "";
+    const maxPrice = url.searchParams.get("maxPrice") ?? 1;
+    const minPrice = url.searchParams.get("minPrice") ?? 1;
+    return {
+        queryKey: ["collections-page", { name, page, collection, sizes, minPrice, maxPrice }],
+        queryFn: async () => {
+            return await productService.all({ name, page, collection, sizes, minPrice, maxPrice, per_page: 20 });
+        },
+    };
+};
 
 const collectionsLoader =
     (queryClient: any): LoaderFunction =>
     async ({ request, params }) => {
         const url = new URL(request.url);
-        const name = url.searchParams.get("name") ?? "";
-        const page = url.searchParams.get("page") ?? "";
-
-        const query = tagsQuery({ name, page, collection: params.slug });
+        const query = tagsQuery(url, params.slug);
         return queryClient.ensureQueryData(query);
     };
 
@@ -94,12 +98,12 @@ const Collections: React.FC<ComponentProps> = () => {
                                     </div>
                                 ) : (
                                     <React.Fragment>
-                                        <div className="grid w-full gap-4 grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                                        <div className="grid w-full gap-4 grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 pb-4">
                                             {products.map((product: Product, index: number) => (
                                                 <ProductItem key={index} product={product} />
                                             ))}
                                         </div>
-                                        {pagination.pages > 1 && <PaginationComponent pagination={pagination} />}
+                                        {pagination.total_pages > 1 && <PaginationComponent pagination={pagination} />}
                                     </React.Fragment>
                                 )}
                             </div>

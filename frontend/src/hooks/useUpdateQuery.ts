@@ -1,4 +1,4 @@
-import { useNavigate, useLocation, useRevalidator } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useCallback } from "react";
 import { debounce } from "@/utils/util";
 
@@ -8,7 +8,6 @@ interface QueryParam {
 }
 
 const useUpdateQuery = (delay = 500) => {
-    const revalidator = useRevalidator();
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -18,11 +17,7 @@ const useUpdateQuery = (delay = 500) => {
             data.forEach(({ key, value }) => {
                 searchParams.set(key, value);
             });
-            // navigate(`${location.pathname}?${searchParams.toString()}`, { replace: true });
-            revalidator.revalidate();
-
-            navigate(`${location.pathname}?${searchParams.toString()}`);
-            revalidator.revalidate();
+            navigate(`${location.pathname}?${searchParams.toString()}`, { replace: true });
         }, delay),
         [navigate, location.search, location.pathname]
     );
