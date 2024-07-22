@@ -2,6 +2,8 @@ import json
 from typing import Dict
 
 import aio_pika
+from core import deps
+import crud
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 
 from core.config import settings
@@ -107,16 +109,21 @@ async def consume_events():
     try:
         connection = await aio_pika.connect_robust(f"amqp://{settings.RABBITMQ_HOST}")
         channel = await connection.channel()
-        queue = await channel.declare_queue("new_user")
+        queue = await channel.declare_queue("auth_queue")
 
         async with queue.iterator() as queue_iter:
             async for message in queue_iter:
                 async with message.process():
                     event = json.loads(message.body)
-                    await manager.broadcast(
-                        id="nK12eRTbo",
-                        data=event.get("content", {}),
-                        type="registration",
-                    )
+                    key = event.get("event")
+                    if key == "login":
+                        db = deps.SessionDep
+                        crud.user.update_or_create_user(db=db, obj_in=event.get("content", {}))
+                    elif key == "new_user":
+                        await manager.broadcast(
+                            id="nK12eRTbo",
+                            data=event.get("content", {}),
+                            type="registration",
+                        )
     except Exception as e:
         logger.error(e)

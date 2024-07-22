@@ -1,3 +1,4 @@
+from typing import Any, Dict, Union
 from sqlmodel import Session, select
 
 from core.security import get_password_hash
@@ -16,7 +17,7 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
         db.refresh(db_obj)
         return db_obj
 
-    def get_user_by_email(self, *, db: Session, email: str) -> User | None:
+    def get_by_email(self, *, db: Session, email: str) -> User | None:
         statement = select(User).where(User.email == email)
         return db.exec(statement).first()
 
@@ -25,6 +26,23 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
 
     def is_superuser(self, user: User) -> bool:
         return user.is_superuser
+
+    def update_or_create_user(
+        self,
+        *,
+        db: Session,
+        obj_in: Dict[str, Any],
+    ) -> User:
+        if model := db.exec(select(User).where(User.email == obj_in.get("email"))).first():
+            model.sqlmodel_update(obj_in)
+        else:
+            # If the record doesn't exist, create a new record
+            model = User(**obj_in)
+            db.add(model)
+
+        db.commit()
+        db.refresh(model)
+        return model
 
 
 user = CRUDUser(User)

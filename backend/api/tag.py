@@ -36,7 +36,7 @@ router = APIRouter()
 
 @router.get(
     "/",
-    # dependencies=[Depends(get_current_user)],
+    dependencies=[Depends(get_current_user)],
     response_model=Tags,
 )
 async def index(
