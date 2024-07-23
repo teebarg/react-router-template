@@ -11,3 +11,19 @@ export interface User {
 export interface Users {
     data: User[];
 }
+
+export interface Base {
+    name: string;
+    slug: string;
+    is_active?: boolean;
+}
+
+export interface Tag {
+    name: string;
+    slug: string;
+    is_active?: boolean;
+}
+
+export interface Tags {
+    tags: Tag[];
+}

@@ -1,18 +1,15 @@
 import React from "react";
 import { GithubIcon } from "nui-react-icons";
-import { Button, Image, ScrollShadow } from "@nextui-org/react";
+import { Image, ScrollShadow } from "@nextui-org/react";
 import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
 import { sponsors } from "./data";
 import { Cookie } from "@/components/cookie";
 import Meta from "@/components/Meta";
-import { SlideOver } from "@/components/core/slideOver";
-import { useOverlayTriggerState } from "@react-stately/overlays";
 
 interface Props {}
 
 const Homepage: React.FC<Props> = () => {
-    const state = useOverlayTriggerState({});
     const features = [
         {
             name: "Push to deploy",
@@ -111,34 +108,6 @@ const Homepage: React.FC<Props> = () => {
                         </div>
                     </div>
                 </main>
-                <Button onPress={state.open}>Open Slideover</Button>
-
-                <SlideOver
-                    isOpen={state.isOpen}
-                    onClose={state.close}
-                    className="bg-default-100"
-                    title="Overlay Modal"
-                    footer={
-                        <div className="flex gap-2 justify-end p-2">
-                            <Button onPress={state.close} color="danger" className="min-w-32">
-                                Cancel
-                            </Button>
-                            <Button variant="shadow" color="primary" className="min-w-32">
-                                Submit
-                            </Button>
-                        </div>
-                    }
-                >
-                    <div className="bg-blue-500">
-                        <h2 className="text-lg font-semibold">Slideover Content</h2>
-                        <p>This is some content inside the slideover.</p>
-                        <div className="h-[1500px]">
-                            {" "}
-                            Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quisquam sequi maiores magni culpa fugit molestiae, earum
-                            repellendus officiis obcaecati accusantium facilis officia aperiam hic corrupti aliquid sint itaque cumque iusto.
-                        </div>
-                    </div>
-                </SlideOver>
                 <Cookie />
                 <Footer />
             </div>

@@ -28,7 +28,7 @@ const root = (queryClient: any, auth: any): any[] => {
         {
             path: "tbo",
             Component: asyncComponentLoader(() => import("@/pages/tbo/components/layout")),
-            children: tboRoutes,
+            children: tboRoutes(isAuthenticated, queryClient),
         },
         {
             path: "profile",

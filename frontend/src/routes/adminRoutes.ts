@@ -1,4 +1,5 @@
 import asyncComponentLoader from "@/utils/loader";
+import { storeRoutes } from "./storeRoutes";
 
 const adminRoutes = (isAuthenticated: any, queryClient: any) => {
     return [
@@ -31,6 +32,16 @@ const adminRoutes = (isAuthenticated: any, queryClient: any) => {
                     Component: User,
                 };
             },
+        },
+        {
+            path: "store",
+            async lazy() {
+                const { StoreLayout } = await import("@/pages/admin/store/layout");
+                return {
+                    Component: StoreLayout,
+                };
+            },
+            children: storeRoutes(queryClient),
         },
     ];
 };

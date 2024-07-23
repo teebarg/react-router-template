@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 import {
     Table as NextTable,
@@ -34,7 +32,7 @@ export default function Table({
     canExport = false,
     isExporting = false,
 }: TableProps) {
-    type Model = (typeof rows)[0];
+    // type Model = (typeof rows)[0];
 
     const navigate = useNavigate();
     const location = useLocation();
@@ -51,15 +49,15 @@ export default function Table({
         return columns.filter((column: Column) => Array.from(visibleColumns).includes(column.uid));
     }, [visibleColumns, columns]);
 
-    const sortedItems = React.useMemo(() => {
-        return [...rows].sort((a: Model, b: Model) => {
-            const first = a[sortDescriptor.column as keyof Model] as number;
-            const second = b[sortDescriptor.column as keyof Model] as number;
-            const cmp = first < second ? -1 : first > second ? 1 : 0;
+    // const sortedItems = React.useMemo(() => {
+    //     return [...rows].sort((a: Model, b: Model) => {
+    //         const first = a[sortDescriptor.column as keyof Model] as number;
+    //         const second = b[sortDescriptor.column as keyof Model] as number;
+    //         const cmp = first < second ? -1 : first > second ? 1 : 0;
 
-            return sortDescriptor.direction === "descending" ? -cmp : cmp;
-        });
-    }, [sortDescriptor, rows]);
+    //         return sortDescriptor.direction === "descending" ? -cmp : cmp;
+    //     });
+    // }, [sortDescriptor, rows]);
 
     const renderCell = React.useCallback(callbackFunction, [callbackFunction]);
 
@@ -209,7 +207,7 @@ export default function Table({
                     </TableColumn>
                 )}
             </TableHeader>
-            <TableBody emptyContent={"No records found"} items={sortedItems}>
+            <TableBody emptyContent={"No records found"} items={rows}>
                 {(item) => <TableRow key={item.id}>{(columnKey) => <TableCell>{renderCell(item, columnKey)}</TableCell>}</TableRow>}
             </TableBody>
         </NextTable>

@@ -69,6 +69,9 @@ const AdminAppearance: React.FC<Props> = () => {
                 </div>
                 <span aria-hidden="true" className="w-px h-px block" style={{ marginLeft: "0.25rem", marginTop: "1rem" }} />
                 <Switch
+                    name="switch"
+                    label=""
+                    control={null}
                     classNames={{
                         base: cn("inline-flex flex-row-reverse w-full items-center max-w-none", "justify-between cursor-pointer gap-2 py-4 px-0"),
                     }}
@@ -81,6 +84,9 @@ const AdminAppearance: React.FC<Props> = () => {
                 </Switch>
                 <span aria-hidden="true" className="w-px h-px block" style={{ marginLeft: "0.25rem", marginTop: "1.5rem" }} />
                 <Switch
+                    name="pointer"
+                    label=""
+                    control={null}
                     classNames={{
                         base: cn("inline-flex flex-row-reverse w-full items-center max-w-none", "justify-between cursor-pointer gap-2 py-4 px-0"),
                     }}

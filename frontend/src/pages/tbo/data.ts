@@ -43,7 +43,7 @@ const categories: CategoryInterface[] = [
         slug: "children-gadget",
     },
     {
-        title: "Children's Toys",
+        title: "Baby Suits",
         description: "Find the best toys for your kids",
         image: "https://nextui-docs-v2.vercel.app/images/fruit-5.jpeg",
         link: "/children-roy",
@@ -82,138 +82,7 @@ const openingHours = [
     },
 ];
 
-const indicators = [
-    {
-        height: "90%",
-        dataOn: false,
-    },
-    {
-        height: "30%",
-        dataOn: false,
-    },
-    {
-        height: "30%",
-        dataOn: true,
-    },
-    {
-        height: "30%",
-        dataOn: true,
-    },
-    {
-        height: "89%",
-        dataOn: true,
-    },
-    {
-        height: "49%",
-        dataOn: true,
-    },
-    {
-        height: "45%",
-        dataOn: true,
-    },
-    {
-        height: "37%",
-        dataOn: true,
-    },
-    {
-        height: "48%",
-        dataOn: true,
-    },
-    {
-        height: "43%",
-        dataOn: false,
-    },
-    {
-        height: "69%",
-        dataOn: false,
-    },
-    {
-        height: "69%",
-        dataOn: false,
-    },
-    {
-        height: "82%",
-        dataOn: false,
-    },
-    {
-        height: "43%",
-        dataOn: false,
-    },
-    {
-        height: "47%",
-        dataOn: false,
-    },
-    {
-        height: "96%",
-        dataOn: false,
-    },
-    {
-        height: "31%",
-        dataOn: false,
-    },
-    {
-        height: "44%",
-        dataOn: false,
-    },
-    {
-        height: "47%",
-        dataOn: false,
-    },
-    {
-        height: "51%",
-        dataOn: false,
-    },
-    {
-        height: "36%",
-        dataOn: false,
-    },
-    {
-        height: "79%",
-        dataOn: false,
-    },
-    {
-        height: "99%",
-        dataOn: false,
-    },
-    {
-        height: "33%",
-        dataOn: false,
-    },
-    {
-        height: "64%",
-        dataOn: false,
-    },
-    {
-        height: "53%",
-        dataOn: false,
-    },
-    {
-        height: "54%",
-        dataOn: false,
-    },
-    {
-        height: "37%",
-        dataOn: false,
-    },
-    {
-        height: "89%",
-        dataOn: false,
-    },
-    {
-        height: "30%",
-        dataOn: false,
-    },
-    {
-        height: "72%",
-        dataOn: false,
-    },
-    {
-        height: "54%",
-        dataOn: false,
-    },
-];
-
-const sizes = [35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46];
+const sizes = ["35", "36", "37", "38", "39", "40", "41", "42", "43", "44", "45", "46"];
 
 const genders = [
     {
@@ -261,71 +130,6 @@ const filters = [
     { key: "most-popular", label: "Most Popular" },
 ];
 
-interface Product {
-    title: string;
-    desc?: string;
-    img: string;
-    price: number;
-    oldPrice?: number;
-    rating?: number;
-}
-
-const products: Product[] = [
-    {
-        title: "Orange",
-        img: "1.avif",
-        desc: "Lorem ipsum lorem sentif",
-        price: 1500,
-        oldPrice: 2500,
-        rating: 4.25,
-    },
-    {
-        title: "Tangerine",
-        img: "2.avif",
-        price: 4500,
-        rating: 4.65,
-    },
-    {
-        title: "Raspberry",
-        img: "3.avif",
-        desc: "Lorem ipsum lorem sentif",
-        price: 5000.5,
-        oldPrice: 80000,
-        rating: 4.75,
-    },
-    {
-        title: "Lemon",
-        img: "4.avif",
-        price: 41500,
-        rating: 2.65,
-    },
-    {
-        title: "Avocado",
-        img: "5.avif",
-        price: 42500,
-        rating: 4.15,
-    },
-    {
-        title: "Lemon 2",
-        img: "6.avif",
-        price: 450000,
-        rating: 4.65,
-    },
-    {
-        title: "Banana",
-        img: "7.png",
-        desc: "Lorem ipsum lorem sentif",
-        price: 500,
-        rating: 3.24,
-    },
-    {
-        title: "Watermelon",
-        img: "8.avif",
-        price: 40,
-        rating: 4.65,
-    },
-];
-
 interface Cart {
     name: string;
     color: string;
@@ -362,5 +166,5 @@ const cart: Cart[] = [
     },
 ];
 
-export type { CategoryInterface, Product, Cart };
-export { categories, openingHours, sizes, indicators, genders, brands, filters, products, cart };
+export type { CategoryInterface, Cart };
+export { categories, openingHours, sizes, genders, brands, filters, cart };

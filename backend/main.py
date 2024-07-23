@@ -4,6 +4,10 @@ from datetime import datetime
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from api.brand import router as brand_router
+from api.collection import router as collection_router
+from api.product import router as product_router
+from api.tag import router as tag_router
 from api.websocket import consume_events
 from api.websocket import router as websocket_router
 from core.config import settings
@@ -18,6 +22,30 @@ app.include_router(
     websocket_router,
     prefix="/api/ws",
     tags=["Websockets"],
+)
+
+app.include_router(
+    product_router,
+    prefix="/api/product",
+    tags=["products"],
+)
+
+app.include_router(
+    collection_router,
+    prefix="/api/collection",
+    tags=["collections"],
+)
+
+app.include_router(
+    tag_router,
+    prefix="/api/tag",
+    tags=["tags"],
+)
+
+app.include_router(
+    brand_router,
+    prefix="/api/brand",
+    tags=["brands"],
 )
 
 app.add_middleware(

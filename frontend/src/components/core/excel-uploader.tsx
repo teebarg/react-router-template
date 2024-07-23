@@ -1,14 +1,22 @@
 import React, { useEffect, useState } from "react";
-import userService from "@/services/user.service";
 import useNotifications from "@/store/notifications";
 import { useWebSocket } from "@/hooks/use-websocket";
 import { Button, Progress } from "@nextui-org/react";
 import { DragNDrop } from "./dragNDrop";
+import useWatch from "@/hooks/use-watch";
+import { useRevalidator } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
 
-interface Props {}
+interface Props {
+    onUpload: (id: string, formData: any) => void;
+    wsUrl: string;
+    revalidateKey?: string;
+}
 
-const Excel: React.FC<Props> = () => {
+const Excel: React.FC<Props> = ({ onUpload, wsUrl, revalidateKey = "" }) => {
     const id = "nK12eRTbo";
+    const revalidator = useRevalidator();
+    const queryClient = useQueryClient();
     const [, notify] = useNotifications();
     const [file, setFile] = useState<File>();
     const [status, setStatus] = useState<boolean>(false);
@@ -16,10 +24,15 @@ const Excel: React.FC<Props> = () => {
 
     const currentMessage = wsMessages[wsMessages.length - 1];
 
+    useWatch(currentMessage, (newValue: any) => {
+        if (newValue.status === "Completed") {
+            queryClient.removeQueries({ queryKey: [revalidateKey] });
+            revalidator.revalidate();
+        }
+    });
+
     useEffect(() => {
-        const domain = import.meta.env.DEV ? "ws://localhost:2222" : `wss://${import.meta.env.VITE_DOMAIN}`;
-        const url = `${domain}/api/ws/users/${id}`;
-        initializeWebsocket(url);
+        initializeWebsocket(wsUrl);
         return () => {
             disconnectWebsocket();
         };
@@ -44,7 +57,7 @@ const Excel: React.FC<Props> = () => {
         formData.append("batch", "batch1");
 
         try {
-            await userService.excelUpload({ id, formData });
+            await onUpload(id, formData);
         } catch (error) {
             notify.error(`Error uploading file: ${error}`);
         } finally {

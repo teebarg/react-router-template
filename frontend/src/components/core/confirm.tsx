@@ -2,11 +2,12 @@ import React, { useState } from "react";
 import { Button } from "@nextui-org/react";
 
 interface Props {
+    title?: string;
     onConfirm?: () => void;
     onClose?: () => void;
 }
 
-const Confirm: React.FC<Props> = ({ onConfirm, onClose }) => {
+const Confirm: React.FC<Props> = ({ title = "Confirm?", onConfirm, onClose }) => {
     const [isPending, setIsPending] = useState<boolean>(false);
 
     const onSubmit = async () => {
@@ -22,7 +23,7 @@ const Confirm: React.FC<Props> = ({ onConfirm, onClose }) => {
                             <div className="flex items-center">
                                 <div className="flex grow flex-col gap-1">
                                     <h2 id="radix-:rml:" className="text-lg font-semibold leading-6 text-token-text-primary">
-                                        Delete User?
+                                        {title}
                                     </h2>
                                 </div>
                             </div>
@@ -35,16 +36,16 @@ const Confirm: React.FC<Props> = ({ onConfirm, onClose }) => {
                         </p>
                     </div>
                     <div className="flex justify-end gap-2 mt-8">
-                        <Button color="default" variant="shadow" onPress={onClose} className="min-w-30">
+                        <Button color="default" variant="shadow" onPress={onClose} className="min-w-36">
                             Close
                         </Button>
                         <div>
                             {isPending ? (
-                                <Button color="danger" isLoading variant="shadow" isDisabled className="min-w-30">
+                                <Button color="danger" isLoading variant="shadow" isDisabled className="min-w-36">
                                     Deleting...
                                 </Button>
                             ) : (
-                                <Button onClick={onSubmit} color="danger" variant="shadow" type="submit" className="min-w-30">
+                                <Button onClick={onSubmit} color="danger" variant="shadow" type="submit" className="min-w-36">
                                     Delete
                                 </Button>
                             )}

@@ -1,5 +1,3 @@
-"use client";
-
 import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, User } from "@nextui-org/react";
 import { useFetcher } from "react-router-dom";
 import { useAuth } from "@/store/auth-provider";
