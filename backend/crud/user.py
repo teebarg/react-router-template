@@ -1,6 +1,8 @@
-from typing import Any, Dict, Union
+from typing import Any, Dict
+
 from sqlmodel import Session, select
 
+from core.logging import logger
 from core.security import get_password_hash
 from crud.base import CRUDBase
 from models.user import User, UserCreate, UserUpdate
@@ -33,16 +35,22 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
         db: Session,
         obj_in: Dict[str, Any],
     ) -> User:
-        if model := db.exec(select(User).where(User.email == obj_in.get("email"))).first():
-            model.sqlmodel_update(obj_in)
-        else:
-            # If the record doesn't exist, create a new record
-            model = User(**obj_in)
-            db.add(model)
+        try:
+            if model := db.exec(
+                select(User).where(User.email == obj_in.get("email"))
+            ).first():
+                model.sqlmodel_update(obj_in)
+            else:
+                # If the record doesn't exist, create a new record
+                model = User(**obj_in)
+                db.add(model)
 
-        db.commit()
-        db.refresh(model)
-        return model
+            db.commit()
+            db.refresh(model)
+            return model
+        except Exception as e:
+            logger.error(f"Error creating or updating user {e}")
+            raise Exception(e) from e
 
 
 user = CRUDUser(User)

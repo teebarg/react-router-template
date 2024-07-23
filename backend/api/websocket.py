@@ -2,12 +2,13 @@ import json
 from typing import Dict
 
 import aio_pika
-from core import deps
-import crud
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
+from sqlmodel import Session, select
 
 from core.config import settings
 from core.logging import logger
+from db.engine import engine
+from models.user import User
 
 
 class ConnectionManager:
@@ -117,8 +118,24 @@ async def consume_events():
                     event = json.loads(message.body)
                     key = event.get("event")
                     if key == "login":
-                        db = deps.SessionDep
-                        crud.user.update_or_create_user(db=db, obj_in=event.get("content", {}))
+                        with Session(engine) as db:
+                            obj_in = event.get("content", {})
+                            try:
+                                if model := db.exec(
+                                    select(User).where(
+                                        User.email == obj_in.get("email")
+                                    )
+                                ).first():
+                                    model.sqlmodel_update(obj_in)
+                                else:
+                                    # If the record doesn't exist, create a new record
+                                    model = User(**obj_in)
+                                    db.add(model)
+
+                                db.commit()
+                            except Exception as e:
+                                logger.error(f"Error creating or updating user {e}")
+                                raise Exception(e) from e
                     elif key == "new_user":
                         await manager.broadcast(
                             id="nK12eRTbo",

@@ -18,16 +18,13 @@ const productQuery = (slug: string) => {
 
 const productLoader =
     (queryClient: any): LoaderFunction =>
-    async ({ request, params }) => {
-        console.log("🚀 ~ params:", params);
-        console.log("🚀 ~ request:", request);
+    async ({ params }) => {
         const query = productQuery(params.slug ?? "");
         return queryClient.ensureQueryData(query);
     };
 
 const Product: React.FC<Props> = () => {
     const product = useLoaderData() as any;
-    console.log("🚀 ~ data:", product);
     return (
         <React.Fragment>
             {/* <div className="mt-4">

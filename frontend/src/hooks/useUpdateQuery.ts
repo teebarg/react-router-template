@@ -17,7 +17,7 @@ const useUpdateQuery = (delay = 500) => {
             data.forEach(({ key, value }) => {
                 searchParams.set(key, value);
             });
-            navigate(`${location.pathname}?${searchParams.toString()}`, { replace: true });
+            navigate(`${location.pathname}?${searchParams.toString()}`);
         }, delay),
         [navigate, location.search, location.pathname]
     );

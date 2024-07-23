@@ -29,6 +29,7 @@ def upgrade() -> None:
         sa.Column("description", sa.Text(), nullable=True),
         sa.Column("price", sa.Float(), nullable=False, default=0),
         sa.Column("old_price", sa.Float(), nullable=False, default=0),
+        sa.Column("inventory", sa.Integer(), nullable=False, default=0),
         sa.Column("image", sa.String(length=255), nullable=True),
         sa.Column("is_active", sa.Boolean(), nullable=False, default=True),
         sa.Column("ratings", sa.Float(), default=0),

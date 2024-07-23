@@ -1,6 +1,5 @@
 from typing import Annotated, Generator, Union
 
-import crud
 import firebase_admin
 import jwt
 from fastapi import Cookie, Depends, HTTPException, status
@@ -11,6 +10,7 @@ from jwt.exceptions import InvalidTokenError
 from pydantic import ValidationError
 from sqlmodel import Session
 
+import crud
 from core import security
 from core.config import settings
 from core.logging import logger
