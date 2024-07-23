@@ -19,8 +19,8 @@ class ProductService {
         }
         return await res.json();
     }
-    async getProduct(id: string): Promise<Product> {
-        const res = await fetch(`${API_URL}/product/${id}`, {
+    async getProduct(slug: string): Promise<Product> {
+        const res = await fetch(`${API_URL}/product/${slug}`, {
             method: "GET",
             headers: { "Content-Type": "application/json" },
             credentials: "include",

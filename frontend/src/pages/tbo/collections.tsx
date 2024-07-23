@@ -44,7 +44,9 @@ const Collections: React.FC<ComponentProps> = () => {
             <TBONavbar />
             <div className=" h-full w-full px-2 lg:px-24 py-4 mt-4">
                 <Breadcrumbs>
-                    <BreadcrumbItem>Home</BreadcrumbItem>
+                    <BreadcrumbItem>
+                        <Link to={"/tbo"}>Home</Link>
+                    </BreadcrumbItem>
                     <BreadcrumbItem>
                         <Link to={"/tbo/collections"}>Collections</Link>
                     </BreadcrumbItem>

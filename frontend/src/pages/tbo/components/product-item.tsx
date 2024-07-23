@@ -1,6 +1,6 @@
 import { Button, Card, CardBody, CardFooter, Image } from "@nextui-org/react";
 import { StarIcon } from "nui-react-icons";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { currency, imgSrc } from "@/utils/util";
 import { Product } from "@/models/product";
 
@@ -37,7 +37,7 @@ const ProductItem: React.FC<ComponentProps> = ({ product }) => {
                 </div>
                 <div className="h-20">
                     <div className="flex text-small justify-between mt-2">
-                        <p className="font-medium text-default-700 text-base line-clamp-2">{product.name}</p>
+                        <Link to={`/tbo/product/${product.slug}`} className="font-medium text-default-700 text-base line-clamp-2">{product.name}</Link>
                         {product.rating && (
                             <div className="flex items-center">
                                 <StarIcon className="text-default-500" role="img" size={16} />

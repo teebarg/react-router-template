@@ -99,12 +99,12 @@ def create(*, db: SessionDep, product_in: ProductCreate) -> ProductPublic:
     return product
 
 
-@router.get("/{id}", response_model=ProductPublic)
-def read(id: int, db: SessionDep) -> ProductPublic:
+@router.get("/{slug}", response_model=ProductPublic)
+def read(slug: str, db: SessionDep) -> ProductPublic:
     """
-    Get a specific product by id.
+    Get a specific product by slug.
     """
-    if product := crud.product.get(db=db, id=id):
+    if product := crud.product.get_by_key(db=db, key="slug", value=slug):
         return product
     else:
         raise HTTPException(status_code=404, detail="Product not found")

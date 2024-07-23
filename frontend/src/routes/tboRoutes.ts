@@ -31,10 +31,11 @@ const tboRoutes = (isAuthenticated: any, queryClient: any) => {
             },
         },
         {
-            path: "product",
+            path: "product/:slug",
             async lazy() {
-                const { Product } = await import("@/pages/tbo/product");
+                const { Product, productLoader } = await import("@/pages/tbo/product");
                 return {
+                    loader: productLoader(queryClient),
                     Component: Product,
                 };
             },
