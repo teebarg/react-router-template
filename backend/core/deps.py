@@ -16,7 +16,7 @@ from core.config import settings
 from core.logging import logger
 from db.engine import engine
 from models.token import TokenPayload
-from models.user import User
+from models.user import Cart, User
 
 reusable_oauth2 = OAuth2PasswordBearer(
     tokenUrl=f"{settings.API_V1_STR}/auth/login/access-token"
@@ -86,6 +86,34 @@ def get_current_active_user(
 
 
 CurrentUser = Annotated[User, Depends(get_current_user)]
+
+def get_cart(
+    db: SessionDep, current_user: CurrentUser
+) -> Cart:
+    if cart := crud.cart.get_by_key(db=db, key="user_id", value=current_user.id):
+        return cart
+    
+    cart = Cart(**{"user_id": current_user.id})
+    db.add(cart)
+    db.commit()
+    db.refresh(cart)
+    return cart
+
+
+def get_cart_path_param(
+    id: str, db: SessionDep, current_user: CurrentUser
+) -> Cart:
+    if cart := crud.cart.get(db=db, id=id):
+        if current_user.id != cart.user_id:
+            raise HTTPException(
+                status_code=401, detail="Unauthorized to access this cart."
+            )
+        return cart
+    raise HTTPException(status_code=404, detail="Cart not found.")
+
+
+UserCart = Annotated[Cart, Depends(get_cart)]
+CurrentCart = Annotated[Cart, Depends(get_cart_path_param)]
 
 
 def get_current_active_superuser(current_user: CurrentUser) -> User:

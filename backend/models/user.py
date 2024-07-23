@@ -1,7 +1,10 @@
 import secrets
+from typing import Optional
 
 from pydantic import EmailStr
-from sqlmodel import Field
+from models.cart import CartBase
+from models.cart_item import CartItemBase
+from sqlmodel import Field, Relationship
 
 from models.base import BaseModel
 
@@ -30,3 +33,18 @@ class UserUpdate(UserBase):
 class User(UserBase, table=True):
     id: int | None = Field(default=None, primary_key=True)
     hashed_password: str = secrets.token_urlsafe(6)
+    cart: "Cart" = Relationship(back_populates="user")
+
+
+class CartItem(CartItemBase, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    cart_id: int | None = Field(default=None, foreign_key="cart.id")
+    cart: "Cart" = Relationship(back_populates="items")
+    product_id: int | None = Field(default=None, foreign_key="product.id")
+    product: "Cart" = Relationship()
+
+class Cart(CartBase, table=True):
+    id: int | None = Field(default=None, primary_key=True)
+    user_id: int | None = Field(default=None, foreign_key="user.id")
+    user: User | None = Relationship(back_populates="cart")
+    items: list["CartItem"] = Relationship(back_populates="cart")
