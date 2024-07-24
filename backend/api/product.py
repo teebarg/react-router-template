@@ -1,6 +1,7 @@
 from io import BytesIO
 from typing import Annotated, Any
 
+from models.generic import Product, ProductPublic, Products
 from fastapi import (
     APIRouter,
     BackgroundTasks,
@@ -11,6 +12,7 @@ from fastapi import (
     UploadFile,
 )
 from sqlmodel import func, select
+from sqlalchemy.sql import text
 
 import crud
 from core import deps
@@ -20,10 +22,7 @@ from core.deps import (
 from core.logging import logger
 from models.message import Message
 from models.product import (
-    Product,
     ProductCreate,
-    ProductPublic,
-    Products,
     ProductUpdate,
 )
 from services.export import export, process_file, validate_file
@@ -164,8 +163,6 @@ async def upload_products(
 async def export_products(
     current_user: deps.CurrentUser, db: SessionDep, bucket: deps.Storage
 ) -> Any:
-    from sqlalchemy.sql import text
-
     try:
         statement = "SELECT name, slug, description, price, old_price FROM product;"
         products = db.exec(text(statement))

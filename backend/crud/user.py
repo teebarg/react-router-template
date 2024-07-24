@@ -1,11 +1,12 @@
 from typing import Any, Dict
 
+from models.generic import User
 from sqlmodel import Session, select
 
 from core.logging import logger
 from core.security import get_password_hash
 from crud.base import CRUDBase
-from models.user import User, UserCreate, UserUpdate
+from models.user import UserCreate, UserUpdate
 
 
 class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):

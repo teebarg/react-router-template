@@ -1,5 +1,5 @@
-
-from models.user import CartItem
+# from models.user import CartItem
+from models.generic import CartItem
 from sqlmodel import Session, select
 
 from core.utils import generate_slug
@@ -7,7 +7,7 @@ from crud.base import CRUDBase
 from models.cart_item import CartItemCreate, CartItemUpdate
 
 
-class CRUDCartitem(CRUDBase[CartItem, CartItemCreate, CartItemUpdate]):
+class CRUDCartItem(CRUDBase[CartItem, CartItemCreate, CartItemUpdate]):
     def create(self, db: Session, obj_in: CartItemCreate) -> CartItem:
         db_obj = CartItem.model_validate(
             obj_in,
@@ -18,4 +18,5 @@ class CRUDCartitem(CRUDBase[CartItem, CartItemCreate, CartItemUpdate]):
         db.refresh(db_obj)
         return db_obj
 
-cart_item = CRUDCartitem(CartItem)
+
+cart_item = CRUDCartItem(CartItem)

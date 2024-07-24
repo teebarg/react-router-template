@@ -8,6 +8,8 @@ from api.brand import router as brand_router
 from api.collection import router as collection_router
 from api.product import router as product_router
 from api.tag import router as tag_router
+from api.cart import router as cart_router
+from api.cart_item import router as cart_item_router
 from api.websocket import consume_events
 from api.websocket import router as websocket_router
 from core.config import settings
@@ -46,6 +48,18 @@ app.include_router(
     brand_router,
     prefix="/api/brand",
     tags=["brands"],
+)
+
+app.include_router(
+    cart_router,
+    prefix="/api/cart",
+    tags=["carts"],
+)
+
+app.include_router(
+    cart_item_router,
+    prefix="/api/cart-item",
+    tags=["cart-items"],
 )
 
 app.add_middleware(

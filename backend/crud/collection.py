@@ -1,12 +1,13 @@
 from typing import Any, Dict
 
+from models.generic import Collection
 from sqlmodel import Session, select
 
 from core.logging import logger
 from core.utils import generate_slug
 from crud.base import CRUDBase
 from models.collection import CollectionCreate, CollectionUpdate
-from models.product import Collection
+# from models.product import Collection
 
 
 class CRUDCollection(CRUDBase[Collection, CollectionCreate, CollectionUpdate]):

@@ -1,5 +1,5 @@
-
-from models.user import Cart
+# from models.user import Cart
+from models.generic import Cart
 from sqlmodel import Session, select
 
 from core.utils import generate_slug
@@ -17,5 +17,6 @@ class CRUDCart(CRUDBase[Cart, CartCreate, CartUpdate]):
         db.commit()
         db.refresh(db_obj)
         return db_obj
+
 
 cart = CRUDCart(Cart)

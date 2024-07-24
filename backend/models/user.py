@@ -1,5 +1,5 @@
 import secrets
-from typing import Optional
+from typing import List, Optional
 
 from pydantic import EmailStr
 from models.cart import CartBase
@@ -30,21 +30,24 @@ class UserUpdate(UserBase):
 
 
 # Database model, database table inferred from class name
-class User(UserBase, table=True):
-    id: int | None = Field(default=None, primary_key=True)
-    hashed_password: str = secrets.token_urlsafe(6)
-    cart: "Cart" = Relationship(back_populates="user")
+# class User(UserBase, table=True):
+#     id: int | None = Field(default=None, primary_key=True)
+#     hashed_password: str = secrets.token_urlsafe(6)
+#     carts: List["Cart"] = Relationship(back_populates="user")
 
 
-class CartItem(CartItemBase, table=True):
-    id: Optional[int] = Field(default=None, primary_key=True)
-    cart_id: int | None = Field(default=None, foreign_key="cart.id")
-    cart: "Cart" = Relationship(back_populates="items")
-    product_id: int | None = Field(default=None, foreign_key="product.id")
-    product: "Cart" = Relationship()
+# class Cart(CartBase, table=True):
+#     id: int | None = Field(default=None, primary_key=True)
 
-class Cart(CartBase, table=True):
-    id: int | None = Field(default=None, primary_key=True)
-    user_id: int | None = Field(default=None, foreign_key="user.id")
-    user: User | None = Relationship(back_populates="cart")
-    items: list["CartItem"] = Relationship(back_populates="cart")
+#     items: list["CartItem"] = Relationship(back_populates="cart")
+
+#     user_id: int | None = Field(default=None, foreign_key="user.id")
+#     user: User | None = Relationship(back_populates="carts")
+
+
+# class CartItem(CartItemBase, table=True):
+#     id: Optional[int] = Field(default=None, primary_key=True)
+#     cart_id: int | None = Field(default=None, foreign_key="cart.id")
+#     cart: Cart | None = Relationship(back_populates="items")
+#     product_id: int | None = Field(default=None, foreign_key="product.id")
+#     product: "Cart" = Relationship(back_populates="cart_items")
