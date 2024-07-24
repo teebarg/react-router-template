@@ -43,45 +43,6 @@ def index(
     return cart
 
 
-@router.get(
-    "/{id}", dependencies=[Depends(get_cart_path_param)], response_model=CartPublic
-)
-def read(cart: deps.CurrentCart) -> CartPublic:
-    """
-    Get a specific cart by id.
-    """
-    return cart
-
-
-@router.patch(
-    "/{id}",
-    dependencies=[Depends(get_current_user)],
-    response_model=CartPublic,
-)
-def update(
-    *,
-    db: SessionDep,
-    db_cart: deps.CurrentCart,
-    update_data: CartUpdate,
-) -> CartPublic:
-    """
-    Update a cart.
-    """
-
-    try:
-        db_cart = crud.cart.update(db=db, db_obj=db_cart, obj_in=update_data)
-        return db_cart
-    except IntegrityError as e:
-        logger.error(f"Error updating tag, {e.orig.pgerror}")
-        raise HTTPException(status_code=422, detail=str(e.orig.pgerror)) from e
-    except Exception as e:
-        logger.error(e)
-        raise HTTPException(
-            status_code=400,
-            detail=str(e),
-        ) from e
-
-
 @router.delete("/{id}", dependencies=[Depends(get_current_user)])
 def delete(db: SessionDep, id: int) -> Message:
     """
