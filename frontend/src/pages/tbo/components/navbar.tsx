@@ -10,6 +10,7 @@ import UserDropDown from "@/components/user-menu";
 import { Link, NavLink } from "react-router-dom";
 import { useAuth } from "@/store/auth-provider";
 import type { AuthContextValue } from "@/store/auth-provider";
+import { Cart } from "./cart";
 
 const TBONavbar = () => {
     const { currentUser } = useAuth() as AuthContextValue;
@@ -81,6 +82,9 @@ const TBONavbar = () => {
                     <ThemeSwitch />
                 </NavbarItem>
                 <NavbarItem className="hidden lg:flex">{searchInput}</NavbarItem>
+                <NavbarItem className="hidden lg:flex">
+                    <Cart />
+                </NavbarItem>
                 <NavbarItem className="hidden sm:flex">
                     {currentUser ? (
                         <UserDropDown />
