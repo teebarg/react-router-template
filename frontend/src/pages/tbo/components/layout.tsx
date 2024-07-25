@@ -11,12 +11,15 @@ const Layout: React.FC<Props> = () => {
 
     return (
         <React.Fragment>
-            {state === "loading" && <Progress size="sm" isIndeterminate aria-label="Loading..." className="" color="secondary" />}
+            {state === "loading" && <Progress size="sm" isIndeterminate color="secondary" />}
             <Banner />
+            <div className="bg-slate-100 p-8">
+                <input name="name" className="bg-white text-red-500 h-8" />
+            </div>
             <Outlet />
             <Footer />
         </React.Fragment>
     );
 };
 
-export default Layout;
+export { Layout };

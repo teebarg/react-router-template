@@ -3,8 +3,8 @@ from sqlmodel import Field, SQLModel
 from models.base import BaseModel
 
 class CartItemBase(BaseModel):
-    cart_id: int = Field(foreign_key="cart.id", primary_key=True)
-    product_id: int = Field(foreign_key="product.id", primary_key=True)
+    # cart_id: int = Field(foreign_key="cart.id", primary_key=True)
+    product_id: int = Field(foreign_key="product.id")
     quantity: int = 0
 
 

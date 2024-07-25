@@ -110,7 +110,7 @@ class Cart(CartBase, table=True):
 
 class CartItem(CartItemBase, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
-    cart_id: int | None = Field(default=None, foreign_key="cart.id")
+    cart_id: int = Field(default=None, foreign_key="cart.id")
     cart: Cart | None = Relationship(back_populates="items")
     product_id: int | None = Field(default=None, foreign_key="product.id")
     # product: "Product" = Relationship(back_populates="cart_items")
@@ -120,21 +120,6 @@ class CartItemPublic(CartItemBase):
     id: int
     product: Product
 
-class CartItems(SQLModel):
-    cart_items: list[CartItemPublic]
-    page: int
-    per_page: int
-    total_count: int
-    total_pages: int
-
-
 class CartPublic(CartBase):
     id: int
     items: list[CartItemPublic] = []
-
-class Carts(SQLModel):
-    carts: list[CartPublic]
-    page: int
-    per_page: int
-    total_count: int
-    total_pages: int

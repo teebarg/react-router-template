@@ -3,6 +3,7 @@ import { StarIcon } from "nui-react-icons";
 import { Link, useNavigate } from "react-router-dom";
 import { currency, imgSrc } from "@/utils/util";
 import { Product } from "@/models/product";
+import { ProductControl } from "./product-control";
 
 interface ComponentProps {
     product: Product;
@@ -47,9 +48,10 @@ const ProductItem: React.FC<ComponentProps> = ({ product }) => {
                     </div>
                     <p className="text-left text-small text-default-500 truncate mt-1">{product.description}</p>
                 </div>
-                <Button color="primary" variant="shadow" className="w-full mt-3 h-12">
+                <ProductControl product={product} />
+                {/* <Button color="primary" variant="shadow" className="w-full mt-3 h-12">
                     Add to Cart
-                </Button>
+                </Button> */}
             </CardFooter>
         </Card>
     );

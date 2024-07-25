@@ -63,7 +63,7 @@ const Collections: React.FC<ComponentProps> = () => {
                             <div className="flex items-center justify-between gap-2 ">
                                 <div className="flex flex-row gap-2">
                                     <Button type="button">
-                                        <FunnelIcon size={16} role="img" className="text-default-500 iconify iconify--solar" focusable="false" />
+                                        <FunnelIcon size={16} role="img" className="text-default-500" focusable="false" />
                                         Filters
                                     </Button>
                                     <div className="hidden items-center gap-1 md:flex">
@@ -98,7 +98,7 @@ const Collections: React.FC<ComponentProps> = () => {
                                     </div>
                                 ) : (
                                     <React.Fragment>
-                                        <div className="grid w-full gap-4 grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 pb-4">
+                                        <div className="grid w-full gap-4 grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 pb-4">
                                             {products.map((product: Product, index: number) => (
                                                 <ProductItem key={index} product={product} />
                                             ))}
