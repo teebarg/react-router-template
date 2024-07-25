@@ -9,6 +9,7 @@ from sqlmodel import Session
 from core.deps import get_current_user
 from db.engine import engine
 from main import app
+
 # from models.user import User
 from models.generic import User
 

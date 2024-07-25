@@ -9,17 +9,15 @@ import { Ratings } from "@/components/core/ratings";
 
 interface ComponentProps {}
 
-const Search: React.FC<ComponentProps> = ({}) => {
+const Search: React.FC<ComponentProps> = () => {
     const API_URL = import.meta.env.VITE_API_DOMAIN;
-    let list = useAsyncList<Product>({
+    const list = useAsyncList<Product>({
         async load({ signal, filterText }) {
-            let res = await fetch(`${API_URL}/product/?name=${filterText}&per_page=5`, {
+            const res = await fetch(`${API_URL}/product/?name=${filterText}&per_page=5`, {
                 signal,
                 headers: { accept: "application/json" },
             });
-            let json = await res.json();
-            console.log("🚀 ~ load ~ json:", json);
-
+            const json = await res.json();
             return {
                 items: json.products,
             };

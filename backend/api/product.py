@@ -1,7 +1,6 @@
 from io import BytesIO
 from typing import Annotated, Any
 
-from models.generic import Product, ProductPublic, Products
 from fastapi import (
     APIRouter,
     BackgroundTasks,
@@ -11,8 +10,8 @@ from fastapi import (
     Query,
     UploadFile,
 )
-from sqlmodel import func, select
 from sqlalchemy.sql import text
+from sqlmodel import func, select
 
 import crud
 from core import deps
@@ -20,6 +19,7 @@ from core.deps import (
     SessionDep,
 )
 from core.logging import logger
+from models.generic import Product, ProductPublic, Products
 from models.message import Message
 from models.product import (
     ProductCreate,

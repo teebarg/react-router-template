@@ -4,7 +4,7 @@ from typing import Annotated, Generator, Union
 
 import firebase_admin
 import jwt
-from fastapi import Cookie, Depends, HTTPException, status, Response
+from fastapi import Cookie, Depends, HTTPException, Response, status
 from fastapi.security import OAuth2PasswordBearer
 from firebase_admin import credentials, storage
 from google.cloud.storage.bucket import Bucket
@@ -17,9 +17,10 @@ from core import security
 from core.config import settings
 from core.logging import logger
 from db.engine import engine
-from models.token import TokenPayload
+
 # from models.user import Cart, User
 from models.generic import Cart, User
+from models.token import TokenPayload
 
 reusable_oauth2 = OAuth2PasswordBearer(
     tokenUrl=f"{settings.API_V1_STR}/auth/login/access-token"
@@ -91,17 +92,21 @@ def get_current_active_user(
 CurrentUser = Annotated[User, Depends(get_current_user)]
 
 
-def get_cart(db: SessionDep, response: Response, session_id: Annotated[Union[str, None], Cookie()] = None) -> Cart:
+def get_cart(
+    db: SessionDep,
+    response: Response,
+    session_id: Annotated[Union[str, None], Cookie()] = None,
+) -> Cart:
     if session_id is None:
         session_id = str(uuid.uuid4())
 
     response.set_cookie(
-            key="session_id",
-            value=session_id,
-            max_age=timedelta(days=30),
-            secure=True,
-            httponly=True,
-        )
+        key="session_id",
+        value=session_id,
+        max_age=timedelta(days=30),
+        secure=True,
+        httponly=True,
+    )
 
     if cart := crud.cart.get_by_key(db=db, key="session_id", value=session_id):
         return cart

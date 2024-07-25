@@ -1,6 +1,7 @@
-from typing import Any, Optional
-from sqlmodel import Field, SQLModel
+from sqlmodel import Field
+
 from models.base import BaseModel
+
 
 class CartItemBase(BaseModel):
     # cart_id: int = Field(foreign_key="cart.id", primary_key=True)

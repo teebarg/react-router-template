@@ -1,14 +1,16 @@
-from typing import Any, List, Optional
+import secrets
+from typing import List, Optional
+
+from pydantic import BaseModel
+from sqlmodel import Field, Relationship, SQLModel
+
+from models.brand import BrandBase
 from models.cart import CartBase
 from models.cart_item import CartItemBase
 from models.collection import CollectionBase
 from models.product import ProductBase
 from models.tag import TagBase
 from models.user import UserBase
-from models.brand import BrandBase
-from pydantic import BaseModel
-from sqlmodel import Field, Relationship, SQLModel
-import secrets
 
 
 class ContactFormCreate(BaseModel):
@@ -116,9 +118,11 @@ class CartItem(CartItemBase, table=True):
     # product: "Product" = Relationship(back_populates="cart_items")
     product: Product = Relationship()
 
+
 class CartItemPublic(CartItemBase):
     id: int
     product: Product
+
 
 class CartPublic(CartBase):
     id: int

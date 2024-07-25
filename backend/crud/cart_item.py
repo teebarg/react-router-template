@@ -1,10 +1,10 @@
 # from models.user import CartItem
-from models.generic import CartItem
-from sqlmodel import Session, select
+from sqlmodel import Session
 
 from core.utils import generate_slug
 from crud.base import CRUDBase
 from models.cart_item import CartItemCreate, CartItemUpdate
+from models.generic import CartItem
 
 
 class CRUDCartItem(CRUDBase[CartItem, CartItemCreate, CartItemUpdate]):

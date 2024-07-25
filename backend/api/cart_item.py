@@ -1,42 +1,32 @@
 # from models.user import CartItem
-from models.generic import CartItem, CartItemPublic, CartPublic
 from fastapi import (
     APIRouter,
-    Depends,
     HTTPException,
-    Query,
 )
-from sqlalchemy.exc import IntegrityError
-from sqlmodel import func, or_, select
 
 import crud
 from core.deps import (
-    CurrentUser,
     SessionDep,
     UserCart,
-    get_current_user,
-    get_product_path_param,
 )
-
-from models.message import Message
 from models.cart_item import (
     CartItemCreate,
-    CartItemUpdate,
 )
-from core.logging import logger
+from models.generic import CartItem, CartPublic
+from models.message import Message
 
 # Create a router for cart items
 router = APIRouter()
 
 
-@router.post(
-    "/", dependencies=[], response_model=CartPublic
-)
-def create(*, db: SessionDep, cart: UserCart, create_data: CartItemCreate) -> CartPublic:
+@router.post("/", dependencies=[], response_model=CartPublic)
+def create(
+    *, db: SessionDep, cart: UserCart, create_data: CartItemCreate
+) -> CartPublic:
     """
     Create new cart_item.
     """
-    product_id = create_data.product_id;
+    product_id = create_data.product_id
     quantity = create_data.quantity
     product = crud.product.get(db=db, id=product_id)
     if not product:

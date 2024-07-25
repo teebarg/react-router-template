@@ -20,7 +20,7 @@ const EmptyCartState = () => {
     );
 };
 
-const CartItems: React.FC<ComponentProps> = ({ }) => {
+const CartItems: React.FC<ComponentProps> = () => {
     const { cartItems, removeFromCart } = useCart();
 
     if (cartItems.length == 0) {

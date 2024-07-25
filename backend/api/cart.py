@@ -1,30 +1,18 @@
 # from models.user import Cart
-from models.generic import CartPublic
-from core import deps
 from fastapi import (
     APIRouter,
     Depends,
     HTTPException,
-    Query,
 )
-from sqlalchemy.exc import IntegrityError
-from sqlmodel import func, or_, select
 
 import crud
 from core.deps import (
-    CurrentUser,
     SessionDep,
     UserCart,
-    get_cart_path_param,
-    get_current_active_superuser,
     get_current_user,
 )
-
+from models.generic import CartPublic
 from models.message import Message
-from models.cart import (
-    CartUpdate,
-)
-from core.logging import logger
 
 # Create a router for carts
 router = APIRouter()

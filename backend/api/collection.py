@@ -1,6 +1,5 @@
 from typing import Annotated, Any
 
-from models.generic import Collection
 from fastapi import (
     APIRouter,
     BackgroundTasks,
@@ -26,7 +25,9 @@ from models.collection import (
     Collections,
     CollectionUpdate,
 )
+from models.generic import Collection
 from models.message import Message
+
 # from models.product import Collection
 from services.export import export, process_file, validate_file
 

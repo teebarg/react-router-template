@@ -8,11 +8,9 @@ import { CartItems } from "./cart-items";
 import { useCart } from "@/store/cart-provider";
 import React from "react";
 
-interface ComponentProps {
-    onClick?: () => void;
-}
+interface ComponentProps {}
 
-const Cart: React.FC<ComponentProps> = ({ onClick }) => {
+const Cart: React.FC<ComponentProps> = () => {
     const { cartItems } = useCart();
     const subTotal = cartItems.reduce((sum, item) => sum + item.product.price * item.quantity, 0);
     const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
