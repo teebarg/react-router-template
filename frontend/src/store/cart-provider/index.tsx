@@ -29,7 +29,6 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
     const [cartItems, setCartItems] = useState<CartItem[]>([]);
 
     useEffect(() => {
-        // Check if the user is already authenticated (e.g., from Cookie)
         getCart();
     }, []);
 

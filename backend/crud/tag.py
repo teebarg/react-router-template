@@ -6,8 +6,6 @@ from core.logging import logger
 from core.utils import generate_slug
 from crud.base import CRUDBase
 from models.generic import Tag
-
-# from models.product import Tag
 from models.tag import TagCreate, TagUpdate
 
 

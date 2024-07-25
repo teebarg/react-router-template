@@ -49,9 +49,6 @@ const ProductItem: React.FC<ComponentProps> = ({ product }) => {
                     <p className="text-left text-small text-default-500 truncate mt-1">{product.description}</p>
                 </div>
                 <ProductControl product={product} />
-                {/* <Button color="primary" variant="shadow" className="w-full mt-3 h-12">
-                    Add to Cart
-                </Button> */}
             </CardFooter>
         </Card>
     );

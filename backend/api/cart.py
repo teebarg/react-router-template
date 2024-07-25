@@ -1,4 +1,3 @@
-# from models.user import Cart
 from fastapi import (
     APIRouter,
     Depends,

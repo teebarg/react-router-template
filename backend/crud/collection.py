@@ -8,8 +8,6 @@ from crud.base import CRUDBase
 from models.collection import CollectionCreate, CollectionUpdate
 from models.generic import Collection
 
-# from models.product import Collection
-
 
 class CRUDCollection(CRUDBase[Collection, CollectionCreate, CollectionUpdate]):
     def create(self, db: Session, obj_in: CollectionCreate) -> Collection:

@@ -1,4 +1,3 @@
-# from models.user import CartItem
 from sqlmodel import Session
 
 from core.utils import generate_slug

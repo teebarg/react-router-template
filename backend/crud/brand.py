@@ -5,8 +5,6 @@ from crud.base import CRUDBase
 from models.brand import BrandCreate, BrandUpdate
 from models.generic import Brand
 
-# from models.product import Brand
-
 
 class CRUDBrand(CRUDBase[Brand, BrandCreate, BrandUpdate]):
     def create(self, db: Session, obj_in: BrandCreate) -> Brand:

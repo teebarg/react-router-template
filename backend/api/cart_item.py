@@ -1,4 +1,3 @@
-# from models.user import CartItem
 from fastapi import (
     APIRouter,
     HTTPException,

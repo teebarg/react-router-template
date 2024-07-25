@@ -10,8 +10,6 @@ from core.logging import logger
 from db.engine import engine
 from models.generic import User
 
-# from models.user import User
-
 
 class ConnectionManager:
     def __init__(self):

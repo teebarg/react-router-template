@@ -17,8 +17,6 @@ from core import security
 from core.config import settings
 from core.logging import logger
 from db.engine import engine
-
-# from models.user import Cart, User
 from models.generic import Cart, User
 from models.token import TokenPayload
 

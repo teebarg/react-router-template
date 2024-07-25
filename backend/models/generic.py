@@ -76,7 +76,6 @@ class Product(ProductBase, table=True):
     brands: list["Brand"] = Relationship(
         back_populates="products", link_model=ProductBrand
     )
-    # cart_items: list["CartItem"] = Relationship(back_populates="product")
 
 
 class ProductPublic(ProductBase):
@@ -115,7 +114,6 @@ class CartItem(CartItemBase, table=True):
     cart_id: int = Field(default=None, foreign_key="cart.id")
     cart: Cart | None = Relationship(back_populates="items")
     product_id: int | None = Field(default=None, foreign_key="product.id")
-    # product: "Product" = Relationship(back_populates="cart_items")
     product: Product = Relationship()
 
 
