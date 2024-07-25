@@ -5,9 +5,7 @@ import { CartItem } from "@/models/commerce";
 import { currency, imgSrc } from "@/utils/util";
 import { useCart } from "@/store/cart-provider";
 
-interface ComponentProps {
-    onClick?: () => void;
-}
+interface ComponentProps {}
 
 const EmptyCartState = () => {
     return (
@@ -22,14 +20,13 @@ const EmptyCartState = () => {
     );
 };
 
-const CartItems: React.FC<ComponentProps> = ({ onClick }) => {
+const CartItems: React.FC<ComponentProps> = ({ }) => {
     const { cartItems, removeFromCart } = useCart();
 
     if (cartItems.length == 0) {
         return <EmptyCartState />;
     }
 
-    // const subTotal = cartItems.reduce((sum, item) => sum + (item.product.price * item.quantity), 0);
     return (
         <div className="w-full rounded-medium bg-content2 px-2 py-4 dark:bg-content1 lg:flex-none max-h-full overflow-auto">
             <div>
@@ -55,7 +52,7 @@ const CartItems: React.FC<ComponentProps> = ({ onClick }) => {
                                 </div>
                             </div>
                             <Button onPress={() => removeFromCart(item.id)} isIconOnly className="rounded-full px-0 !gap-0 bg-default/40 h-7 w-7 min-w-[1.5rem]">
-                                <CancelIcon size={14} role="img" className="" />
+                                <CancelIcon size={14} role="img" />
                             </Button>
                         </li>
                     ))}

@@ -5,7 +5,7 @@ import React, { createContext, useContext, useState, useCallback, ReactNode, use
 interface CartContextType {
     cartItems: CartItem[];
     updateQuantity: (product_id: number, quantity: number) => void;
-    removeFromCart: (itemId: number) => void;
+    removeFromCart: (itemId: number | undefined) => void;
     clearCart: () => void;
 }
 
@@ -50,7 +50,10 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
         }
     }, []);
 
-    const removeFromCart = useCallback(async (itemId: number) => {
+    const removeFromCart = useCallback(async (itemId: number | undefined) => {
+        if (!itemId) {
+            return;
+        }
         try {
             await cartService.delete(itemId);
             setCartItems((prevItems) => prevItems.filter((item) => item.id !== itemId));

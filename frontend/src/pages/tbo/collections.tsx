@@ -98,7 +98,7 @@ const Collections: React.FC<ComponentProps> = () => {
                                     </div>
                                 ) : (
                                     <React.Fragment>
-                                        <div className="grid w-full gap-4 grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 pb-4">
+                                        <div className="grid w-full gap-4 grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 pb-4">
                                             {products.map((product: Product, index: number) => (
                                                 <ProductItem key={index} product={product} />
                                             ))}
