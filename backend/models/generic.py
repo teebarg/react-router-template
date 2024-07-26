@@ -1,6 +1,9 @@
 import secrets
 from typing import List, Optional
 
+from models.order_item import OrderItemBase
+from models.address import AddressBase
+from models.order import OrderBase
 from pydantic import BaseModel
 from sqlmodel import Field, Relationship, SQLModel
 
@@ -98,6 +101,8 @@ class User(UserBase, table=True):
     id: int | None = Field(default=None, primary_key=True)
     hashed_password: str = secrets.token_urlsafe(6)
     carts: List["Cart"] = Relationship(back_populates="user")
+    addresses: List["Address"] = Relationship(back_populates="user")
+    orders: List["Order"] = Relationship(back_populates="user")
 
 
 class Cart(CartBase, table=True):
@@ -121,7 +126,60 @@ class CartItemPublic(CartItemBase):
     id: int
     product: Product
 
-
 class CartPublic(CartBase):
     id: int
     items: list[CartItemPublic] = []
+
+class Address(AddressBase, table=True):
+    __tablename__ = "addresses"
+    id: Optional[int] = Field(default=None, primary_key=True)
+    user_id: int | None = Field(default=None, foreign_key="user.id")
+    user: User | None = Relationship(back_populates="addresses")
+
+class AddressPublic(AddressBase):
+    id: int
+
+class Addresses(SQLModel):
+    addresses: list[AddressPublic]
+    page: int
+    per_page: int
+    total_count: int
+    total_pages: int
+
+class Order(OrderBase, table=True):
+    __tablename__ = "orders"
+    id: Optional[int] = Field(default=None, primary_key=True)
+    user_id: int | None = Field(default=None, foreign_key="user.id")
+    user: User | None = Relationship(back_populates="orders")
+    # billing_id: int | None = Field(default=None, foreign_key="addresses.id")
+    # billing: Address | None = Relationship()
+    shipping_id: int | None = Field(default=None, foreign_key="addresses.id")
+    shipping: Address = Relationship()
+
+    items: list["OrderItem"] = Relationship(back_populates="order")
+
+class OrderPublic(OrderBase):
+    id: int
+
+class Orders(SQLModel):
+    orders: list[OrderPublic]
+    page: int
+    per_page: int
+    total_count: int
+    total_pages: int
+
+
+class OrderItem(OrderItemBase, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    order_id: int | None = Field(default=None, foreign_key="orders.id")
+    order: Order | None = Relationship(back_populates="items")
+
+class OrderItemPublic(OrderItemBase):
+    id: int
+
+class OrderItems(SQLModel):
+    order_items: list[OrderItemPublic]
+    page: int
+    per_page: int
+    total_count: int
+    total_pages: int

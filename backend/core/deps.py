@@ -17,7 +17,7 @@ from core import security
 from core.config import settings
 from core.logging import logger
 from db.engine import engine
-from models.generic import Cart, User
+from models.generic import Address, Cart, User
 from models.token import TokenPayload
 
 reusable_oauth2 = OAuth2PasswordBearer(
@@ -89,6 +89,16 @@ def get_current_active_user(
 
 CurrentUser = Annotated[User, Depends(get_current_user)]
 
+def get_address_param(id: str, db: SessionDep, current_user: CurrentUser) -> Address:
+    if address := crud.address.get(db=db, id=id):
+        if  not current_user.is_superuser and current_user.id != address.user_id:
+            raise HTTPException(
+                status_code=401, detail="Unauthorized to access this address."
+            )
+        return address
+    raise HTTPException(status_code=404, detail="Address not found.")
+
+CurrentAddress = Annotated[User, Depends(get_address_param)]
 
 def get_cart(
     db: SessionDep,

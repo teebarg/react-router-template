@@ -61,7 +61,6 @@ async def index(
     count_statement = crud.product.generate_statement(
         statement=count_statement, query=query
     )
-    print(count_statement)
     total_count = db.exec(count_statement).one()
 
     products = crud.product.get_multi(
