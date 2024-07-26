@@ -6,14 +6,10 @@ import crud
 from core.logging import logger
 from core.utils import generate_slug
 from crud.base import CRUDBase
+from models.generic import Collection, Product, ProductCollection, ProductTag, Tag
 from models.product import (
-    Collection,
-    Product,
-    ProductCollection,
     ProductCreate,
-    ProductTag,
     ProductUpdate,
-    Tag,
 )
 
 

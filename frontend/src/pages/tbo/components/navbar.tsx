@@ -10,26 +10,31 @@ import UserDropDown from "@/components/user-menu";
 import { Link, NavLink } from "react-router-dom";
 import { useAuth } from "@/store/auth-provider";
 import type { AuthContextValue } from "@/store/auth-provider";
+import { Cart } from "./cart";
+import React from "react";
+import { Search } from "./product-search";
 
 const TBONavbar = () => {
     const { currentUser } = useAuth() as AuthContextValue;
     const searchInput = (
-        <Input
-            aria-label="Search"
-            classNames={{
-                inputWrapper: "bg-default-100 min-w-[500px] lg:min-w-[500px] rounded-full",
-                input: "text-sm",
-            }}
-            endContent={
-                <Kbd className="hidden lg:inline-block" keys={["command"]}>
-                    K
-                </Kbd>
-            }
-            labelPlacement="outside"
-            placeholder="Search..."
-            startContent={<SearchIcon className="text-base text-default-400 pointer-events-none flex-shrink-0" />}
-            type="search"
-        />
+        <React.Fragment>
+            <Input
+                aria-label="Search"
+                classNames={{
+                    inputWrapper: "bg-default-100 min-w-[500px] lg:min-w-[500px] rounded-full",
+                    input: "text-sm",
+                }}
+                endContent={
+                    <Kbd className="hidden lg:inline-block" keys={["command"]}>
+                        K
+                    </Kbd>
+                }
+                labelPlacement="outside"
+                placeholder="Search..."
+                startContent={<SearchIcon className="text-base text-default-400 pointer-events-none flex-shrink-0" />}
+                type="search"
+            />
+        </React.Fragment>
     );
 
     return (
@@ -43,33 +48,27 @@ const TBONavbar = () => {
                 </NavbarBrand>
                 <div className="hidden sm:flex gap-2 text-sm">
                     <NavbarMenuItem>
-                        <NavLink className={({ isActive, isPending }) => (isPending ? "pending" : isActive ? "text-danger" : "")} to={"/"}>
+                        <NavLink className={({ isActive }) => (isActive ? "text-danger" : "")} to={"/"}>
                             Home
                         </NavLink>
                     </NavbarMenuItem>
                     <NavbarMenuItem>
-                        <NavLink className={({ isActive, isPending }) => (isPending ? "pending" : isActive ? "text-danger" : "")} to={"/"}>
+                        <NavLink className={({ isActive }) => (isActive ? "text-danger" : "")} to={"/"}>
                             About
                         </NavLink>
                     </NavbarMenuItem>
                     <NavbarMenuItem>
-                        <NavLink className={({ isActive, isPending }) => (isPending ? "pending" : isActive ? "text-danger" : "")} to={"/"}>
+                        <NavLink className={({ isActive }) => (isActive ? "text-danger" : "")} to={"/"}>
                             Services
                         </NavLink>
                     </NavbarMenuItem>
                     <NavbarMenuItem>
-                        <NavLink
-                            className={({ isActive, isPending }) => (isPending ? "pending" : isActive ? "text-danger" : "")}
-                            to={"/tbo/collections"}
-                        >
+                        <NavLink className={({ isActive }) => (isActive ? "text-danger" : "")} to={"/tbo/collections"}>
                             Collections
                         </NavLink>
                     </NavbarMenuItem>
                     <NavbarMenuItem>
-                        <NavLink
-                            className={({ isActive, isPending }) => (isPending ? "pending" : isActive ? "text-danger" : "")}
-                            to={"/tbo/checkout"}
-                        >
+                        <NavLink className={({ isActive }) => (isActive ? "text-danger" : "")} to={"/tbo/checkout"}>
                             Checkout
                         </NavLink>
                     </NavbarMenuItem>
@@ -80,7 +79,13 @@ const TBONavbar = () => {
                 <NavbarItem className="flex gap-2">
                     <ThemeSwitch />
                 </NavbarItem>
-                <NavbarItem className="hidden lg:flex">{searchInput}</NavbarItem>
+                {/* <NavbarItem className="hidden lg:flex">{searchInput}</NavbarItem> */}
+                <NavbarItem className="hidden lg:flex">
+                    <Search />
+                </NavbarItem>
+                <NavbarItem className="hidden lg:flex">
+                    <Cart />
+                </NavbarItem>
                 <NavbarItem className="hidden sm:flex">
                     {currentUser ? (
                         <UserDropDown />

@@ -37,18 +37,18 @@ const SlideOver: React.FC<SlideoverProps> = ({ isOpen, onClose, children, title,
                     {...dialogProps}
                     {...modalProps}
                     ref={ref}
-                    className={`fixed top-0 w-[27%] h-screen shadow-lg transform transition-transform duration-300 z-50 py-5 px-2 bg-default-50 ${className} ${location[direction]}`}
+                    className={`fixed flex flex-col top-0 w-[27%] h-screen shadow-lg transform transition-transform duration-300 z-50 py-5 px-2 bg-default-50 ${className} ${location[direction]}`}
                 >
                     <Button isIconOnly onPress={onClose} className="absolute top-4 right-2 bg-transparent">
                         <CancelIcon size={24} />
                     </Button>
-                    <ScrollShadow isEnabled={false} hideScrollBar className="flex flex-col h-full">
+                    <ScrollShadow isEnabled={false} hideScrollBar className="flex flex-col flex-1">
                         <div className="text-2xl mb-4 font-semibold pl-2">{title}</div>
                         <div className="w-full h-full max-h-full flex-1 px-2">
                             <React.Fragment>{children}</React.Fragment>
                         </div>
-                        <React.Fragment>{footer}</React.Fragment>
                     </ScrollShadow>
+                    <React.Fragment>{footer}</React.Fragment>
                 </div>
             </FocusScope>
         </OverlayContainer>

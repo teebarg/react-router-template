@@ -10,6 +10,7 @@ from fastapi import (
     Query,
     UploadFile,
 )
+from sqlalchemy.sql import text
 from sqlmodel import func, select
 
 import crud
@@ -18,12 +19,10 @@ from core.deps import (
     SessionDep,
 )
 from core.logging import logger
+from models.generic import Product, ProductPublic, Products
 from models.message import Message
 from models.product import (
-    Product,
     ProductCreate,
-    ProductPublic,
-    Products,
     ProductUpdate,
 )
 from services.export import export, process_file, validate_file
@@ -62,7 +61,6 @@ async def index(
     count_statement = crud.product.generate_statement(
         statement=count_statement, query=query
     )
-    print(count_statement)
     total_count = db.exec(count_statement).one()
 
     products = crud.product.get_multi(
@@ -164,8 +162,6 @@ async def upload_products(
 async def export_products(
     current_user: deps.CurrentUser, db: SessionDep, bucket: deps.Storage
 ) -> Any:
-    from sqlalchemy.sql import text
-
     try:
         statement = "SELECT name, slug, description, price, old_price FROM product;"
         products = db.exec(text(statement))

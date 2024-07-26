@@ -130,41 +130,5 @@ const filters = [
     { key: "most-popular", label: "Most Popular" },
 ];
 
-interface Cart {
-    name: string;
-    color: string;
-    size: string;
-    amount: string;
-    quantity: number;
-    image: string;
-}
-
-const cart: Cart[] = [
-    {
-        name: "Boot",
-        color: "Blue",
-        size: "41",
-        amount: "$49.99",
-        quantity: 3,
-        image: "https://nextuipro.nyc3.cdn.digitaloceanspaces.com/components-images/shoes/1.png",
-    },
-    {
-        name: "Sneakers",
-        color: "Ted",
-        size: "45",
-        amount: "$69.99",
-        quantity: 1,
-        image: "https://nextuipro.nyc3.cdn.digitaloceanspaces.com/components-images/shoes/2.png",
-    },
-    {
-        name: "Training shoes",
-        color: "Black",
-        size: "42",
-        amount: "$49.99",
-        quantity: 5,
-        image: "https://nextuipro.nyc3.cdn.digitaloceanspaces.com/components-images/shoes/3.png",
-    },
-];
-
-export type { CategoryInterface, Cart };
-export { categories, openingHours, sizes, genders, brands, filters, cart };
+export type { CategoryInterface };
+export { categories, openingHours, sizes, genders, brands, filters };

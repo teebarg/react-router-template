@@ -23,15 +23,15 @@ def upgrade() -> None:
     op.create_table(
         "cartitem",
         sa.Column("id", sa.Integer(), nullable=False),
-        sa.Column("user_id", sa.Integer(), nullable=False),
+        sa.Column("cart_id", sa.Integer(), nullable=False),
         sa.Column("product_id", sa.Integer(), nullable=False),
         sa.Column("quantity", sa.Integer(), nullable=False),
         sa.Column("created_at", sa.DateTime(), nullable=True),
         sa.Column("updated_at", sa.DateTime(), nullable=True),
         sa.PrimaryKeyConstraint("id"),
         sa.ForeignKeyConstraint(
-            ["user_id"],
-            ["user.id"],
+            ["cart_id"],
+            ["cart.id"],
         ),
         sa.ForeignKeyConstraint(
             ["product_id"],

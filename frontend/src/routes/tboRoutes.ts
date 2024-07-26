@@ -49,6 +49,16 @@ const tboRoutes = (isAuthenticated: any, queryClient: any) => {
                 };
             },
         },
+        {
+            path: "checkout/:slug",
+            async lazy() {
+                const { CheckoutStatus, checkoutStatusLoader } = await import("@/pages/tbo/checkout-status");
+                return {
+                    loader: checkoutStatusLoader,
+                    Component: CheckoutStatus,
+                };
+            },
+        },
     ];
 };
 

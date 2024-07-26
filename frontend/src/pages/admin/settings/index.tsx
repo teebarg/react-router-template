@@ -15,12 +15,11 @@ const AdminSettings: React.FC<Props> = () => {
             <div>
                 <div className="w-full max-w-3xl flex-1 py-4 px-8 sm:px-16">
                     <div className="flex items-center gap-x-3">
-                        <Button className="text-tiny rounded-small px-0 !gap-0 bg-default/40 min-w-8 w-8 h-8 sm:hidden">
+                        <Button isIconOnly className="text-tiny rounded-small px-0 !gap-0 bg-default/40 min-w-8 w-8 h-8 sm:hidden">
                             <svg
-                                xmlns="http://www.w3.org/2000/svg"
                                 aria-hidden="true"
                                 role="img"
-                                className="text-default-500"
+                                className="text-primary"
                                 width="20"
                                 height="20"
                                 viewBox="0 0 24 24"

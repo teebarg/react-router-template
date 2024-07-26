@@ -8,7 +8,7 @@ from sqlmodel import Session, select
 from core.config import settings
 from core.logging import logger
 from db.engine import engine
-from models.user import User
+from models.generic import User
 
 
 class ConnectionManager:
