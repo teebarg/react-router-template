@@ -3,7 +3,9 @@ from sqlmodel import Field, SQLModel
 from models.base import BaseModel
 
 class OrderItemBase(BaseModel):
-    pass
+    product_id: int = Field(foreign_key="product.id")
+    quantity: int = 0
+    price: float = 0
 
 
 class OrderItemCreate(OrderItemBase):

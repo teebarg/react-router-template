@@ -1,3 +1,4 @@
+from datetime import datetime, timezone
 import secrets
 from typing import List, Optional
 
@@ -149,6 +150,9 @@ class Addresses(SQLModel):
 class Order(OrderBase, table=True):
     __tablename__ = "orders"
     id: Optional[int] = Field(default=None, primary_key=True)
+    order_number: str | None = Field(default=None, max_length=255)
+    order_date: datetime | None = Field(default=datetime.now(timezone.utc))
+    status: str | None = Field(default=None, max_length=255)
     user_id: int | None = Field(default=None, foreign_key="user.id")
     user: User | None = Relationship(back_populates="orders")
     # billing_id: int | None = Field(default=None, foreign_key="addresses.id")
@@ -158,8 +162,26 @@ class Order(OrderBase, table=True):
 
     items: list["OrderItem"] = Relationship(back_populates="order")
 
+
+class OrderItem(OrderItemBase, table=True):
+    __tablename__ = "order_items"
+    id: Optional[int] = Field(default=None, primary_key=True)
+    order_id: int | None = Field(default=None, foreign_key="orders.id")
+    order: Order | None = Relationship(back_populates="items")
+    product_id: int | None = Field(default=None, foreign_key="product.id")
+    product: Product = Relationship()
+
+class OrderItemPublic(OrderItemBase):
+    id: int
+    product: Product
+
 class OrderPublic(OrderBase):
     id: int
+    order_number: str
+    order_date: datetime
+    status: str
+    items: list["OrderItemPublic"] = []
+
 
 class Orders(SQLModel):
     orders: list[OrderPublic]
@@ -168,14 +190,6 @@ class Orders(SQLModel):
     total_count: int
     total_pages: int
 
-
-class OrderItem(OrderItemBase, table=True):
-    id: Optional[int] = Field(default=None, primary_key=True)
-    order_id: int | None = Field(default=None, foreign_key="orders.id")
-    order: Order | None = Relationship(back_populates="items")
-
-class OrderItemPublic(OrderItemBase):
-    id: int
 
 class OrderItems(SQLModel):
     order_items: list[OrderItemPublic]

@@ -1,6 +1,6 @@
 import { CartItem } from "@/models/commerce";
 import cartService from "@/services/cart.service";
-import React, { createContext, useContext, useState, useCallback, ReactNode, useEffect } from "react";
+import React, { createContext, useContext, useState, useCallback, ReactNode, useEffect, useMemo } from "react";
 import useNotifications from "../notifications";
 
 interface CartContextType {
@@ -8,6 +8,7 @@ interface CartContextType {
     updateQuantity: (product_id: number, quantity: number) => void;
     removeFromCart: (itemId: number | undefined) => void;
     clearCart: () => void;
+    subtotal: number;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -66,11 +67,16 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
         setCartItems([]);
     }, []);
 
+    const subtotal = useMemo(() => {
+        return cartItems.reduce((sum, item) => sum + item.product.price * item.quantity, 0);
+    }, [cartItems]);
+
     const value: CartContextType = {
         cartItems,
         updateQuantity,
         removeFromCart,
         clearCart,
+        subtotal
     };
 
     return <CartContext.Provider value={value}>{children}</CartContext.Provider>;

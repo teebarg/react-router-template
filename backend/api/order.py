@@ -1,5 +1,6 @@
+from core.utils import generate_invoice_email, send_email
 from core import deps
-from models.generic import Order, OrderPublic, Orders
+from models.generic import CartItem, Order, OrderItem, OrderPublic, Orders
 from fastapi import (
     APIRouter,
     BackgroundTasks,
@@ -9,16 +10,19 @@ from fastapi import (
     HTTPException,
     Query,
     UploadFile,
+    Cookie
 )
-from typing import Annotated
+from typing import Annotated, Union
 from sqlmodel import func, or_, select
 from sqlalchemy.exc import IntegrityError
 
 import crud
 from core.deps import (
+    CurrentOrder,
     CurrentUser,
     SessionDep,
     get_current_user,
+    get_order_path_param,
 )
 
 from models.message import Message
@@ -77,60 +81,71 @@ def index(
 @router.post(
     "/", dependencies=[Depends(get_current_user)], response_model=OrderPublic
 )
-def create(*, db: SessionDep, create_data: OrderCreate) -> OrderPublic:
+def create(*, db: SessionDep, create_data: OrderCreate, current_user: CurrentUser, session_id: Annotated[Union[str, None], Cookie()] = None) -> OrderPublic:
     """
     Create new order.
     """
-    order = crud.order.get_by_key(db=db, value=create_data.name)
-    if order:
-        raise HTTPException(
-            status_code=400,
-            detail="The order already exists in the system.",
-        )
+    if not session_id:
+        raise HTTPException(status_code=404, detail="Cart not found")
+    
+    cart = crud.cart.get_by_key(db=db, key="session_id", value=session_id)
+    if not cart.items:
+        raise HTTPException(status_code=400, detail="Cart is empty")
+    
+    order = crud.order.create(db=db, obj_in=create_data, user_id=current_user.id)
 
-    order = crud.order.create(db=db, obj_in=create_data)
+    for item in cart.items:
+        print(item.product)
+        order_item = OrderItem(
+            order_id=order.id,
+            product_id=item.product_id,
+            quantity=item.quantity,
+            price=item.product.price
+        )
+        db.add(order_item)
+    db.query(CartItem).filter(CartItem.cart_id == cart.id).delete()
+    db.commit()
+
+    # Send download link
+    email_data = generate_invoice_email(order=order, user=current_user)
+    send_email(
+        email_to="neyostica2000@yahoo.com",
+        subject=email_data.subject,
+        html_content=email_data.html_content,
+    )
+
     return order
 
 
-@router.get("/{id}", response_model=OrderPublic)
+@router.get("/{order_number}", dependencies=[], response_model=OrderPublic)
 def read(
-    id: int, db: SessionDep
+    order: CurrentOrder
 ) -> OrderPublic:
     """
-    Get a specific order by id.
+    Get a specific order by order_number.
     """
-    order = crud.order.get(db=db, id=id)
-    if not order:
-        raise HTTPException(status_code=404, detail="Order not found")
     return order
 
 
 @router.patch(
     "/{id}",
-    dependencies=[Depends(get_current_user)],
+    dependencies=[],
     response_model=OrderPublic,
 )
 def update(
     *,
     db: SessionDep,
-    id: int,
+    db_order: CurrentOrder,
     update_data: OrderUpdate,
 ) -> OrderPublic:
     """
     Update a order.
     """
-    db_order = crud.order.get(db=db, id=id)
-    if not db_order:
-        raise HTTPException(
-            status_code=404,
-            detail="Order not found",
-        )
-
     try:
         db_order = crud.order.update(db=db, db_obj=db_order, obj_in=update_data)
         return db_order
     except IntegrityError as e:
-        logger.error(f"Error updating tag, str(e.orig.pgerror)")
+        logger.error(f"Error updating tag, {e.orig.pgerror}")
         raise HTTPException(
             status_code=422, detail=str(e.orig.pgerror)
         ) from e
@@ -142,15 +157,13 @@ def update(
         ) from e
 
 
-@router.delete("/{id}", dependencies=[Depends(get_current_user)])
+@router.delete("/{id}", dependencies=[Depends(get_order_path_param)])
 def delete(db: SessionDep, id: int) -> Message:
     """
     Delete a order.
     """
     try:
-        order = crud.order.get(db=db, id=id)
-        if not order:
-            raise HTTPException(status_code=404, detail="Order not found")
+
         crud.order.remove(db=db, id=id)
         return Message(message="Order deleted successfully")
     except Exception as e:
@@ -158,21 +171,6 @@ def delete(db: SessionDep, id: int) -> Message:
             status_code=500,
             detail=str(e),
         ) from e
-
-
-@router.post("/excel/{task_id}")
-async def upload_orders(
-    file: Annotated[UploadFile, File()],
-    batch: Annotated[str, Form()],
-    task_id: str,
-    db: SessionDep,
-    background_tasks: BackgroundTasks,
-):
-    await validate_file(file=file)
-
-    contents = await file.read()
-    background_tasks.add_task(process_file, contents, task_id, db, crud.order.bulk_upload)
-    return {"batch": batch, "message": "File upload started"}
 
 
 @router.post("/export")

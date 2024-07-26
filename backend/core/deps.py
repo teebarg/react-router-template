@@ -17,7 +17,7 @@ from core import security
 from core.config import settings
 from core.logging import logger
 from db.engine import engine
-from models.generic import Address, Cart, User
+from models.generic import Address, Cart, Order, User
 from models.token import TokenPayload
 
 reusable_oauth2 = OAuth2PasswordBearer(
@@ -126,16 +126,6 @@ def get_cart(
     return cart
 
 
-def get_cart_path_param(id: str, db: SessionDep, current_user: CurrentUser) -> Cart:
-    if cart := crud.cart.get(db=db, id=id):
-        if current_user.id != cart.user_id:
-            raise HTTPException(
-                status_code=401, detail="Unauthorized to access this cart."
-            )
-        return cart
-    raise HTTPException(status_code=404, detail="Cart not found.")
-
-
 def get_product_path_param(id: str, db: SessionDep) -> Cart:
     if product := crud.product.get(db=db, id=id):
         return product
@@ -143,7 +133,6 @@ def get_product_path_param(id: str, db: SessionDep) -> Cart:
 
 
 UserCart = Annotated[Cart, Depends(get_cart)]
-CurrentCart = Annotated[Cart, Depends(get_cart_path_param)]
 
 
 def get_current_active_superuser(current_user: CurrentUser) -> User:
@@ -155,3 +144,27 @@ def get_current_active_superuser(current_user: CurrentUser) -> User:
 
 
 AdminUser = Annotated[User, Depends(get_current_active_superuser)]
+
+
+def get_cart_path_param(id: str, db: SessionDep, current_user: CurrentUser) -> Cart:
+    if cart := crud.cart.get(db=db, id=id):
+        if not current_user.is_superuser and current_user.id != cart.user_id:
+            raise HTTPException(
+                status_code=401, detail="Unauthorized to access this cart."
+            )
+        return cart
+    raise HTTPException(status_code=404, detail="Cart not found.")
+
+CurrentCart = Annotated[Cart, Depends(get_cart_path_param)]
+
+
+def get_order_path_param(order_number: str, db: SessionDep, current_user: CurrentUser) -> Cart:
+    if order := crud.order.get_by_key(db=db, key="order_number", value=order_number):
+        if not current_user.is_superuser:
+            raise HTTPException(
+                status_code=401, detail="Unauthorized to access this order."
+            )
+        return order
+    raise HTTPException(status_code=404, detail="Order not found.")
+
+CurrentOrder = Annotated[Order, Depends(get_order_path_param)]
