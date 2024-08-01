@@ -28,5 +28,5 @@ bcrypt==4.0.1
 emails==0.6
 ruff==0.5.0
 pandas==2.2.2
-openpyxl==3.1.4
+openpyxl==3.1.5
 aio-pika==9.4.2
