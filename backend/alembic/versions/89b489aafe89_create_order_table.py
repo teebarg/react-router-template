@@ -25,7 +25,6 @@ def upgrade() -> None:
         sa.Column("id", sa.Integer(), nullable=False),
         sa.Column("order_number", sa.String(length=255), nullable=False),
         sa.Column("user_id", sa.Integer(), nullable=False),
-        # sa.Column("billing_id", sa.Integer(), nullable=False),
         sa.Column("shipping_id", sa.Integer(), nullable=False),
         sa.Column("order_date", sa.Date(), nullable=False),
         sa.Column("status", sa.String(length=255), nullable=False),
@@ -40,10 +39,6 @@ def upgrade() -> None:
         sa.ForeignKeyConstraint(
             ["user_id"],
             ["user.id"],
-        ),
-        sa.ForeignKeyConstraint(
-            ["billing_id"],
-            ["addresses.id"],
         ),
         sa.ForeignKeyConstraint(
             ["shipping_id"],

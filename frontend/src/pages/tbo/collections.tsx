@@ -58,7 +58,7 @@ const Collections: React.FC<ComponentProps> = () => {
                         <header className="relative z-20 flex flex-col gap-2 rounded-medium bg-default-50 px-4 pb-3 pt-2 md:pt-3">
                             <div className="flex items-center gap-1 md:hidden md:gap-2">
                                 <h2 className="text-large font-medium capitalize">{slug}</h2>
-                                <span className="text-small text-default-400">(1240)</span>
+                                <span className="text-small text-default-400">({pagination.total_count})</span>
                             </div>
                             <div className="flex items-center justify-between gap-2 ">
                                 <div className="flex flex-row gap-2">
@@ -68,7 +68,7 @@ const Collections: React.FC<ComponentProps> = () => {
                                     </Button>
                                     <div className="hidden items-center gap-1 md:flex">
                                         <h2 className="text-medium font-medium capitalize">{slug}</h2>
-                                        <span className="text-small text-default-400">(1240)</span>
+                                        <span className="text-small text-default-400">({pagination.total_count})</span>
                                     </div>
                                 </div>
                                 <div className="flex items-center gap-1 flex-1 sm:flex-initial">

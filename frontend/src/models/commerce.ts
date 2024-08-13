@@ -19,7 +19,10 @@ export interface Order {
     order_number: string;
     created_at: string;
     status: string;
-    total: number;
+    total_amount: number;
+    tax: number;
+    delivery_fee: number;
+    discount: number;
     items: OrderItem[];
 }
 

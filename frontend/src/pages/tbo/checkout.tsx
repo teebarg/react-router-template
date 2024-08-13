@@ -2,12 +2,14 @@ import { CancelIcon, DocumentIcon, MasterCardIcon, PayPalIcon, VisaCardIcon } fr
 import { BreadcrumbItem, Breadcrumbs, Button, Checkbox, Radio, RadioGroup, cn, Image } from "@nextui-org/react";
 import React from "react";
 import { useForm } from "react-hook-form";
-import { Link, NavLink } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import { Email, Input, Select, Number } from "nextui-hook-form";
 import { useCart } from "@/store/cart-provider";
 import { CartItem } from "@/models/commerce";
 import { currency, imgSrc } from "@/utils/util";
 import Meta from "@/components/Meta";
+import orderService from "@/services/order.service";
+import useNotifications from "@/store/notifications";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const CustomRadio: React.FC<any> = (props) => {
@@ -39,11 +41,34 @@ type Inputs = {
 interface ComponentProps {}
 
 const Checkout: React.FC<ComponentProps> = () => {
+    const [, notify] = useNotifications();
+    const navigate = useNavigate();
     const { cartItems, removeFromCart } = useCart();
+    const [loading, setLoading] = React.useState<boolean>(false);
     const subTotal = cartItems.reduce((sum, item) => sum + item.product.price * item.quantity, 0);
     const tax = 0.05 * subTotal;
     const discount = 2000;
-    const total = subTotal + tax + discount;
+    const total_amount = subTotal + tax + discount;
+    const delivery_fee = 1500;
+
+    const handleCheckout = async () => {
+        setLoading(true);
+        try {
+            const { order_number } = await orderService.create({
+                shipping_id: 1,
+                subtotal: subTotal,
+                tax,
+                delivery_fee,
+                discount,
+                total_amount,
+            });
+            navigate(`/tbo/checkout/${order_number}`, { replace: true });
+        } catch (error) {
+            notify.error(`${error}`);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const {
         control,
@@ -241,13 +266,13 @@ const Checkout: React.FC<ComponentProps> = () => {
                                         <hr className="shrink-0 bg-divider border-none w-full h-divider" role="separator" />
                                         <div className="flex justify-between">
                                             <dt className="text-small font-semibold text-default-500">Total</dt>
-                                            <dd className="text-small font-semibold text-default-700">{currency(total)}</dd>
+                                            <dd className="text-small font-semibold text-default-700">{currency(total_amount)}</dd>
                                         </div>
                                     </dl>
                                 </div>
                             </div>
                             <div className="mt-4">
-                                <Button color="primary" className="w-full">
+                                <Button onPress={handleCheckout} color="primary" className="w-full" isLoading={loading} isDisabled={loading}>
                                     Checkout
                                 </Button>
                             </div>

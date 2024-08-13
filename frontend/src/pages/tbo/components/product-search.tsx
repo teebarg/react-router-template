@@ -71,15 +71,15 @@ const Search: React.FC<ComponentProps> = () => {
         >
             {(item) => (
                 <AutocompleteItem key={item.name} className="capitalize">
-                    <Link to={`/tbo/product/${item.slug}`} className="flex items-center w-full gap-2">
+                    <Link to={`/tbo/product/${item.slug}`} className="flex items-center w-full gap-6">
                         <Image src={imgSrc(`products%2F${item.image}`)} className="h-24" />
                         <div className="flex-1">
-                            <p className="truncate font-semibold">{item.name}</p>
-                            <p>
-                                <span className="text-danger text-lg">{currency(item.price)}</span>
-                                <span className="line-through text-xs ml-1">{currency(item.old_price)}</span>
-                            </p>
-                            <Ratings rating={item.rating ?? 1} size={20} />
+                            <p className="truncate font-semibold max-w-60">{item.name}</p>
+                            <div className="flex items-start">
+                                <p className="text-danger text-lg">{currency(item.price)}</p>
+                                {item.old_price > 0 && <p className="line-through text-xs ml-1">{currency(item.old_price)}</p>}
+                            </div>
+                            <Ratings rating={item.ratings ?? 1} size={20} />
                         </div>
                         <p>Buy Now</p>
                     </Link>

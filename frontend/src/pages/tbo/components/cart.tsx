@@ -42,22 +42,21 @@ const Cart: React.FC<ComponentProps> = () => {
                                         <dd className="text-small font-semibold text-default-700">{currency(subTotal)}</dd>
                                     </div>
                                 </dl>
-                                <div className="mt-4">
-                                    <Link
-                                        className="inline-flex items-center justify-center whitespace-nowrap font-normal overflow-hidden px-4 min-w-20 h-10 text-small gap-2 rounded-medium bg-primary text-primary-foreground w-full"
-                                        to={"/tbo/checkout"}
-                                    >
-                                        Checkout
-                                    </Link>
-                                </div>
-                                <div className="mt-6 flex items-center justify-center text-center text-sm">
-                                    <p>
-                                        or
-                                        <Link to={"/tbo/collections"} className="font-medium">
-                                            Continue Shopping
-                                            <span aria-hidden="true"> →</span>
+                                {cartItems.length > 0 && (
+                                    <div className="mt-4">
+                                        <Link
+                                            className="inline-flex items-center justify-center whitespace-nowrap font-normal overflow-hidden px-4 min-w-20 h-10 text-small gap-2 rounded-medium bg-primary text-primary-foreground w-full"
+                                            to={"/tbo/checkout"}
+                                        >
+                                            Checkout
                                         </Link>
-                                    </p>
+                                    </div>
+                                )}
+                                <div className="mt-6 flex items-center justify-center text-center text-sm">
+                                    <Link to={"/tbo/collections"} className="font-medium">
+                                        Continue Shopping
+                                        <span aria-hidden="true"> →</span>
+                                    </Link>
                                 </div>
                             </div>
                         </React.Fragment>

@@ -1,10 +1,10 @@
 import React from "react";
-import { LoaderFunction, useLoaderData, useParams } from "react-router-dom";
-import { Button } from "@nextui-org/react";
+import { LoaderFunction, useLoaderData, useNavigate, useParams } from "react-router-dom";
+import { Button, Image } from "@nextui-org/react";
 import { Order, OrderItem } from "@/models/commerce";
 import orderService from "@/services/order.service";
 import { CartIcon, CheckIcon, RightArrowIcon } from "nui-react-icons";
-import { currency } from "@/utils/util";
+import { currency, imgSrc } from "@/utils/util";
 
 const OrderNotFoundPaymentFailedPage = ({ order_number }: any) => {
     return (
@@ -13,7 +13,7 @@ const OrderNotFoundPaymentFailedPage = ({ order_number }: any) => {
                 <div>
                     <h2 className="mt-6 text-center text-3xl font-extrabold text-default-800">Oops! Something went wrong</h2>
                     <p className="mt-2 text-center text-sm text-default-500">
-                        We couldn't find your order {order_number} and the payment has failed.
+                        {`We couldn't find your order ${order_number} and the payment has failed.`}
                     </p>
                 </div>
 
@@ -24,7 +24,7 @@ const OrderNotFoundPaymentFailedPage = ({ order_number }: any) => {
 
                 <div className="rounded-md bg-content2 shadow-sm p-6">
                     <div className="space-y-4">
-                        <p className="text-sm text-default-500">Don't worry, no charges have been made to your account. Here's what you can do:</p>
+                        <p className="text-sm text-default-500">{`Don't worry, no charges have been made to your account. Here's what you can do:`}</p>
                         <ul className="list-disc pl-5 text-sm text-default-500 space-y-2">
                             <li>Double-check your order number and try again</li>
                             <li>Ensure your payment details are correct</li>
@@ -71,6 +71,7 @@ const checkoutStatusLoader: LoaderFunction = async ({ request, params }) => {
 const CheckoutStatus: React.FC<ComponentProps> = () => {
     const { order, error } = useLoaderData() as { order: Order; error: boolean };
     const { slug } = useParams();
+    const navigate = useNavigate();
 
     if (error) {
         return <OrderNotFoundPaymentFailedPage order_number={slug} />;
@@ -99,12 +100,11 @@ const CheckoutStatus: React.FC<ComponentProps> = () => {
                     </div>
                     <div>
                         <p className="text-default-600">Date:</p>
-                        {/* <p className="font-medium">{order.created_at?.toLocaleDateString()}</p> */}
-                        <p className="font-medium">{order.created_at}</p>
+                        <p className="font-medium">{new Date(order.created_at)?.toLocaleDateString()}</p>
                     </div>
                     <div>
                         <p className="text-default-600">Total Amount:</p>
-                        <p className="font-medium">{currency(order.total ?? 0)}</p>
+                        <p className="font-medium">{currency(order.total_amount ?? 0)}</p>
                     </div>
                     <div>
                         <p className="text-default-600">Status:</p>
@@ -119,8 +119,19 @@ const CheckoutStatus: React.FC<ComponentProps> = () => {
                     {order.items?.map((item: OrderItem) => (
                         <li key={item.id} className="py-4 flex justify-between">
                             <div>
-                                <p className="font-medium">{item.product.name}</p>
-                                <p className="text-default-600">Quantity: {item?.quantity}</p>
+                                <div className="flex items-center gap-2">
+                                    <Image
+                                        width="100%"
+                                        alt={item.product.name}
+                                        className="object-contain h-[50px]"
+                                        src={imgSrc(`products%2F${item.product.image}`)}
+                                        fallbackSrc="https://via.placeholder.com/300x200"
+                                    />
+                                    <div>
+                                        <p className="font-medium truncate text-sm">{item.product.name}</p>
+                                        <p className="text-default-600">X {item?.quantity}</p>
+                                    </div>
+                                </div>
                             </div>
                             <p className="font-medium">{currency(item.price * item.quantity ?? 0)}</p>
                         </li>
@@ -147,7 +158,7 @@ const CheckoutStatus: React.FC<ComponentProps> = () => {
 
             <div className="text-center">
                 <Button className="mr-4">Track Order</Button>
-                <Button variant="bordered">Continue Shopping</Button>
+                <Button onPress={() => navigate("/tbo/collections")} variant="bordered">Continue Shopping</Button>
             </div>
         </div>
     );

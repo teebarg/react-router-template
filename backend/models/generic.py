@@ -155,8 +155,6 @@ class Order(OrderBase, table=True):
     status: str | None = Field(default=None, max_length=255)
     user_id: int | None = Field(default=None, foreign_key="user.id")
     user: User | None = Relationship(back_populates="orders")
-    # billing_id: int | None = Field(default=None, foreign_key="addresses.id")
-    # billing: Address | None = Relationship()
     shipping_id: int | None = Field(default=None, foreign_key="addresses.id")
     shipping: Address = Relationship()
 
