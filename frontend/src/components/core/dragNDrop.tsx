@@ -3,7 +3,7 @@ import type { FileDropItem } from "react-aria";
 import React from "react";
 import { FileTrigger } from "@/components/core/fileTrigger";
 import useWatch from "@/hooks/use-watch";
-import { CancelIcon } from "nui-react-icons";
+import { CancelIcon, UploadIcon } from "nui-react-icons";
 import { FileTypes } from "@/types";
 
 interface DragNDropProps {
@@ -69,10 +69,7 @@ const DragNDrop: React.FC<DragNDropProps> = ({ onSelect, onError, maxFileSize = 
                 }}
             >
                 <div className="text-center space-y-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="#007bff" viewBox="0 0 24 24" className="h-16 w-16 inline">
-                        <path fill="none" d="M0 0h24v24H0z" />
-                        <path d="M18 15v3H6v-3H4v3c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2v-3h-2zM7 9l1.41 1.41L11 7.83V16h2V7.83l2.59 2.58L17 9l-5-5-5 5z" />
-                    </svg>
+                    <UploadIcon className="h-16 w-16 inline" fill="#007bff" />
                     <p>
                         Drop your files here or <button className="link">browse.</button>
                     </p>

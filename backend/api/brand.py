@@ -18,8 +18,8 @@ from models.brand import (
     Brands,
     BrandUpdate,
 )
+from models.generic import Brand
 from models.message import Message
-from models.product import Brand
 
 # Create a router for brands
 router = APIRouter()

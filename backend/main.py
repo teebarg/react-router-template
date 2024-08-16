@@ -4,8 +4,13 @@ from datetime import datetime
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from api.address import router as address_router
 from api.brand import router as brand_router
+from api.cart import router as cart_router
+from api.cart_item import router as cart_item_router
 from api.collection import router as collection_router
+from api.order import router as order_router
+from api.order_item import router as order_item_router
 from api.product import router as product_router
 from api.tag import router as tag_router
 from api.websocket import consume_events
@@ -46,6 +51,36 @@ app.include_router(
     brand_router,
     prefix="/api/brand",
     tags=["brands"],
+)
+
+app.include_router(
+    cart_router,
+    prefix="/api/cart",
+    tags=["carts"],
+)
+
+app.include_router(
+    cart_item_router,
+    prefix="/api/cart-item",
+    tags=["cart-items"],
+)
+
+app.include_router(
+    address_router,
+    prefix="/api/address",
+    tags=["addresses"],
+)
+
+app.include_router(
+    order_router,
+    prefix="/api/order",
+    tags=["orders"],
+)
+
+app.include_router(
+    order_item_router,
+    prefix="/api/order-item",
+    tags=["order-item"],
 )
 
 app.add_middleware(

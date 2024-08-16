@@ -20,8 +20,8 @@ from core.deps import (
     get_current_user,
 )
 from core.logging import logger
+from models.generic import Tag
 from models.message import Message
-from models.product import Tag
 from models.tag import (
     TagCreate,
     TagPublic,

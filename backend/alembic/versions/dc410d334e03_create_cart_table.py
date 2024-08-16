@@ -23,7 +23,8 @@ def upgrade() -> None:
     op.create_table(
         "cart",
         sa.Column("id", sa.Integer(), nullable=False),
-        sa.Column("user_id", sa.Integer(), nullable=False),
+        sa.Column("user_id", sa.Integer(), nullable=True),
+        sa.Column("session_id", sa.String(length=255), nullable=True),
         sa.Column("created_at", sa.DateTime(), nullable=True),
         sa.Column("updated_at", sa.DateTime(), nullable=True),
         sa.PrimaryKeyConstraint("id"),
@@ -32,7 +33,9 @@ def upgrade() -> None:
             ["user.id"],
         ),
     )
+    op.create_index(op.f("ix_user_session"), "cart", ["session_id"], unique=True)
 
 
 def downgrade() -> None:
+    op.drop_index(op.f("ix_user_session"), table_name="cart")
     op.drop_table("cart")

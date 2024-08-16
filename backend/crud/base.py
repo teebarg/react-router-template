@@ -40,8 +40,8 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         self,
         db: Session,
         filters: list,
-        per_page: int,
-        offset: int,
+        per_page: int = 20,
+        offset: int = 1,
         sort: str = "desc",
     ) -> list[ModelType]:
         statement = select(self.model)

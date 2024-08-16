@@ -1,9 +1,13 @@
 import { Ratings } from "@/components/core/ratings";
+import Meta from "@/components/Meta";
 import productService from "@/services/product.service";
 import { currency, imgSrc } from "@/utils/util";
 import { Accordion, AccordionItem, BreadcrumbItem, Breadcrumbs, Button, ScrollShadow, Image } from "@nextui-org/react";
+import { StarIcon } from "nui-react-icons";
 import React from "react";
 import { Link, LoaderFunction, useLoaderData } from "react-router-dom";
+import TBONavbar from "./components/navbar";
+import { ProductControl } from "./components/product-control";
 
 interface Props {}
 
@@ -36,6 +40,8 @@ const Product: React.FC<Props> = () => {
                     className="w-full"
                 ></iframe>
             </div> */}
+            <Meta title={`Children Clothings | ${product.name}`} />
+            <TBONavbar />
             <div className="max-w-8xl h-full w-full px-2 lg:px-24 my-8">
                 <Breadcrumbs>
                     <BreadcrumbItem>
@@ -48,23 +54,16 @@ const Product: React.FC<Props> = () => {
                 </Breadcrumbs>
                 <div className="relative flex flex-col gap-4 lg:grid lg:grid-cols-2 lg:items-start lg:gap-x-8 mt-4">
                     <div className="relative h-full w-full flex-none">
-                        <div className="max-w-fit min-w-min inline-flex items-center justify-between box-border whitespace-nowrap px-2 text-medium rounded-full absolute left-3 top-3 z-20 h-10 gap-1 bg-background/60 pl-3 pr-2 text-foreground/90 shadow-medium backdrop-blur-md backdrop-saturate-150 dark:bg-default-100/50">
-                            <svg aria-hidden="true" role="img" className="max-h-[80%]" width="1em" height="1em" viewBox="0 0 24 24">
-                                <path
-                                    fill="currentColor"
-                                    d="M9.153 5.408C10.42 3.136 11.053 2 12 2c.947 0 1.58 1.136 2.847 3.408l.328.588c.36.646.54.969.82 1.182c.28.213.63.292 1.33.45l.636.144c2.46.557 3.689.835 3.982 1.776c.292.94-.546 1.921-2.223 3.882l-.434.507c-.476.557-.715.836-.822 1.18c-.107.345-.071.717.001 1.46l.066.677c.253 2.617.38 3.925-.386 4.506c-.766.582-1.918.051-4.22-1.009l-.597-.274c-.654-.302-.981-.452-1.328-.452c-.347 0-.674.15-1.328.452l-.596.274c-2.303 1.06-3.455 1.59-4.22 1.01c-.767-.582-.64-1.89-.387-4.507l.066-.676c.072-.744.108-1.116 0-1.46c-.106-.345-.345-.624-.821-1.18l-.434-.508c-1.677-1.96-2.515-2.941-2.223-3.882c.293-.941 1.523-1.22 3.983-1.776l.636-.144c.699-.158 1.048-.237 1.329-.45c.28-.213.46-.536.82-1.182z"
-                                />
-                            </svg>
+                        <div className="inline-flex items-center justify-between px-2 text-medium rounded-full absolute left-3 top-3 z-20 h-10 gap-1 bg-background/60 pl-3 pr-2 text-foreground/90 shadow-medium backdrop-blur-md backdrop-saturate-150 dark:bg-default-100/50">
+                            <StarIcon className="max-h-[80%]" role="img" width="1em" height="1em" />
                             <span className="flex-1 text-inherit font-normal px-2 pl-1">Popular</span>
                         </div>
-                        {/* <div className="relative shadow-black/5 shadow-none rounded-large h-[70vh] bg-red-400"> */}{" "}
                         <Image
                             src={imgSrc(`products%2F${product.image}`)}
                             className="max-h-[60vh]"
                             classNames={{ wrapper: "!max-w-full flex justify-center" }}
                             alt={product.name}
                         />
-                        {/* </div> */}
                         <ScrollShadow orientation="horizontal" className="h-[200px] w-full">
                             <Image src={imgSrc(`products%2F${product.image}`)} className="h-[200px] w-full" alt={product.name} />
                         </ScrollShadow>
@@ -81,11 +80,7 @@ const Product: React.FC<Props> = () => {
                         <p className="text-xl font-medium tracking-tight">{currency(product.price)}</p>
                         <div className="mt-4">
                             <p className="sr-only">Product description</p>
-                            <p className="line-clamp-3 text-medium text-default-500">
-                                The Nike Air Max 270 delivers an even more adaptive fit than before. Stretch material in the upper moves with your
-                                foot, while the tri-star outsole pattern adjusts to your every step for a ride that delivers support and flexibility
-                                where you need it.
-                            </p>
+                            <p className="line-clamp-3 text-medium text-default-500">{product.description}</p>
                         </div>
                         <div className="mt-6 flex flex-col gap-1">
                             <div className="mb-4 flex items-center gap-2 text-default-700">
@@ -139,16 +134,8 @@ const Product: React.FC<Props> = () => {
                                 </ul>
                             </AccordionItem>
                         </Accordion>
-                        <div className="mt-2 flex gap-2">
-                            <Button variant="shadow" color="primary">
-                                <svg aria-hidden="true" role="img" focusable="false" width="24" height="24" viewBox="0 0 24 24">
-                                    <path
-                                        fill="currentColor"
-                                        d="M2.237 2.288a.75.75 0 1 0-.474 1.423l.265.089c.676.225 1.124.376 1.453.529c.312.145.447.262.533.382c.087.12.155.284.194.626c.041.361.042.833.042 1.546v2.672c0 1.367 0 2.47.117 3.337c.12.9.38 1.658.982 2.26c.601.602 1.36.86 2.26.981c.866.117 1.969.117 3.336.117H18a.75.75 0 0 0 0-1.5h-7c-1.435 0-2.436-.002-3.192-.103c-.733-.099-1.122-.28-1.399-.556c-.235-.235-.4-.551-.506-1.091h10.12c.959 0 1.438 0 1.814-.248c.376-.248.565-.688.943-1.57l.428-1c.81-1.89 1.215-2.834.77-3.508C19.533 6 18.506 6 16.45 6H5.745a8.996 8.996 0 0 0-.047-.833c-.055-.485-.176-.93-.467-1.333c-.291-.404-.675-.66-1.117-.865c-.417-.194-.946-.37-1.572-.58zM7.5 18a1.5 1.5 0 1 1 0 3a1.5 1.5 0 0 1 0-3m9 0a1.5 1.5 0 1 1 0 3a1.5 1.5 0 0 1 0-3"
-                                    />
-                                </svg>
-                                Add to cart
-                            </Button>
+                        <div className="mt-2 flex gap-2 max-w-xs">
+                            <ProductControl product={product} />
                             <Button isIconOnly>
                                 <svg aria-hidden="true" role="img" width="24" height="24" viewBox="0 0 24 24">
                                     <path

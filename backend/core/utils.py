@@ -5,10 +5,11 @@ from pathlib import Path
 from typing import Any
 
 import emails  # type: ignore
-from jinja2 import Template
+from jinja2 import Environment, FileSystemLoader, Template
 
 from core.config import settings
 from core.logging import logger
+from models.generic import Order, User
 
 
 @dataclass
@@ -17,7 +18,27 @@ class EmailData:
     subject: str
 
 
+def format_naira(value: int):
+    return f"₦{value:,.2f}" if value else "₦0.00"
+
+
+def format_image(image: str):
+    return f"https://firebasestorage.googleapis.com/v0/b/shopit-ebc60.appspot.com/o/products%2F{image}?alt=media"
+
+
 def render_email_template(*, template_name: str, context: dict[str, Any]) -> str:
+    # Set up Jinja2 environment and add the custom filter
+    template_path = Path(__file__).parent.parent / "email-templates" / "build"
+    env = Environment(loader=FileSystemLoader(template_path))
+    env.filters["naira"] = format_naira
+    env.filters["image"] = format_image
+
+    # Load and render the template
+    template = env.get_template(template_name)
+    return template.render(context)
+
+
+def render_email_template2(*, template_name: str, context: dict[str, Any]) -> str:
     template_str = (
         Path(__file__).parent.parent / "email-templates" / "build" / template_name
     ).read_text()
@@ -57,6 +78,21 @@ def generate_test_email(email_to: str) -> EmailData:
     html_content = render_email_template(
         template_name="test_email.html",
         context={"project_name": settings.PROJECT_NAME, "email": email_to},
+    )
+    return EmailData(html_content=html_content, subject=subject)
+
+
+def generate_invoice_email(order: Order, user: User) -> EmailData:
+    project_name = settings.PROJECT_NAME
+    subject = f"{project_name} - Order Confirmation"
+    html_content = render_email_template(
+        template_name="invoice.html",
+        context={
+            "project_name": settings.PROJECT_NAME,
+            # "download_link": download_link,
+            "order": order,
+            "user": user,
+        },
     )
     return EmailData(html_content=html_content, subject=subject)
 

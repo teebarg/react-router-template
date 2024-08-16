@@ -5,7 +5,7 @@ import { filters } from "./data";
 import { ProductItem } from "./components/product-item";
 import TBONavbar from "./components/navbar";
 import Meta from "@/components/Meta";
-import { FunnelIcon } from "nui-react-icons";
+import { ExclamationIcon, FunnelIcon } from "nui-react-icons";
 import { Link, LoaderFunction, useLoaderData, useParams } from "react-router-dom";
 import productService from "@/services/product.service";
 import { Product } from "@/models/product";
@@ -58,17 +58,17 @@ const Collections: React.FC<ComponentProps> = () => {
                         <header className="relative z-20 flex flex-col gap-2 rounded-medium bg-default-50 px-4 pb-3 pt-2 md:pt-3">
                             <div className="flex items-center gap-1 md:hidden md:gap-2">
                                 <h2 className="text-large font-medium capitalize">{slug}</h2>
-                                <span className="text-small text-default-400">(1240)</span>
+                                <span className="text-small text-default-400">({pagination.total_count})</span>
                             </div>
                             <div className="flex items-center justify-between gap-2 ">
                                 <div className="flex flex-row gap-2">
                                     <Button type="button">
-                                        <FunnelIcon size={16} role="img" className="text-default-500 iconify iconify--solar" focusable="false" />
+                                        <FunnelIcon size={16} role="img" className="text-default-500" focusable="false" />
                                         Filters
                                     </Button>
                                     <div className="hidden items-center gap-1 md:flex">
                                         <h2 className="text-medium font-medium capitalize">{slug}</h2>
-                                        <span className="text-small text-default-400">(1240)</span>
+                                        <span className="text-small text-default-400">({pagination.total_count})</span>
                                     </div>
                                 </div>
                                 <div className="flex items-center gap-1 flex-1 sm:flex-initial">
@@ -88,9 +88,7 @@ const Collections: React.FC<ComponentProps> = () => {
                                 {products.length === 0 ? (
                                     <div className="flex flex-col items-center justify-center min-h-[60vh] bg-content1">
                                         <div className="max-w-md mx-auto text-center">
-                                            <svg className="w-20 h-20 mx-auto text-danger" viewBox="0 0 24 24" fill="currentColor">
-                                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" />
-                                            </svg>
+                                            <ExclamationIcon className="w-20 h-20 mx-auto text-danger" />
                                             <h1 className="text-4xl font-bold mt-6">Oops! No Products Found</h1>
                                             <p className="text-default-500 mt-4">{`There are no products in this category`}</p>
                                             <Link to="/tbo" className="bg-primary text-white font-semibold py-2 px-4 rounded mt-6 inline-block">

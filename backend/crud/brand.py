@@ -3,7 +3,7 @@ from sqlmodel import Session
 from core.utils import generate_slug
 from crud.base import CRUDBase
 from models.brand import BrandCreate, BrandUpdate
-from models.product import Brand
+from models.generic import Brand
 
 
 class CRUDBrand(CRUDBase[Brand, BrandCreate, BrandUpdate]):

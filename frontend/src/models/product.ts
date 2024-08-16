@@ -1,4 +1,5 @@
 export interface Product {
+    id: number;
     name: string;
     slug?: string;
     description?: string;
@@ -6,7 +7,7 @@ export interface Product {
     old_price: number;
     image: string;
     is_active?: boolean;
-    rating?: number;
+    ratings?: number;
 }
 
 export interface Products {

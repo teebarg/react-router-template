@@ -11,7 +11,7 @@ const Layout: React.FC<Props> = () => {
 
     return (
         <React.Fragment>
-            {state === "loading" && <Progress size="sm" isIndeterminate aria-label="Loading..." className="" color="secondary" />}
+            {state === "loading" && <Progress size="sm" isIndeterminate color="secondary" />}
             <Banner />
             <Outlet />
             <Footer />
@@ -19,4 +19,4 @@ const Layout: React.FC<Props> = () => {
     );
 };
 
-export default Layout;
+export { Layout };

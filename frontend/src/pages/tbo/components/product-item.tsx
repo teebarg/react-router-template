@@ -3,6 +3,7 @@ import { StarIcon } from "nui-react-icons";
 import { Link, useNavigate } from "react-router-dom";
 import { currency, imgSrc } from "@/utils/util";
 import { Product } from "@/models/product";
+import { ProductControl } from "./product-control";
 
 interface ComponentProps {
     product: Product;
@@ -38,18 +39,16 @@ const ProductItem: React.FC<ComponentProps> = ({ product }) => {
                 <div className="h-20">
                     <div className="flex text-small justify-between mt-2">
                         <Link to={`/tbo/product/${product.slug}`} className="font-medium text-default-700 text-base line-clamp-2">{product.name}</Link>
-                        {product.rating && (
+                        {product.ratings && (
                             <div className="flex items-center">
                                 <StarIcon className="text-default-500" role="img" size={16} />
-                                <p>{product.rating}</p>
+                                <p>{product.ratings}</p>
                             </div>
                         )}
                     </div>
                     <p className="text-left text-small text-default-500 truncate mt-1">{product.description}</p>
                 </div>
-                <Button color="primary" variant="shadow" className="w-full mt-3 h-12">
-                    Add to Cart
-                </Button>
+                <ProductControl product={product} />
             </CardFooter>
         </Card>
     );

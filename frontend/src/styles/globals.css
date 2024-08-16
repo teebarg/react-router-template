@@ -81,3 +81,8 @@ h6 {
 .animate-scrolling-banner-vertical {
     animation: scrolling-banner-vertical var(--duration) linear infinite;
 }
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+    width: 1px;
+}
