@@ -1,17 +1,17 @@
-from datetime import datetime, timezone
 import secrets
+from datetime import datetime, timezone
 from typing import List, Optional
 
-from models.order_item import OrderItemBase
-from models.address import AddressBase
-from models.order import OrderBase
 from pydantic import BaseModel
 from sqlmodel import Field, Relationship, SQLModel
 
+from models.address import AddressBase
 from models.brand import BrandBase
 from models.cart import CartBase
 from models.cart_item import CartItemBase
 from models.collection import CollectionBase
+from models.order import OrderBase
+from models.order_item import OrderItemBase
 from models.product import ProductBase
 from models.tag import TagBase
 from models.user import UserBase
@@ -127,9 +127,11 @@ class CartItemPublic(CartItemBase):
     id: int
     product: Product
 
+
 class CartPublic(CartBase):
     id: int
     items: list[CartItemPublic] = []
+
 
 class Address(AddressBase, table=True):
     __tablename__ = "addresses"
@@ -137,8 +139,10 @@ class Address(AddressBase, table=True):
     user_id: int | None = Field(default=None, foreign_key="user.id")
     user: User | None = Relationship(back_populates="addresses")
 
+
 class AddressPublic(AddressBase):
     id: int
+
 
 class Addresses(SQLModel):
     addresses: list[AddressPublic]
@@ -146,6 +150,7 @@ class Addresses(SQLModel):
     per_page: int
     total_count: int
     total_pages: int
+
 
 class Order(OrderBase, table=True):
     __tablename__ = "orders"
@@ -169,9 +174,11 @@ class OrderItem(OrderItemBase, table=True):
     product_id: int | None = Field(default=None, foreign_key="product.id")
     product: Product = Relationship()
 
+
 class OrderItemPublic(OrderItemBase):
     id: int
     product: Product
+
 
 class OrderPublic(OrderBase):
     id: int

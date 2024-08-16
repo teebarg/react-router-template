@@ -1,6 +1,5 @@
 import { Order } from "@/models/commerce";
 import UnauthorizedError from "@/services/error.service";
-import { Generic } from "@/types";
 
 const API_URL = import.meta.env.VITE_API_DOMAIN;
 

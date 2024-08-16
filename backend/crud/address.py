@@ -1,12 +1,11 @@
-
 from typing import Any, Dict
-from models.generic import Address
+
 from sqlmodel import Session, select
 
+from core.logging import logger
 from crud.base import CRUDBase
 from models.address import AddressCreate, AddressUpdate
-
-from core.logging import logger
+from models.generic import Address
 
 
 class CRUDAddress(CRUDBase[Address, AddressCreate, AddressUpdate]):
@@ -66,5 +65,6 @@ class CRUDAddress(CRUDBase[Address, AddressCreate, AddressUpdate]):
                 db.commit()
             except Exception as e:
                 logger.error(e)
+
 
 address = CRUDAddress(Address)

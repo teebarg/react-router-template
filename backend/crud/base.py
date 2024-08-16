@@ -39,7 +39,7 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
     def get_multi(
         self,
         db: Session,
-        filters: list = [],
+        filters: list,
         per_page: int = 20,
         offset: int = 1,
         sort: str = "desc",

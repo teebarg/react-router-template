@@ -89,16 +89,19 @@ def get_current_active_user(
 
 CurrentUser = Annotated[User, Depends(get_current_user)]
 
+
 def get_address_param(id: str, db: SessionDep, current_user: CurrentUser) -> Address:
     if address := crud.address.get(db=db, id=id):
-        if  not current_user.is_superuser and current_user.id != address.user_id:
+        if not current_user.is_superuser and current_user.id != address.user_id:
             raise HTTPException(
                 status_code=401, detail="Unauthorized to access this address."
             )
         return address
     raise HTTPException(status_code=404, detail="Address not found.")
 
+
 CurrentAddress = Annotated[User, Depends(get_address_param)]
+
 
 def get_cart(
     db: SessionDep,
@@ -155,10 +158,13 @@ def get_cart_path_param(id: str, db: SessionDep, current_user: CurrentUser) -> C
         return cart
     raise HTTPException(status_code=404, detail="Cart not found.")
 
+
 CurrentCart = Annotated[Cart, Depends(get_cart_path_param)]
 
 
-def get_order_path_param(order_number: str, db: SessionDep, current_user: CurrentUser) -> Cart:
+def get_order_path_param(
+    order_number: str, db: SessionDep, current_user: CurrentUser
+) -> Cart:
     if order := crud.order.get_by_key(db=db, key="order_number", value=order_number):
         if not current_user.is_superuser:
             raise HTTPException(
@@ -166,5 +172,6 @@ def get_order_path_param(order_number: str, db: SessionDep, current_user: Curren
             )
         return order
     raise HTTPException(status_code=404, detail="Order not found.")
+
 
 CurrentOrder = Annotated[Order, Depends(get_order_path_param)]

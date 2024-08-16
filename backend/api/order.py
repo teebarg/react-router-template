@@ -1,22 +1,17 @@
-from core.utils import generate_invoice_email, send_email
-from core import deps
-from models.generic import CartItem, Order, OrderItem, OrderPublic, Orders
+from typing import Annotated, Union
+
 from fastapi import (
     APIRouter,
-    BackgroundTasks,
+    Cookie,
     Depends,
-    File,
-    Form,
     HTTPException,
     Query,
-    UploadFile,
-    Cookie
 )
-from typing import Annotated, Union
-from sqlmodel import func, or_, select
 from sqlalchemy.exc import IntegrityError
+from sqlmodel import func, select
 
 import crud
+from core import deps
 from core.deps import (
     CurrentOrder,
     CurrentUser,
@@ -24,17 +19,19 @@ from core.deps import (
     get_current_user,
     get_order_path_param,
 )
-
+from core.logging import logger
+from core.utils import generate_invoice_email, send_email
+from models.generic import CartItem, Order, OrderItem, OrderPublic, Orders
 from models.message import Message
 from models.order import (
     OrderCreate,
     OrderUpdate,
 )
-from core.logging import logger
-from services.export import export, process_file, validate_file
+from services.export import export
 
 # Create a router for orders
 router = APIRouter()
+
 
 @router.get(
     "/",
@@ -59,7 +56,6 @@ def index(
     )
     total_count = db.exec(count_statement).one()
 
-
     orders = crud.order.get_multi(
         db=db,
         query=query,
@@ -78,20 +74,24 @@ def index(
     )
 
 
-@router.post(
-    "/", dependencies=[Depends(get_current_user)], response_model=OrderPublic
-)
-def create(*, db: SessionDep, create_data: OrderCreate, current_user: CurrentUser, session_id: Annotated[Union[str, None], Cookie()] = None) -> OrderPublic:
+@router.post("/", dependencies=[Depends(get_current_user)], response_model=OrderPublic)
+def create(
+    *,
+    db: SessionDep,
+    create_data: OrderCreate,
+    current_user: CurrentUser,
+    session_id: Annotated[Union[str, None], Cookie()] = None,
+) -> OrderPublic:
     """
     Create new order.
     """
     if not session_id:
         raise HTTPException(status_code=404, detail="Cart not found")
-    
+
     cart = crud.cart.get_by_key(db=db, key="session_id", value=session_id)
     if not cart.items:
         raise HTTPException(status_code=400, detail="Cart is empty")
-    
+
     order = crud.order.create(db=db, obj_in=create_data, user_id=current_user.id)
 
     for item in cart.items:
@@ -100,7 +100,7 @@ def create(*, db: SessionDep, create_data: OrderCreate, current_user: CurrentUse
             order_id=order.id,
             product_id=item.product_id,
             quantity=item.quantity,
-            price=item.product.price
+            price=item.product.price,
         )
         db.add(order_item)
     db.query(CartItem).filter(CartItem.cart_id == cart.id).delete()
@@ -118,9 +118,7 @@ def create(*, db: SessionDep, create_data: OrderCreate, current_user: CurrentUse
 
 
 @router.get("/{order_number}", dependencies=[], response_model=OrderPublic)
-def read(
-    order: CurrentOrder
-) -> OrderPublic:
+def read(order: CurrentOrder) -> OrderPublic:
     """
     Get a specific order by order_number.
     """
@@ -146,9 +144,7 @@ def update(
         return db_order
     except IntegrityError as e:
         logger.error(f"Error updating tag, {e.orig.pgerror}")
-        raise HTTPException(
-            status_code=422, detail=str(e.orig.pgerror)
-        ) from e
+        raise HTTPException(status_code=422, detail=str(e.orig.pgerror)) from e
     except Exception as e:
         logger.error(e)
         raise HTTPException(
@@ -179,10 +175,11 @@ async def export_orders(
 ):
     try:
         orders = db.exec(select(Order))
-        file_url = await export(data=orders, name="Order", bucket=bucket, email=current_user.email)
+        file_url = await export(
+            data=orders, name="Order", bucket=bucket, email=current_user.email
+        )
 
         return {"message": "Data Export successful", "file_url": file_url}
     except Exception as e:
         logger.error(f"Export orders error: {e}")
         raise HTTPException(status_code=500, detail=str(e)) from e
-

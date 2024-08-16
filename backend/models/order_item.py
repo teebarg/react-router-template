@@ -1,6 +1,7 @@
-from typing import Optional
-from sqlmodel import Field, SQLModel
+from sqlmodel import Field
+
 from models.base import BaseModel
+
 
 class OrderItemBase(BaseModel):
     product_id: int = Field(foreign_key="product.id")
@@ -10,6 +11,7 @@ class OrderItemBase(BaseModel):
 
 class OrderItemCreate(OrderItemBase):
     pass
+
 
 class OrderItemUpdate(OrderItemBase):
     pass

@@ -1,39 +1,29 @@
-from core import deps
-from models.generic import OrderItem, OrderItemPublic, OrderItems
 from fastapi import (
     APIRouter,
-    BackgroundTasks,
     Depends,
-    File,
-    Form,
     HTTPException,
-    Query,
-    UploadFile,
 )
-from typing import Annotated
-from sqlmodel import func, or_, select
 from sqlalchemy.exc import IntegrityError
+from sqlmodel import select
 
 import crud
+from core import deps
 from core.deps import (
-    CurrentUser,
     SessionDep,
     get_current_active_superuser,
-    get_current_user,
 )
-
-from models.message import Message
-from models.order_item import OrderItemUpdate, OrderItemCreate
 from core.logging import logger
-from services.export import export, process_file, validate_file
+from models.generic import OrderItem, OrderItemPublic
+from models.message import Message
+from models.order_item import OrderItemUpdate
+from services.export import export
 
 # Create a router for order_items
 router = APIRouter()
 
+
 @router.get("/{id}", response_model=OrderItemPublic)
-def read(
-    id: int, db: SessionDep
-) -> OrderItemPublic:
+def read(id: int, db: SessionDep) -> OrderItemPublic:
     """
     Get a specific order_item by id.
     """
@@ -65,13 +55,13 @@ def update(
         )
 
     try:
-        db_order_item = crud.order_item.update(db=db, db_obj=db_order_item, obj_in=update_data)
+        db_order_item = crud.order_item.update(
+            db=db, db_obj=db_order_item, obj_in=update_data
+        )
         return db_order_item
     except IntegrityError as e:
         logger.error(f"Error updating tag - ${e.orig.pgerror}")
-        raise HTTPException(
-            status_code=422, detail=str(e.orig.pgerror)
-        ) from e
+        raise HTTPException(status_code=422, detail=str(e.orig.pgerror)) from e
     except Exception as e:
         logger.error(e)
         raise HTTPException(
@@ -104,10 +94,11 @@ async def export_order_items(
 ):
     try:
         order_items = db.exec(select(OrderItem))
-        file_url = await export(data=order_items, name="OrderItem", bucket=bucket, email=current_user.email)
+        file_url = await export(
+            data=order_items, name="OrderItem", bucket=bucket, email=current_user.email
+        )
 
         return {"message": "Data Export successful", "file_url": file_url}
     except Exception as e:
         logger.error(f"Export order items error: {e}")
         raise HTTPException(status_code=500, detail=str(e)) from e
-

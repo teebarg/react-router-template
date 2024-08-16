@@ -57,9 +57,7 @@ const OrderNotFoundPaymentFailedPage = ({ order_number }: any) => {
 
 interface ComponentProps {}
 
-const checkoutStatusLoader: LoaderFunction = async ({ request, params }) => {
-    const url = new URL(request.url);
-    console.log("🚀 ~ constcheckoutStatusLoader:LoaderFunction= ~ url:", url);
+const checkoutStatusLoader: LoaderFunction = async ({ params }) => {
     try {
         const res = await orderService.get(params.slug as string);
         return { order: res, error: false };
@@ -133,7 +131,7 @@ const CheckoutStatus: React.FC<ComponentProps> = () => {
                                     </div>
                                 </div>
                             </div>
-                            <p className="font-medium">{currency(item.price * item.quantity ?? 0)}</p>
+                            <p className="font-medium">{currency(item.price * item.quantity || 0)}</p>
                         </li>
                     ))}
                 </ul>

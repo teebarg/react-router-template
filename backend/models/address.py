@@ -1,5 +1,7 @@
-from models.base import BaseModel
 from sqlmodel import Field
+
+from models.base import BaseModel
+
 
 class AddressBase(BaseModel):
     address: str | None = Field(default=None, max_length=255)
@@ -8,8 +10,10 @@ class AddressBase(BaseModel):
     city: str | None = Field(default=None, max_length=255)
     state: str | None = Field(default=None, max_length=255)
 
+
 class AddressCreate(AddressBase):
     pass
+
 
 class AddressUpdate(AddressBase):
     pass

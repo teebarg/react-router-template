@@ -1,17 +1,11 @@
-from models.generic import Address, AddressPublic, Addresses
 from fastapi import (
     APIRouter,
-    BackgroundTasks,
     Depends,
-    File,
-    Form,
     HTTPException,
     Query,
-    UploadFile,
 )
-from typing import Annotated
-from sqlmodel import func, or_, select
 from sqlalchemy.exc import IntegrityError
+from sqlmodel import func, select
 
 import crud
 from core.deps import (
@@ -21,16 +15,17 @@ from core.deps import (
     get_address_param,
     get_current_user,
 )
-
-from models.message import Message
+from core.logging import logger
 from models.address import (
     AddressCreate,
     AddressUpdate,
 )
-from core.logging import logger
+from models.generic import Address, Addresses, AddressPublic
+from models.message import Message
 
 # Create a router for addresses
 router = APIRouter()
+
 
 @router.get(
     "/",
@@ -55,7 +50,6 @@ def index(
     )
     total_count = db.exec(count_statement).one()
 
-
     addresses = crud.address.get_multi(
         db=db,
         query=query,
@@ -77,7 +71,9 @@ def index(
 @router.post(
     "/", dependencies=[Depends(get_current_user)], response_model=AddressPublic
 )
-def create(*, db: SessionDep, current_user: CurrentUser,create_data: AddressCreate) -> AddressPublic:
+def create(
+    *, db: SessionDep, current_user: CurrentUser, create_data: AddressCreate
+) -> AddressPublic:
     """
     Create new address.
     """
@@ -86,9 +82,7 @@ def create(*, db: SessionDep, current_user: CurrentUser,create_data: AddressCrea
 
 
 @router.get("/{id}", response_model=AddressPublic)
-def read(
-    address: CurrentAddress
-) -> AddressPublic:
+def read(address: CurrentAddress) -> AddressPublic:
     """
     Get a specific address by id.
     """
@@ -114,9 +108,7 @@ def update(
         return db_address
     except IntegrityError as e:
         logger.error(f"Error updating tag, ${e.orig.pgerror}")
-        raise HTTPException(
-            status_code=422, detail=str(e.orig.pgerror)
-        ) from e
+        raise HTTPException(status_code=422, detail=str(e.orig.pgerror)) from e
     except Exception as e:
         logger.error(e)
         raise HTTPException(
@@ -138,4 +130,3 @@ def delete(db: SessionDep, id: int) -> Message:
             status_code=500,
             detail=str(e),
         ) from e
-

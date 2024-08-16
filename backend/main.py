@@ -4,15 +4,15 @@ from datetime import datetime
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from api.address import router as address_router
 from api.brand import router as brand_router
 from api.cart import router as cart_router
 from api.cart_item import router as cart_item_router
 from api.collection import router as collection_router
-from api.product import router as product_router
-from api.tag import router as tag_router
-from api.address import router as address_router
 from api.order import router as order_router
 from api.order_item import router as order_item_router
+from api.product import router as product_router
+from api.tag import router as tag_router
 from api.websocket import consume_events
 from api.websocket import router as websocket_router
 from core.config import settings

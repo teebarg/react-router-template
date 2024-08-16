@@ -1,13 +1,8 @@
+from sqlmodel import Session
 
-from typing import Any, Dict
-from models.generic import OrderItem
-from sqlmodel import Session, select
-
-from core.utils import generate_slug
 from crud.base import CRUDBase
+from models.generic import OrderItem
 from models.order_item import OrderItemCreate, OrderItemUpdate
-
-from core.logging import logger
 
 
 class CRUDOrderItem(CRUDBase[OrderItem, OrderItemCreate, OrderItemUpdate]):
@@ -20,5 +15,6 @@ class CRUDOrderItem(CRUDBase[OrderItem, OrderItemCreate, OrderItemUpdate]):
         db.commit()
         db.refresh(db_obj)
         return db_obj
+
 
 order_item = CRUDOrderItem(OrderItem)

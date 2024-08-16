@@ -45,7 +45,9 @@ def upgrade() -> None:
             ["addresses.id"],
         ),
     )
-    op.create_index(op.f("ix_orders_order_number"), "orders", ["order_number"], unique=True)
+    op.create_index(
+        op.f("ix_orders_order_number"), "orders", ["order_number"], unique=True
+    )
 
 
 def downgrade() -> None:
