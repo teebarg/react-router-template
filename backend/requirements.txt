@@ -26,7 +26,7 @@ pytest>=7.4.2,<9.0.0
 httpx>=0.25.0,<0.26
 bcrypt==4.0.1
 emails==0.6
-ruff==0.5.5
+ruff==0.6.3
 pandas==2.2.2
 openpyxl==3.1.5
 aio-pika==9.4.2
