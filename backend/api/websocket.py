@@ -1,7 +1,7 @@
 import json
 from typing import Dict
 
-import aio_pika
+# import aio_pika
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 from sqlmodel import Session, select
 
@@ -106,41 +106,41 @@ async def upload_ws(websocket: WebSocket, id: str):
         manager.disconnect(websocket)
 
 
-async def consume_events():
-    try:
-        connection = await aio_pika.connect_robust(f"amqp://{settings.RABBITMQ_HOST}")
-        channel = await connection.channel()
-        queue = await channel.declare_queue("auth_queue")
+# async def consume_events():
+#     try:
+#         connection = await aio_pika.connect_robust(f"amqp://{settings.RABBITMQ_HOST}")
+#         channel = await connection.channel()
+#         queue = await channel.declare_queue("auth_queue")
 
-        async with queue.iterator() as queue_iter:
-            async for message in queue_iter:
-                async with message.process():
-                    event = json.loads(message.body)
-                    key = event.get("event")
-                    if key == "login":
-                        with Session(engine) as db:
-                            obj_in = event.get("content", {})
-                            try:
-                                if model := db.exec(
-                                    select(User).where(
-                                        User.email == obj_in.get("email")
-                                    )
-                                ).first():
-                                    model.sqlmodel_update(obj_in)
-                                else:
-                                    # If the record doesn't exist, create a new record
-                                    model = User(**obj_in)
-                                    db.add(model)
+#         async with queue.iterator() as queue_iter:
+#             async for message in queue_iter:
+#                 async with message.process():
+#                     event = json.loads(message.body)
+#                     key = event.get("event")
+#                     if key == "login":
+#                         with Session(engine) as db:
+#                             obj_in = event.get("content", {})
+#                             try:
+#                                 if model := db.exec(
+#                                     select(User).where(
+#                                         User.email == obj_in.get("email")
+#                                     )
+#                                 ).first():
+#                                     model.sqlmodel_update(obj_in)
+#                                 else:
+#                                     # If the record doesn't exist, create a new record
+#                                     model = User(**obj_in)
+#                                     db.add(model)
 
-                                db.commit()
-                            except Exception as e:
-                                logger.error(f"Error creating or updating user {e}")
-                                raise Exception(e) from e
-                    elif key == "new_user":
-                        await manager.broadcast(
-                            id="nK12eRTbo",
-                            data=event.get("content", {}),
-                            type="registration",
-                        )
-    except Exception as e:
-        logger.error(e)
+#                                 db.commit()
+#                             except Exception as e:
+#                                 logger.error(f"Error creating or updating user {e}")
+#                                 raise Exception(e) from e
+#                     elif key == "new_user":
+#                         await manager.broadcast(
+#                             id="nK12eRTbo",
+#                             data=event.get("content", {}),
+#                             type="registration",
+#                         )
+#     except Exception as e:
+#         logger.error(e)

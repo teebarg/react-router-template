@@ -13,7 +13,7 @@ from api.order import router as order_router
 from api.order_item import router as order_item_router
 from api.product import router as product_router
 from api.tag import router as tag_router
-from api.websocket import consume_events
+# from api.websocket import consume_events
 from api.websocket import router as websocket_router
 from core.config import settings
 from core.utils import generate_contact_form_email, send_email
@@ -121,12 +121,12 @@ async def contact_form(data: ContactFormCreate):
     return {"message": "Message sent successfully"}
 
 
-@app.on_event("startup")
-async def startup_event():
-    import asyncio
+# @app.on_event("startup")
+# async def startup_event():
+#     import asyncio
 
-    loop = asyncio.get_event_loop()
-    loop.create_task(consume_events())
+#     loop = asyncio.get_event_loop()
+#     loop.create_task(consume_events())
 
 
 class CustomJSONEncoder(json.JSONEncoder):

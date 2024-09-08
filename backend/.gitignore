@@ -9,3 +9,4 @@ cred.json
 app.log
 
 .idea/
+.vercel

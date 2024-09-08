@@ -25,3 +25,4 @@ frontend/src/node_modules
 frontend/build
 frontend/dist
 frontend/dev-dist
+.vercel
