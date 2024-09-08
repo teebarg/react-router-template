@@ -2,23 +2,38 @@ services:
   traefik:
     image: traefik:v2.9
     command:
-      - traefik
-      - --entrypoints.dev.address=:4030
-      - --providers.file.filename=/config.yml
       - --api.insecure=true
+      - --providers.docker=true
+      - --providers.docker.exposedbydefault=false
+      - --entrypoints.http.address=:4030
+      # - --log.level=DEBUG  # Debug logging
     ports:
-      - 4030:4030
-      - 4031:8080
+      - 4030:4030 # HTTP entrypoint
+      - 4031:8080 # Traefik dashboard
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - ./lb.yml:/config.yml:ro
     networks:
       - traefik-network
+    labels:
+      # Enable Traefik
+      - traefik.enable=true
+      # Dashboard route setup
+      - traefik.http.routers.traefik-dashboard.entrypoints=http
+      - traefik.http.routers.traefik-dashboard.rule=Host(`traefik.localhost`)
+      - traefik.http.services.traefik-dashboard.loadbalancer.server.port=8080
+      - traefik.http.routers.traefik-dashboard.service=api@internal
 
   backend:
     image: '${DOCKER_IMAGE_BACKEND?Variable not set}:${TAG-latest}'
-    ports:
-      - 4032:8000
+    container_name: react-router-backend
+    labels:
+      - traefik.enable=true
+      # Route traffic on port 4030 to the auth service
+      - traefik.http.routers.react-router-backend-router.entrypoints=http
+      - traefik.http.routers.react-router-backend-router.rule=Host(`backend.localhost`)
+      - traefik.http.services.react-router-backend-service.loadbalancer.server.port=8000
+    # ports:
+    #   - 4032:8000
     networks:
       - traefik-network
     env_file:
@@ -34,8 +49,15 @@ services:
 
   frontend:
     image: '${DOCKER_IMAGE_FRONTEND?Variable not set}:${TAG-latest}'
-    ports:
-      - 4033:5173
+    container_name: react-router-frontend
+    labels:
+      - traefik.enable=true
+      # Route traffic on port 4030 to the auth service
+      - traefik.http.routers.react-router-frontend-router.entrypoints=http
+      - traefik.http.routers.react-router-frontend-router.rule=Host(`frontend.localhost`)
+      - traefik.http.services.react-router-frontend-service.loadbalancer.server.port=5173
+    # ports:
+    #   - 4033:5173
     networks:
       - traefik-network
     depends_on:

@@ -90,14 +90,10 @@ prep-docker: ## Prepare postges database
 
 
 # Backend Deployment
-build: ## Build docker image for the project
-	@echo "$(YELLOW)Building project image...$(RESET)"
-	docker build -f backend/Dockerfile -t $(APP_NAME) ./backend
+deploy:
+	@echo "$(YELLOW)Deploying backend to Vercel...$(RESET)"
+	vercel deploy --prod
 
-stage: ## Prepare postges database
-	@echo "$(YELLOW)Staging for deployment...$(RESET)"
-	docker tag $(APP_NAME):latest $(DOCKER_HUB)/$(APP_NAME):latest
-	docker push $(DOCKER_HUB)/$(APP_NAME):latest
 
 # Helpers
 scaffold: ## Scaffold a resource

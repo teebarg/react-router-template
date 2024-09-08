@@ -16,14 +16,6 @@ LOGGING_CONFIG = {
             "formatter": "standard",
             "class": "logging.StreamHandler",
         },
-        "file": {
-            "level": "INFO",
-            "formatter": "standard",
-            "class": "logging.handlers.RotatingFileHandler",
-            "filename": "app.log",
-            "maxBytes": 10485760,  # 10MB
-            "backupCount": 5,
-        },
     },
     "loggers": {
         "": {  # root logger

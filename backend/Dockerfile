@@ -15,10 +15,11 @@ RUN apt-get update && apt-get install -y \
     libssl-dev
 
 # Copy the requirements.txt file to the container
-COPY requirements.txt .
+COPY requirements.base.txt .
+COPY requirements.dev.txt .
 
 # Install the project dependencies
-RUN pip install -r requirements.txt
+RUN pip install -r requirements.dev.txt
 
 # Install uvicorn explicitly
 RUN pip install uvicorn

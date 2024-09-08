@@ -4,7 +4,6 @@ from datetime import datetime
 from io import BytesIO
 from typing import Any, Dict
 
-import pandas as pd
 from fastapi import (
     HTTPException,
 )
@@ -23,32 +22,33 @@ upload_statuses: Dict[str, UploadStatus] = {}
 
 
 async def process_file(file, task_id: str, db: SessionDep, upload_func):
-    chunk_size = 100
-    try:
-        df = pd.read_excel(BytesIO(file))
-        total_rows = len(df)
-        upload_statuses[task_id] = UploadStatus(
-            total_rows=total_rows, processed_rows=0, status="Processing"
-        )
-        await send_status_update(task_id)
+    print("Processing file")
+    # chunk_size = 100
+    # try:
+    #     df = pd.read_excel(BytesIO(file))
+    #     total_rows = len(df)
+    #     upload_statuses[task_id] = UploadStatus(
+    #         total_rows=total_rows, processed_rows=0, status="Processing"
+    #     )
+    #     await send_status_update(task_id)
 
-        for i in range(0, total_rows, chunk_size):
-            chunk = df.iloc[i : i + chunk_size]
-            records = chunk.to_dict("records")
+    #     for i in range(0, total_rows, chunk_size):
+    #         chunk = df.iloc[i : i + chunk_size]
+    #         records = chunk.to_dict("records")
 
-            await upload_func(db=db, records=records)
-            upload_statuses[task_id].processed_rows += len(records)
-            await send_status_update(task_id)
-            await asyncio.sleep(0.1)  # Allow other tasks to run
+    #         await upload_func(db=db, records=records)
+    #         upload_statuses[task_id].processed_rows += len(records)
+    #         await send_status_update(task_id)
+    #         await asyncio.sleep(0.1)  # Allow other tasks to run
 
-        if upload_statuses.get(task_id):
-            upload_statuses[task_id].status = "Completed"
-        await send_status_update(task_id)
-    except Exception as e:
-        logger.error(f"Error: {e}")
-        if upload_statuses.get(task_id):
-            upload_statuses[task_id].status = f"Error: {str(e)}"
-            await send_status_update(task_id)
+    #     if upload_statuses.get(task_id):
+    #         upload_statuses[task_id].status = "Completed"
+    #     await send_status_update(task_id)
+    # except Exception as e:
+    #     logger.error(f"Error: {e}")
+    #     if upload_statuses.get(task_id):
+    #         upload_statuses[task_id].status = f"Error: {str(e)}"
+    #         await send_status_update(task_id)
 
 
 async def send_status_update(task_id: str):
@@ -60,24 +60,25 @@ async def send_status_update(task_id: str):
 
 
 async def export(data: list, name: str, bucket: Any, email: str, columns: list) -> str:
+    return "https://google.com"
     # Get the current date
-    current_date = datetime.now().strftime("%Y-%m-%d-%H:%M:%S")
-    filename = f"{name}_export_{current_date}.csv"
-    csv = data_to_csv(columns=columns, items=data, filename=filename)
-    file_url = await upload_to_firebase(file_path=csv, bucket=bucket)
+    # current_date = datetime.now().strftime("%Y-%m-%d-%H:%M:%S")
+    # filename = f"{name}_export_{current_date}.csv"
+    # csv = data_to_csv(columns=columns, items=data, filename=filename)
+    # file_url = await upload_to_firebase(file_path=csv, bucket=bucket)
 
-    # Send download link
-    email_data = generate_data_export_email(download_link=file_url)
-    send_email(
-        email_to=email,
-        subject=email_data.subject,
-        html_content=email_data.html_content,
-    )
+    # # Send download link
+    # email_data = generate_data_export_email(download_link=file_url)
+    # send_email(
+    #     email_to=email,
+    #     subject=email_data.subject,
+    #     html_content=email_data.html_content,
+    # )
 
-    # Clean up
-    os.remove(f"./{filename}")
+    # # Clean up
+    # os.remove(f"./{filename}")
 
-    return file_url
+    # return file_url
 
 
 async def validate_file(file, size: int = 1.5) -> None:
